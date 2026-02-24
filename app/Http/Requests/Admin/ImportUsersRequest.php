@@ -17,7 +17,7 @@ class ImportUsersRequest extends FormRequest
             'file' => [
                 'required',
                 'file',
-                // 🔥 PERBAIKAN: Tambahkan 'txt' agar CSV yang terbaca sebagai text tidak error
+                //  PERBAIKAN: Tambahkan 'txt' agar CSV yang terbaca sebagai text tidak error
                 'mimes:xlsx,xls,csv,xml,txt',
                 'max:10240', // Maksimal 10MB
             ],

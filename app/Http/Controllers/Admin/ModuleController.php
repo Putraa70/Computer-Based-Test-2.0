@@ -23,27 +23,27 @@ class ModuleController extends Controller
             'section' => $section,
         ];
 
-    if ($section === 'class') {
+        if ($section === 'class') {
             $query = Module::withCount('topics') // Hitung jumlah topik
                 ->latest();
 
             // Fitur Pencarian
             if ($request->search) {
-                $query->where(function($q) use ($request) {
+                $query->where(function ($q) use ($request) {
                     $q->where('name', 'like', "%{$request->search}%")
-                    ->orWhere('description', 'like', "%{$request->search}%");
+                        ->orWhere('description', 'like', "%{$request->search}%");
                 });
             }
 
             // Gunakan Pagination untuk tabel utama
             $data['modules'] = $query->paginate(10)->appends($request->query());
-            
+
             // Kirim filter balik ke frontend agar input search tidak hilang
             $data['filters'] = $request->only(['search']);
         }
 
         // ==========================================
-        // 🔥 TAMBAHKAN INI: LOGIC UNTUK TAB IMPORT
+        //  TAMBAHKAN INI: LOGIC UNTUK TAB IMPORT
         // ==========================================
         if ($section === 'import') {
             $moduleId = $request->input('module_id');

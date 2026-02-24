@@ -53,7 +53,7 @@ Route::middleware($baseMiddlewares)
         Route::get('/results/{testUser}', [ResultController::class, 'show'])
             ->name('results.show');
 
-        // 🔥 PERBAIKAN DI SINI:
+        //  PERBAIKAN DI SINI:
         // Cukup tulis 'tests.check-status', karena otomatis digabung dengan group 'peserta.'
         Route::get('/tests/{testUser}/check-status', [TestController::class, 'checkStatus'])
             ->name('tests.check-status');

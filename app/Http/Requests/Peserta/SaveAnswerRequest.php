@@ -21,7 +21,7 @@ class SaveAnswerRequest extends FormRequest
             // Validasi Answer ID (Untuk Pilihan Ganda)
             'answer_id' => [
                 'nullable',
-                // 🔥 SECURITY: Pastikan jawaban ini BENAR-BENAR milik soal tersebut
+                //  SECURITY: Pastikan jawaban ini BENAR-BENAR milik soal tersebut
                 // Mencegah siswa mengirim ID jawaban dari soal lain
                 Rule::exists('answers', 'id')->where(function ($query) {
                     return $query->where('question_id', $this->question_id);

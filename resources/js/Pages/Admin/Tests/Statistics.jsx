@@ -1,11 +1,11 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { 
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell 
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
-import { 
-    ArrowLeft, Users, TrendingUp, CheckCircle, XCircle, 
+import {
+    ArrowLeft, Users, TrendingUp, CheckCircle, XCircle,
     Award, Clock, AlertCircle, FileText, HelpCircle, Hourglass, ThumbsUp, ThumbsDown
 } from 'lucide-react';
 
@@ -13,7 +13,7 @@ import {
 import 'katex/dist/katex.min.css';
 import 'react-quill/dist/quill.snow.css';
 
-// 🔥 PERBAIKAN IMPORT: Langsung dari file sebelah, bukan folder Components
+//  PERBAIKAN IMPORT: Langsung dari file sebelah, bukan folder Components
 import ExportPdfStatistics from './ExportPdfStatistics';
 
 export default function Statistics({ test, summary }) {
@@ -35,7 +35,7 @@ export default function Statistics({ test, summary }) {
             answer_id: answerId,
             is_correct: isCorrect
         }, {
-            preserveScroll: true, 
+            preserveScroll: true,
             onSuccess: () => { }
         });
     };
@@ -63,8 +63,8 @@ export default function Statistics({ test, summary }) {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                        <Link 
-                            href={route('admin.tests.index', { section: 'statistic' })} 
+                        <Link
+                            href={route('admin.tests.index', { section: 'statistic' })}
                             className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-2 text-sm transition-colors font-medium"
                         >
                             <ArrowLeft className="w-4 h-4" /> Kembali ke Daftar Ujian
@@ -214,7 +214,7 @@ export default function Statistics({ test, summary }) {
                                         <tr className="bg-white">
                                             <td className="border-r border-gray-100"></td>
                                             <td className="px-6 py-5 text-gray-800">
-                                                
+
                                                 {/* FOTO SOAL */}
                                                 {q.question_image && (
                                                     <div className="mb-4">
@@ -223,8 +223,8 @@ export default function Statistics({ test, summary }) {
                                                 )}
 
                                                 {/* HTML SOAL (Tampilan Web) */}
-                                                <div 
-                                                    dangerouslySetInnerHTML={{ __html: q.question_text }} 
+                                                <div
+                                                    dangerouslySetInnerHTML={{ __html: q.question_text }}
                                                     className="prose prose-sm max-w-none mb-4 text-gray-800 break-words whitespace-normal [&_img]:max-w-full [&_img]:h-auto ql-editor"
                                                     style={{ padding: 0, height: 'auto', overflow: 'visible' }}
                                                 />
@@ -240,12 +240,12 @@ export default function Statistics({ test, summary }) {
                                                                     {String.fromCharCode(65 + idx)}
                                                                 </div>
                                                                 <div className="flex-1 relative min-h-[2.25rem] h-auto py-1.5 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 flex items-center px-3">
-                                                                    <div 
-                                                                        className={`absolute left-0 top-0 bottom-0 transition-all duration-500 ${ans.is_correct ? 'bg-emerald-100/60' : 'bg-indigo-50/60'}`} 
+                                                                    <div
+                                                                        className={`absolute left-0 top-0 bottom-0 transition-all duration-500 ${ans.is_correct ? 'bg-emerald-100/60' : 'bg-indigo-50/60'}`}
                                                                         style={{ width: `${ans.selection_pct}%` }}
                                                                     ></div>
                                                                     <div className="relative z-10 flex flex-wrap justify-between items-center w-full text-xs gap-2">
-                                                                        
+
                                                                         <div className="flex-1 min-w-0 pr-2">
                                                                             {/* FOTO JAWABAN */}
                                                                             {ans.answer_image && (
@@ -253,15 +253,15 @@ export default function Statistics({ test, summary }) {
                                                                             )}
                                                                             {/* HTML JAWABAN */}
                                                                             <div className="flex items-center gap-2">
-                                                                                <div 
-                                                                                    dangerouslySetInnerHTML={{ __html: ans.answer_text }} 
+                                                                                <div
+                                                                                    dangerouslySetInnerHTML={{ __html: ans.answer_text }}
                                                                                     className={`font-medium break-words whitespace-normal leading-tight ql-editor ${ans.is_correct ? 'text-emerald-800' : 'text-gray-600'}`}
                                                                                     style={{ padding: 0, height: 'auto', overflow: 'visible', minHeight: 0 }}
                                                                                 />
                                                                                 {ans.is_correct && <span className="inline-block text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded uppercase tracking-wider align-middle shrink-0">Kunci</span>}
                                                                             </div>
                                                                         </div>
-                                                                        
+
                                                                         <span className="font-bold text-gray-700 font-mono shrink-0 self-start mt-1">
                                                                             {ans.selection_count} Mhs ({ans.selection_pct}%)
                                                                         </span>
@@ -274,7 +274,7 @@ export default function Statistics({ test, summary }) {
                                                         <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
                                                             <div className="px-4 py-3 border-b border-gray-200 bg-gray-100/50 flex justify-between items-center">
                                                                 <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wide flex items-center gap-2">
-                                                                    <FileText className="w-4 h-4 text-gray-400" /> 
+                                                                    <FileText className="w-4 h-4 text-gray-400" />
                                                                     Jawaban Masuk ({q.student_responses ? q.student_responses.length : 0})
                                                                 </h4>
                                                                 {q.student_responses?.some(r => r.status === 'waiting') && (
@@ -283,7 +283,7 @@ export default function Statistics({ test, summary }) {
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            
+
                                                             <div className="p-4 space-y-3">
                                                                 {q.student_responses && q.student_responses.length > 0 ? (
                                                                     q.student_responses.map((resp, i) => (
@@ -296,7 +296,7 @@ export default function Statistics({ test, summary }) {
                                                                                 <span className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
                                                                                     <Users className="w-3 h-3" /> {resp.student_name}
                                                                                 </span>
-                                                                                
+
                                                                                 <div className="flex items-center gap-2">
                                                                                     {resp.status === 'waiting' && <span className="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded font-bold border border-yellow-200">Perlu Dinilai</span>}
                                                                                     {resp.status === 'correct' && <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold border border-emerald-200">Benar</span>}
@@ -305,29 +305,29 @@ export default function Statistics({ test, summary }) {
                                                                             </div>
 
                                                                             {/* HTML JAWABAN SISWA */}
-                                                                            <div 
+                                                                            <div
                                                                                 dangerouslySetInnerHTML={{ __html: resp.text }}
                                                                                 className="text-gray-800 text-sm mb-4 leading-relaxed whitespace-pre-wrap border-l-2 border-gray-200 pl-3 ql-editor"
                                                                                 style={{ padding: 0, height: 'auto', overflow: 'visible', minHeight: 0 }}
                                                                             />
-                                                                            
+
                                                                             <div className="flex justify-end gap-2 pt-2 border-t border-gray-100/50">
-                                                                                <button 
+                                                                                <button
                                                                                     onClick={() => handleGrade(resp.id, 0)}
                                                                                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                                                                                        resp.status === 'wrong' 
-                                                                                        ? 'bg-red-600 text-white shadow-md ring-2 ring-red-200' 
+                                                                                        resp.status === 'wrong'
+                                                                                        ? 'bg-red-600 text-white shadow-md ring-2 ring-red-200'
                                                                                         : 'bg-white border border-gray-200 text-gray-500 hover:bg-red-50 hover:text-red-600 hover:border-red-200'
                                                                                     }`}
                                                                                 >
                                                                                     <ThumbsDown className="w-3 h-3" /> Salah
                                                                                 </button>
-                                                                                
-                                                                                <button 
+
+                                                                                <button
                                                                                     onClick={() => handleGrade(resp.id, 1)}
                                                                                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                                                                                        resp.status === 'correct' 
-                                                                                        ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-200' 
+                                                                                        resp.status === 'correct'
+                                                                                        ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-200'
                                                                                         : 'bg-white border border-gray-200 text-gray-500 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200'
                                                                                     }`}
                                                                                 >

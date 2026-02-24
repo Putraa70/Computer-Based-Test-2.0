@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { router, Link } from "@inertiajs/react";
-import { Clock, RefreshCw, Hash, Eye, ChevronDown } from "lucide-react"; // Tambah ChevronDown
+import { Clock, RefreshCw, Hash, Eye, ChevronDown } from "lucide-react"; 
 
 export default function Analitics({ tests = [], currentTestId, participants = [] }) {
   const [isAutoRefresh, setIsAutoRefresh] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [isLoading, setIsLoading] = useState(false); // State untuk loading dropdown
+  const [isLoading, setIsLoading] = useState(false);
 
   // Auto Refresh
   useEffect(() => {
@@ -27,9 +27,9 @@ export default function Analitics({ tests = [], currentTestId, participants = []
     if (!testId) return;
 
     setIsLoading(true); // Mulai loading
-    router.get(route('admin.tests.index'), { 
-        section: 'analitics', 
-        test_id: testId 
+    router.get(route('admin.tests.index'), {
+        section: 'analitics',
+        test_id: testId
     }, {
         onFinish: () => setIsLoading(false) // Selesai loading
     });
@@ -46,7 +46,7 @@ export default function Analitics({ tests = [], currentTestId, participants = []
 
   return (
     <div className="space-y-6 pb-20">
-        
+
         {/* Header Controller */}
        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex items-center gap-4 w-full md:w-2/3">
@@ -57,11 +57,11 @@ export default function Analitics({ tests = [], currentTestId, participants = []
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">
                         Pilih Ujian {isLoading && <span className="text-blue-500 animate-pulse ml-2">(Memuat...)</span>}
                     </label>
-                    
-                    {/* 🔥 PERBAIKAN DROPDOWN DISINI */}
+
+                    {/*  PERBAIKAN DROPDOWN DISINI */}
                     <div className="relative">
-                        <select 
-                            value={currentTestId || ''} 
+                        <select
+                            value={currentTestId || ''}
                             onChange={handleTestChange}
                             disabled={isLoading}
                             className="block w-full pl-4 pr-10 py-2.5 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg shadow-sm transition-all appearance-none cursor-pointer bg-white text-gray-900 font-medium disabled:bg-gray-100 disabled:text-gray-400"
@@ -84,17 +84,17 @@ export default function Analitics({ tests = [], currentTestId, participants = []
                     </div>
                 </div>
             </div>
-            
+
             <div className="flex items-center justify-between w-full md:w-auto gap-4 pl-0 md:pl-4 border-t md:border-t-0 md:border-l border-gray-100 pt-3 md:pt-0">
                 <div className="text-left md:text-right">
                     <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Update Terakhir</p>
                     <p className="text-sm font-mono font-bold text-gray-700">{lastUpdated.toLocaleTimeString()}</p>
                 </div>
-                <button 
+                <button
                     onClick={() => setIsAutoRefresh(!isAutoRefresh)}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm border ${
-                        isAutoRefresh 
-                        ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' 
+                        isAutoRefresh
+                        ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
                         : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
                     }`}
                 >
@@ -129,7 +129,7 @@ export default function Analitics({ tests = [], currentTestId, participants = []
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2 text-gray-700 font-mono font-bold bg-gray-100 px-2 py-1 rounded w-fit text-xs">
                                             <Hash className="w-3 h-3 text-gray-400" />
-                                            {p.user?.npm || p.user?.username || '-'} 
+                                            {p.user?.npm || p.user?.username || '-'}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">

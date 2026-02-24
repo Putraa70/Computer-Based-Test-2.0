@@ -24,7 +24,7 @@ class EnsureSingleSession
         // 2. Jika di DB berbeda dengan browser sekarang
         if ($user->active_session_id && $user->active_session_id !== $currentSessionId) {
 
-            // 🔑 CEK VALIDITAS SESSION LAMA
+            //  CEK VALIDITAS SESSION LAMA
             // Ambil dari tabel sessions bawaan Laravel
             $sessionMasihAktif = DB::table('sessions')
                 ->where('id', $user->active_session_id)

@@ -36,7 +36,7 @@ class ConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-        // 🔒 Redirect berdasarkan role (FINAL)
+        //  Redirect berdasarkan role (FINAL)
         return auth()->user()->role === 'admin'
             ? redirect()->route('admin.dashboard')
             : redirect()->route('peserta.dashboard');

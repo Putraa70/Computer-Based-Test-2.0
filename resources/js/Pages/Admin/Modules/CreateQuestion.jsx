@@ -39,20 +39,20 @@ const modulesAnswer = {
 
 const modulesQuestion = {
 toolbar: [
-        ['bold', 'italic', { 'script': 'sub' }, { 'script': 'super' }], 
-        
+        ['bold', 'italic', { 'script': 'sub' }, { 'script': 'super' }],
+
         ['formula'],
         ['clean']
     ],
 };
 
 export default function CreateQuestion({ show, onClose, mode, questionData, topicId }) {
-    
+
     const initialForm = {
-        topic_id: topicId || "", 
+        topic_id: topicId || "",
         type: "multiple_choice",
         question_text: "",
-        question_image: null, 
+        question_image: null,
         options: [
             { text: "", is_correct: true, image: null, image_url: null },
             { text: "", is_correct: false, image: null, image_url: null },
@@ -63,13 +63,13 @@ export default function CreateQuestion({ show, onClose, mode, questionData, topi
 
     const [form, setForm] = useState(initialForm);
     const [imagePreview, setImagePreview] = useState(null);
-    
-    // 🔥 STATE BARU: Melacak Editor mana yang sedang aktif
+
+    //  STATE BARU: Melacak Editor mana yang sedang aktif
     // 'question' = Editor Soal
     // 0, 1, 2, 3 = Index Editor Jawaban
-    const [activeField, setActiveField] = useState('question'); 
+    const [activeField, setActiveField] = useState('question');
 
-    // 🔥 REFS UNTUK BANYAK EDITOR
+    //  REFS UNTUK BANYAK EDITOR
     const questionRef = useRef(null);
     const answerRefs = useRef([]); // Array of refs untuk jawaban
 
@@ -97,7 +97,7 @@ export default function CreateQuestion({ show, onClose, mode, questionData, topi
                             text: a.answer_text || "",
                             is_correct: !!a.is_correct,
                             image: null,
-                            image_url: a.answer_image ? `/storage/${a.answer_image}` : null 
+                            image_url: a.answer_image ? `/storage/${a.answer_image}` : null
                         }))
                         : initialForm.options,
                 });
@@ -152,7 +152,7 @@ export default function CreateQuestion({ show, onClose, mode, questionData, topi
         setForm((prev) => ({ ...prev, options: prev.options.map((o, i) => ({ ...o, is_correct: i === idx })) }));
     };
 
-    // 🔥 GANTI: Handle Text Quill untuk Opsi
+    //  GANTI: Handle Text Quill untuk Opsi
     const handleOptionTextChange = (idx, content) => {
         setForm(prev => ({
             ...prev,
@@ -188,7 +188,7 @@ export default function CreateQuestion({ show, onClose, mode, questionData, topi
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         // Validasi Text Kosong (Strip HTML tags)
         const stripHtml = (html) => html.replace(/<(.|\n)*?>/g, '').trim();
         const isQuestionEmpty = stripHtml(form.question_text).length === 0;
@@ -205,7 +205,7 @@ export default function CreateQuestion({ show, onClose, mode, questionData, topi
 
         if (form.type === "multiple_choice") {
             form.options.forEach((opt, index) => {
-                formData.append(`options[${index}][text]`, opt.text || ""); 
+                formData.append(`options[${index}][text]`, opt.text || "");
                 formData.append(`options[${index}][is_correct]`, opt.is_correct ? '1' : '0');
                 if (opt.image instanceof File) formData.append(`options[${index}][image]`, opt.image);
             });
@@ -236,11 +236,11 @@ export default function CreateQuestion({ show, onClose, mode, questionData, topi
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                        
+
                         {/* KOLOM KIRI: SOAL */}
                         <div className="lg:col-span-7 space-y-6">
-                            
-                            {/* 🔥 PANEL SIMBOL (GLOBAL) */}
+
+                            {/*  PANEL SIMBOL (GLOBAL) */}
                             <div className="bg-blue-50 p-3 rounded-lg border border-blue-100 sticky top-[70px] z-10 shadow-sm">
                                 <div className="flex justify-between items-center mb-2">
                                     <p className="text-[10px] font-bold text-blue-700 uppercase">
@@ -271,12 +271,12 @@ export default function CreateQuestion({ show, onClose, mode, questionData, topi
                             <div>
                                 <label className="block text-xs font-bold uppercase text-gray-400 mb-2">Pertanyaan (Vignette)</label>
                                 <div className={`rounded-xl overflow-hidden border transition-all ${activeField === 'question' ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'}`}>
-                                    <ReactQuill 
-                                        ref={questionRef} 
+                                    <ReactQuill
+                                        ref={questionRef}
                                         theme="snow"
                                         value={form.question_text}
                                         onChange={(content) => setForm(prev => ({ ...prev, question_text: content }))}
-                                        onFocus={() => setActiveField('question')} // 🔥 SET AKTIF KE SOAL
+                                        onFocus={() => setActiveField('question')} //  SET AKTIF KE SOAL
                                         modules={modulesQuestion}
                                         placeholder="Tulis skenario klinis di sini..."
                                         className="h-[250px] mb-12 bg-white"
@@ -319,30 +319,30 @@ export default function CreateQuestion({ show, onClose, mode, questionData, topi
                                         <label className="text-xs font-bold uppercase text-gray-400">Opsi Jawaban</label>
                                         <button type="button" onClick={addOption} className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1"><PlusIcon className="w-3 h-3" /> Tambah Opsi</button>
                                     </div>
-                                    
+
                                     <div className="space-y-6"> {/* Space lebih besar karena editor butuh ruang */}
                                         {form.options.map((opt, idx) => (
                                             <div key={idx} className={`flex flex-col gap-2 p-3 rounded-lg border shadow-sm relative group bg-white ${activeField === idx ? 'ring-2 ring-blue-200 border-blue-400' : 'border-gray-200'}`}>
-                                                
+
                                                 <div className="flex items-start gap-3">
                                                     {/* Radio Button */}
                                                     <div className="pt-3">
                                                         <input type="radio" name={`correct_option_${topicId || 'new'}`} checked={opt.is_correct} onChange={() => setCorrectOption(idx)} className="w-5 h-5 text-green-600 focus:ring-green-500 cursor-pointer border-gray-300" />
                                                     </div>
 
-                                                    {/* 🔥 REACT QUILL UNTUK OPSI */}
+                                                    {/*  REACT QUILL UNTUK OPSI */}
                                                     <div className="flex-1 relative min-w-0">
                                                         <ReactQuill
                                                             ref={(el) => (answerRefs.current[idx] = el)} // Simpan ref ke array
                                                             theme="snow"
                                                             value={opt.text}
                                                             onChange={(content) => handleOptionTextChange(idx, content)}
-                                                            onFocus={() => setActiveField(idx)} // 🔥 SET AKTIF KE OPSI INI
+                                                            onFocus={() => setActiveField(idx)} //  SET AKTIF KE OPSI INI
                                                             modules={modulesAnswer} // Toolbar lebih simpel
                                                             placeholder={`Pilihan ${idx + 1}...`}
                                                             className="bg-white ql-compact" // Custom class jika perlu
                                                         />
-                                                        
+
                                                         {/* Tombol Upload Image Kecil */}
                                                         <label className="cursor-pointer text-gray-400 hover:text-blue-600 absolute right-2 bottom-2 z-10 bg-white/80 p-1 rounded">
                                                             <PhotoIcon className="w-5 h-5" />

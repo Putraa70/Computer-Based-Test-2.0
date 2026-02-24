@@ -1,32 +1,31 @@
 import React, { useState } from "react";
 import { router } from "@inertiajs/react";
-import Button from "@/Components/UI/Button"; 
-import Pagination from "@/Components/UI/Pagination"; 
+import Button from "@/Components/UI/Button";
+import Pagination from "@/Components/UI/Pagination";
 import CreateQuestion from "./CreateQuestion";
 
-import { 
-    PencilSquareIcon, TrashIcon, PlusIcon, 
+import {
+    PencilSquareIcon, TrashIcon, PlusIcon,
     DocumentTextIcon, FolderIcon, BookOpenIcon,
     FunnelIcon, CheckCircleIcon, ExclamationTriangleIcon
 } from "@heroicons/react/24/outline";
 
-// 🔥 PENTING: IMPORT CSS AGAR RUMUS & SIMBOL TAMPIL BENAR
 import "katex/dist/katex.min.css";
 import "react-quill/dist/quill.snow.css";
 
 export default function Questions({ modules = [], topics = [], questions = null, filters = {} }) {
     const [isLoading, setIsLoading] = useState(false);
-    
+
     // State untuk Modal
     const [showModal, setShowModal] = useState(false);
-    const [mode, setMode] = useState("create"); 
+    const [mode, setMode] = useState("create");
     const [editingQuestion, setEditingQuestion] = useState(null);
 
     // --- LOGIC FILTERING ---
     const handleModuleChange = (moduleId) => {
         setIsLoading(true);
         router.get(
-            route('admin.modules.index'), 
+            route('admin.modules.index'),
             { section: 'questions', module_id: moduleId },
             { preserveState: true, preserveScroll: true, only: ['topics', 'questions', 'filters'], onFinish: () => setIsLoading(false) }
         );
@@ -35,8 +34,8 @@ export default function Questions({ modules = [], topics = [], questions = null,
     const handleTopicChange = (topicId) => {
         setIsLoading(true);
         router.get(
-            route('admin.modules.index'), 
-            { section: 'questions', module_id: filters.module_id, topic_id: topicId }, 
+            route('admin.modules.index'),
+            { section: 'questions', module_id: filters.module_id, topic_id: topicId },
             { preserveState: true, preserveScroll: true, only: ['questions', 'filters'], onFinish: () => setIsLoading(false) }
         );
     };
@@ -69,7 +68,7 @@ export default function Questions({ modules = [], topics = [], questions = null,
 
     return (
         <div className="space-y-6 duration-500">
-            
+
             {/* --- SECTION 1: FILTER BAR --- */}
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 relative overflow-hidden">
                 {isLoading && (
@@ -87,7 +86,7 @@ export default function Questions({ modules = [], topics = [], questions = null,
                     <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Pilih Modul</label>
                         <div className="relative">
-                            <select 
+                            <select
                                 value={filters.module_id || ""}
                                 onChange={(e) => handleModuleChange(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 bg-gray-50 border-gray-200 rounded-xl text-sm focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer hover:bg-white hover:shadow-sm"
@@ -102,7 +101,7 @@ export default function Questions({ modules = [], topics = [], questions = null,
                     <div className={`transition-all duration-300 ${!filters.module_id ? 'opacity-50 pointer-events-none' : ''}`}>
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Pilih Topik / Subject</label>
                         <div className="relative">
-                            <select 
+                            <select
                                 value={filters.topic_id || ""}
                                 onChange={(e) => handleTopicChange(e.target.value)}
                                 disabled={!filters.module_id}
@@ -119,7 +118,7 @@ export default function Questions({ modules = [], topics = [], questions = null,
 
             {/* --- SECTION 2: LIST SOAL --- */}
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm min-h-[500px]">
-                
+
                 {/* Header Content */}
                 <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -128,13 +127,13 @@ export default function Questions({ modules = [], topics = [], questions = null,
                             Bank Soal
                         </h2>
                         <p className="text-sm text-gray-500 mt-1">
-                            {filters.topic_id && questions?.total 
+                            {filters.topic_id && questions?.total
                                 ? <>Menampilkan <span className="font-bold text-gray-900">{questions.from}-{questions.to}</span> dari <span className="font-bold text-gray-900">{questions.total}</span> soal</>
                                 : "Silakan pilih filter di atas untuk menampilkan data"
                             }
                         </p>
                     </div>
-                    
+
                     {filters.topic_id && (
                         <Button
                             onClick={openCreate}
@@ -174,7 +173,7 @@ export default function Questions({ modules = [], topics = [], questions = null,
                     <div className="space-y-4">
                         {questionList.map((q, index) => (
                             <div key={q.id} className="group bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 relative">
-                                
+
                                 {/* Header Soal (Nomor, Tipe, Tombol Aksi) */}
                                 <div className="flex justify-between items-start mb-4">
                                     <div className="flex items-center gap-3">
@@ -196,23 +195,23 @@ export default function Questions({ modules = [], topics = [], questions = null,
                                 </div>
 
                                 <div className="pl-[44px]">
-                                    
+
                                     {/* 1. TEKS SOAL (Render HTML + Rumus) */}
                                     {q.question_text && (
-                                        <div 
-                                            className="text-gray-800 font-medium leading-relaxed mb-4 prose prose-sm max-w-none text-justify ql-editor" 
+                                        <div
+                                            className="text-gray-800 font-medium leading-relaxed mb-4 prose prose-sm max-w-none text-justify ql-editor"
                                             style={{ padding: 0 }} // Reset padding bawaan Quill
-                                            dangerouslySetInnerHTML={{ __html: q.question_text }} 
+                                            dangerouslySetInnerHTML={{ __html: q.question_text }}
                                         />
                                     )}
 
                                     {/* 2. GAMBAR SOAL */}
                                     {q.question_image && (
                                         <div className="mb-5">
-                                            <img 
-                                                src={`/storage/${q.question_image}`} 
-                                                alt="Soal" 
-                                                className="max-h-60 rounded-xl border border-gray-200 shadow-sm" 
+                                            <img
+                                                src={`/storage/${q.question_image}`}
+                                                alt="Soal"
+                                                className="max-h-60 rounded-xl border border-gray-200 shadow-sm"
                                             />
                                         </div>
                                     )}
@@ -222,25 +221,25 @@ export default function Questions({ modules = [], topics = [], questions = null,
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                             {q.answers.map((a) => (
                                                 <div key={a.id} className={`flex items-start gap-3 p-3 rounded-xl border transition-colors ${a.is_correct ? "bg-emerald-50 border-emerald-200 text-emerald-900" : "bg-gray-50/50 border-gray-100 text-gray-600"}`}>
-                                                    
+
                                                     {/* Indikator Benar/Salah */}
                                                     <div className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center border ${a.is_correct ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-gray-300 bg-white'}`}>
                                                         {a.is_correct && <CheckCircleIcon className="w-3.5 h-3.5" />}
                                                     </div>
-                                                    
+
                                                     {/* Isi Jawaban */}
                                                     <div className="flex flex-col gap-1 w-full min-w-0">
                                                         {/* Gambar Jawaban */}
                                                         {a.answer_image && (
-                                                            <img 
-                                                                src={`/storage/${a.answer_image}`} 
-                                                                alt="Jawaban" 
+                                                            <img
+                                                                src={`/storage/${a.answer_image}`}
+                                                                alt="Jawaban"
                                                                 className="max-h-24 w-auto rounded border border-gray-200 mb-1 object-contain self-start"
                                                             />
                                                         )}
-                                                        {/* 🔥 TEKS JAWABAN (Render HTML + Rumus) */}
+                                                        {/*  TEKS JAWABAN (Render HTML + Rumus) */}
                                                         {a.answer_text && (
-                                                            <div 
+                                                            <div
                                                                 className={`text-sm prose prose-sm max-w-none ${a.is_correct ? 'font-semibold' : ''}`}
                                                                 dangerouslySetInnerHTML={{ __html: a.answer_text }}
                                                             />
@@ -265,12 +264,12 @@ export default function Questions({ modules = [], topics = [], questions = null,
             </div>
 
             {/* --- SECTION 3: MODAL --- */}
-            <CreateQuestion 
-                show={showModal} 
-                onClose={closeModal} 
-                mode={mode} 
-                questionData={editingQuestion} 
-                topicId={filters.topic_id} 
+            <CreateQuestion
+                show={showModal}
+                onClose={closeModal}
+                mode={mode}
+                questionData={editingQuestion}
+                topicId={filters.topic_id}
             />
         </div>
     );

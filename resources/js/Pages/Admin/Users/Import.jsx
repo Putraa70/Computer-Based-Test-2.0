@@ -1,10 +1,10 @@
 import React from "react";
 import Button from "@/Components/UI/Button";
 import { useForm, usePage } from "@inertiajs/react";
-import { 
-    CloudArrowUpIcon, 
-    DocumentTextIcon, 
-    CheckCircleIcon, 
+import {
+    CloudArrowUpIcon,
+    DocumentTextIcon,
+    CheckCircleIcon,
     ExclamationCircleIcon,
     ArrowDownTrayIcon,
     InformationCircleIcon,
@@ -13,7 +13,7 @@ import {
     DocumentDuplicateIcon
 } from "@heroicons/react/24/outline";
 
-// 🔥 Import Component Alert yang baru dibuat
+//  Import Component Alert yang baru dibuat
 // Sesuaikan path import ini dengan struktur folder Anda
 import ImportAlert from "@/Pages/Admin/Components/ImportAlert";
 
@@ -52,7 +52,7 @@ export default function Import() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      
+
       {/* --- HEADER SECTION --- */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
@@ -78,7 +78,7 @@ export default function Import() {
       <ImportAlert flash={flash} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* --- KOLOM KIRI: FORM UPLOAD --- */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -88,10 +88,10 @@ export default function Import() {
                  Area Upload
                </h2>
             </div>
-            
+
             <div className="p-6 md:p-8">
               <form onSubmit={submitImport}>
-                
+
                 {/* DROPZONE AREA */}
                 <div className="mb-6">
                   <div
@@ -164,14 +164,14 @@ export default function Import() {
                       Batal
                     </Button>
                   )}
-                  
+
                   <Button
                     type="submit"
                     loading={processing}
                     disabled={!data.file}
                     className={`px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-sm transition-all text-sm font-bold tracking-wide ${
-                      !data.file 
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200" 
+                      !data.file
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
                         : "bg-blue-600 hover:bg-blue-700 text-white hover:shadow-md border border-transparent"
                     }`}
                   >
@@ -186,7 +186,7 @@ export default function Import() {
 
         {/* --- KOLOM KANAN: INFORMASI --- */}
         <div className="lg:col-span-1 space-y-6">
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
                 <InformationCircleIcon className="w-5 h-5 text-blue-500" />
@@ -229,8 +229,8 @@ export default function Import() {
             <p className="text-xs text-blue-600 leading-relaxed mb-3">
               Gunakan template resmi agar data masuk dengan sempurna tanpa error format.
             </p>
-            <a 
-              href={route("admin.import.template")} 
+            <a
+              href={route("admin.import.template")}
               className="text-xs font-bold text-blue-700 hover:text-blue-900 hover:underline flex items-center gap-1 group"
             >
               <DocumentDuplicateIcon className="w-3 h-3 group-hover:scale-110 transition-transform" />

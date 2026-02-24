@@ -7,7 +7,7 @@ use App\Models\Test;
 use App\Models\TestUser;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-// 🔥 1. IMPORT SERVICE
+//  1. IMPORT SERVICE
 use App\Services\CBT\ExamTimeService;
 
 class AnalyticsController extends Controller
@@ -67,12 +67,12 @@ class AnalyticsController extends Controller
 
         $testUser->test->setRelation('questions', $allQuestions);
 
-        // 🔥 2. HITUNG SISA WAKTU DARI SERVER (YANG SUDAH SUPPORT LOCK)
+        //  2. HITUNG SISA WAKTU DARI SERVER (YANG SUDAH SUPPORT LOCK)
         $remainingSeconds = ExamTimeService::remainingSeconds($testUser);
 
         return Inertia::render('Admin/Tests/ShowAnalytics', [
             'testUser' => $testUser,
-            // 🔥 3. KIRIM KE FRONTEND
+            //  3. KIRIM KE FRONTEND
             'serverRemainingSeconds' => $remainingSeconds
         ]);
     }

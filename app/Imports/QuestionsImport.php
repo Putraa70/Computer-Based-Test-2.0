@@ -49,7 +49,7 @@ class QuestionsImport implements ToCollection
 
             $correctKey = strtoupper(trim($row[7] ?? ''));
 
-            // 🔥 LOGIKA PENERJEMAH (Bahasa Indonesia -> Database)
+            //  LOGIKA PENERJEMAH (Bahasa Indonesia -> Database)
             if (in_array($rawType, ['pilihan_ganda', 'multiple_choice', 'pg', 'pilgan'])) {
                 $type = 'multiple_choice';
             } elseif (in_array($rawType, ['esai', 'essay', 'uraian'])) {

@@ -82,7 +82,7 @@ class TestResultsExport implements FromQuery, WithHeadings, WithMapping, ShouldA
             $duration = $testUser->finished_at->diffInMinutes($testUser->started_at) . ' menit';
         }
 
-        // 🔥 LOGIKA HITUNG NILAI REALTIME (FLOAT)
+        //  LOGIKA HITUNG NILAI REALTIME (FLOAT)
         $score = 0.00; // Default float
         $totalQuestions = 0;
 
@@ -108,7 +108,7 @@ class TestResultsExport implements FromQuery, WithHeadings, WithMapping, ShouldA
             $testUser->user->name,
             $testUser->test->title,
             ucfirst($testUser->status),
-            $score, // 🔥 Kirim Raw Number (misal: 31.77777)
+            $score, //  Kirim Raw Number (misal: 31.77777)
             $testUser->started_at,
             $testUser->finished_at ?? '-',
             $duration
@@ -121,7 +121,7 @@ class TestResultsExport implements FromQuery, WithHeadings, WithMapping, ShouldA
     }
 
     /**
-     * 🔥 FORCE FORMAT EXCEL AGAR 2 DESIMAL
+     *  FORCE FORMAT EXCEL AGAR 2 DESIMAL
      */
     public function columnFormats(): array
     {

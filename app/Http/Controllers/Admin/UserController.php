@@ -107,9 +107,7 @@ class UserController extends Controller
     // logic buat nampilin tabel seleksi massal
     private function handleSelection(Request $request)
     {
-        $query = User::with('groups')
-            ->where('role', 'peserta')
-            ->latest();
+        $query = User::with('groups');
 
         // filter pencarian
         if ($request->search) {
@@ -123,6 +121,10 @@ class UserController extends Controller
         if ($request->group_id) {
             $query->whereHas('groups', fn($q) => $q->where('groups.id', $request->group_id));
         }
+
+        // Sorting: Admin first (0), then peserta (1), then by ID descending
+        $query->orderByRaw("CASE WHEN role = 'admin' THEN 0 WHEN role = 'peserta' THEN 1 ELSE 2 END")
+            ->orderBy('id', 'desc');
 
         return inertia('Admin/Users/Index', [
             'section' => 'selection',
@@ -167,7 +169,6 @@ class UserController extends Controller
         $usersInGroup = [];
         if ($selectedGroupId) {
             $usersInGroup = User::whereHas('groups', fn($q) => $q->where('groups.id', $selectedGroupId))
-                ->where('role', 'peserta')
                 ->select('id', 'name', 'npm')
                 ->orderBy('name')
                 ->get();
@@ -214,9 +215,7 @@ class UserController extends Controller
     // logic default buat crud user biasa
     private function handleManagement(Request $request)
     {
-        $query = User::with('groups')
-            ->where('role', 'peserta')
-            ->latest();
+        $query = User::with('groups');
 
         // filter pencarian nama / npm
         if ($request->search) {
@@ -233,15 +232,16 @@ class UserController extends Controller
             });
         }
 
+        // Sorting: Admin first (0), then peserta (1), then by ID descending
+        $query->orderByRaw("CASE WHEN role = 'admin' THEN 0 WHEN role = 'peserta' THEN 1 ELSE 2 END")
+            ->orderBy('id', 'desc');
+
+        $users = $query->paginate(50)->appends($request->query());
+
         return inertia('Admin/Users/Index', [
             'section' => 'management',
-            // jangan lupa appends biar filter gak ilang pas klik page 2
-            'users' => $query->paginate(10)->appends($request->query()),
-
-            // kirim data grup buat isi dropdown filter
+            'users' => $users,
             'groups' => Group::select('id', 'name')->orderBy('name')->get(),
-
-            // balikin state filter ke frontend biar inputan gak kereset
             'filters' => $request->only(['search', 'group_id']),
         ]);
     }

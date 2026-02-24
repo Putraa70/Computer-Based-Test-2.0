@@ -8,7 +8,7 @@ use App\Models\Test;
 use App\Models\TestUser;
 use App\Services\CBT\AnswerService;
 use App\Services\CBT\ExamStateService;
-// 🔥 PASTIKAN IMPORT INI BENAR (MENGARAH KE CBT)
+//  PASTIKAN IMPORT INI BENAR (MENGARAH KE CBT)
 use App\Services\CBT\ExamTimeService;
 use App\Services\CBT\QuestionGeneratorService;
 use App\Services\CBT\ScoringService;
@@ -255,24 +255,24 @@ class TestController extends Controller
     /**
      * Cek Status & Sisa Waktu (Polling)
      */
-public function checkStatus(TestUser $testUser)
-{
-    $baseDuration = ($testUser->test->duration + $testUser->extra_time) * 60; // detik
+    public function checkStatus(TestUser $testUser)
+    {
+        $baseDuration = ($testUser->test->duration + $testUser->extra_time) * 60; // detik
 
-    if ($testUser->is_locked && $testUser->locked_at) {
-        // Hanya hitung sampai waktu dikunci
-        $elapsed = $testUser->locked_at->diffInSeconds($testUser->started_at);
-        $remaining = $baseDuration - $elapsed;
-    } else {
-        // Normal
-        $elapsed = now()->diffInSeconds($testUser->started_at);
-        $remaining = $baseDuration - $elapsed;
+        if ($testUser->is_locked && $testUser->locked_at) {
+            // Hanya hitung sampai waktu dikunci
+            $elapsed = $testUser->locked_at->diffInSeconds($testUser->started_at);
+            $remaining = $baseDuration - $elapsed;
+        } else {
+            // Normal
+            $elapsed = now()->diffInSeconds($testUser->started_at);
+            $remaining = $baseDuration - $elapsed;
+        }
+
+        return response()->json([
+            'status' => $testUser->is_locked ? 'locked' : 'ongoing',
+            'remaining_seconds' => max(0, $remaining),
+            'message' => $testUser->lock_reason,
+        ]);
     }
-
-    return response()->json([
-        'status' => $testUser->is_locked ? 'locked' : 'ongoing',
-        'remaining_seconds' => max(0, $remaining),
-        'message' => $testUser->lock_reason,
-    ]);
-}
 }

@@ -6,16 +6,16 @@ export default function Navigation({ questions, current, answers, onJump }) {
             <div className="flex flex-wrap gap-2 justify-start">
                 {questions.map((question, index) => {
                     const isActive = current === index;
-                    
+
                     // Ambil data jawaban untuk soal ini
                     const userAnswer = answers[question.id];
 
-                    // 🔥 FIX LOGIKA DI SINI:
+                    //  FIX LOGIKA DI SINI:
                     // 1. Cek apakah objek userAnswer ada
                     // 2. DAN Cek apakah answerId TIDAK null (untuk PG)
                     // 3. ATAU Cek apakah answerText TIDAK null (untuk Essay)
                     const isAnswered = userAnswer && (
-                        userAnswer.answerId !== null || 
+                        userAnswer.answerId !== null ||
                         (userAnswer.answerText && userAnswer.answerText !== "")
                     );
 
@@ -25,16 +25,16 @@ export default function Navigation({ questions, current, answers, onJump }) {
                             onClick={() => onJump(index)}
                             className={`
                                 flex-none w-9 h-9 flex items-center justify-center rounded-lg text-xs font-bold transition-all duration-200 border relative
-                                ${isActive 
-                                    ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-100 z-10 scale-105' 
-                                    : isAnswered 
-                                        ? 'bg-emerald-500 text-white border-emerald-500 hover:bg-emerald-600' 
-                                        : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100 hover:border-gray-400' 
+                                ${isActive
+                                    ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-100 z-10 scale-105'
+                                    : isAnswered
+                                        ? 'bg-emerald-500 text-white border-emerald-500 hover:bg-emerald-600'
+                                        : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100 hover:border-gray-400'
                                 }
                             `}
                         >
                             {index + 1}
-                            
+
                             {/* Indikator titik kecil (Hanya muncul jika aktif TAPI belum dijawab) */}
                             {isActive && !isAnswered && (
                                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-400 rounded-full border-2 border-white"></span>

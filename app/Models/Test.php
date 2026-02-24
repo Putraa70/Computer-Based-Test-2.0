@@ -20,7 +20,7 @@ class Test extends Model
     ];
 
     // ==========================================
-    // 🔥 RELASI UTAMA (DATABASE)
+    //  RELASI UTAMA (DATABASE)
     // ==========================================
 
     // Ujian ↔ Topik

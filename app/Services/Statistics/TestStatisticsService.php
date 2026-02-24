@@ -62,7 +62,7 @@ class TestStatisticsService
             )
             ->get();
 
-        // 6. Analisis Butir Soal (🔥 UPDATE: Ambil Foto Soal & Jawaban)
+        // 6. Analisis Butir Soal ( UPDATE: Ambil Foto Soal & Jawaban)
         $questions = Question::with(['answers'])
             ->whereHas('topic.tests', function ($q) use ($testId) {
                 $q->where('tests.id', $testId);
@@ -86,7 +86,7 @@ class TestStatisticsService
                 $count = $responses->where('answer_id', $ans->id)->count();
                 return [
                     'answer_text' => $ans->answer_text,
-                    // 🔥 PERBAIKAN: Kirim Gambar Jawaban
+                    // PERBAIKAN: Kirim Gambar Jawaban
                     'answer_image' => $ans->answer_image,
                     'is_correct' => $ans->is_correct,
                     'selection_count' => $count,
@@ -116,7 +116,7 @@ class TestStatisticsService
             return [
                 'id' => $q->id,
                 'question_text' => $q->question_text,
-                // 🔥 PERBAIKAN: Kirim Gambar Soal
+                // PERBAIKAN: Kirim Gambar Soal
                 'question_image' => $q->question_image,
                 'stats' => [
                     'recurrence' => $totalParticipants,

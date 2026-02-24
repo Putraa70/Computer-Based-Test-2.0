@@ -88,7 +88,7 @@ export default function TestManagement({
     transform,
   } = useForm(initialForm);
 
-  // 🔥 PERBAIKAN DI SINI: Transform Data sebelum Submit
+  //  PERBAIKAN DI SINI: Transform Data sebelum Submit
   transform((data) => ({
     ...data,
     start_time: data.start_time ? data.start_time.replace("T", " ") : null,
@@ -137,19 +137,19 @@ export default function TestManagement({
 
     // create atau update
     const action = editMode ? put : post;
-    const url = editMode 
-        ? route('admin.tests.update', data.id) 
+    const url = editMode
+        ? route('admin.tests.update', data.id)
         : route('admin.tests.store');
 
     action(url, {
-      preserveScroll: true, 
-      preserveState: true,  
+      preserveScroll: true,
+      preserveState: true,
 
       onSuccess: () => {
         setIsModalOpen(false);
         reset();
       },
-      
+
       onError: (errors) => {
         console.log("Gagal simpan:", errors);
       },

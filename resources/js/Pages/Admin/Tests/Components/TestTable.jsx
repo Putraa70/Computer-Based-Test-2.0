@@ -49,7 +49,7 @@ export default function TestTable({
 
   // 4. Update Render Actions dengan Logika Kondisional
   const renderActions = (row) => {
-    // 🔥 JIKA MODE STATISTIK: Tampilkan Tombol Analisis
+    //  JIKA MODE STATISTIK: Tampilkan Tombol Analisis
     if (isStatisticMode) {
       return (
         <Link
@@ -62,7 +62,7 @@ export default function TestTable({
       );
     }
 
-    // 🔥 JIKA MODE BIASA: Tampilkan Edit & Hapus (Kode Lama Anda)
+    //  JIKA MODE BIASA: Tampilkan Edit & Hapus (Kode Lama Anda)
     return (
       <div className="flex gap-1">
         <Button

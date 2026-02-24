@@ -15,7 +15,7 @@ class QuestionGeneratorService
     {
         $cacheKey = self::cacheKey($test->id, $userId);
 
-        // 🔥 PERBAIKAN 1: UNCOMMENT CACHE
+        //  PERBAIKAN 1: UNCOMMENT CACHE
         // Ini wajib aktif agar saat user refresh, sistem tidak mengacak ulang soal.
         if (Cache::has($cacheKey)) {
             return Cache::get($cacheKey);
@@ -74,13 +74,24 @@ class QuestionGeneratorService
     }
 
     /**
-     * Ambil soal + jawaban sesuai aturan
+     * Ambil soal + jawaban sesuai aturan (OPTIMIZED)
      */
     public static function getQuestions(Test $test, int $userId)
     {
+        $cacheDataKey = "cbt_questions_" . md5($test->id . "_" . implode(',', $test->topics->pluck('id')->toArray()));
+
+        // Cache full questions data untuk 6 jam
+        if (Cache::has($cacheDataKey)) {
+            return Cache::get($cacheDataKey);
+        }
+
         $session = self::generate($test, $userId);
 
+        // Load topics dengan pivot di awal SAJA
         $test->load('topics');
+
+        // Buat mapping untuk akses cepat
+        $topicsMap = $test->topics->keyBy('id');
 
         $questions = Question::with(['answers' => function ($q) {
             $q->whereNotNull('answer_text'); // Ambil hanya yang ada teksnya
@@ -93,9 +104,9 @@ class QuestionGeneratorService
             return array_search($model->id, $session['question_ids']);
         })->values();
 
-        return $questions->map(function ($question) use ($test, $userId) {
+        $questionsList = $questions->map(function ($question) use ($topicsMap, $userId) {
 
-            $topic = $test->topics->where('id', $question->topic_id)->first();
+            $topic = $topicsMap->get($question->topic_id);
             if (!$topic) return $question;
 
             $pivot = $topic->pivot;
@@ -107,10 +118,7 @@ class QuestionGeneratorService
 
                 // Tetap lakukan pengacakan jika fitur random aktif
                 if ($pivot->random_answers) {
-                    // 🔥 PERBAIKAN 2: DETERMINISTIC SHUFFLE
-                    // Jangan pakai shuffle() biasa karena akan berubah tiap refresh.
-                    // Gunakan sorting berdasarkan Hash ID Jawaban + ID User.
-                    // Hasilnya: Acak berbeda tiap user, tapi KONSISTEN (tetap) untuk user tersebut.
+
                     $answers = $answers->sortBy(function ($ans) use ($userId) {
                         return md5($ans->id . '_' . $userId);
                     })->values();
@@ -122,6 +130,11 @@ class QuestionGeneratorService
 
             return $question;
         });
+
+        // Cache full data untuk mencegah re-query
+        Cache::put($cacheDataKey, $questionsList, now()->addHours(6));
+
+        return $questionsList;
     }
 
     /**
@@ -130,6 +143,13 @@ class QuestionGeneratorService
     public static function clear(int $testId, int $userId): void
     {
         Cache::forget(self::cacheKey($testId, $userId));
+        // Juga clear question data cache
+        $test = \App\Models\Test::find($testId);
+        if ($test) {
+            $test->load('topics');
+            $cacheDataKey = "cbt_questions_" . md5($test->id . "_" . implode(',', $test->topics->pluck('id')->toArray()));
+            Cache::forget($cacheDataKey);
+        }
     }
 
     /**

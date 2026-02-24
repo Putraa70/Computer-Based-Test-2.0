@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Trash2 } from 'lucide-react'; 
+import { Trash2 } from 'lucide-react';
 
 export default function AnswerOptions({ question, selectedAnswer, testUserId, onAnswer, onFatalError }) {
     const [isSaving, setIsSaving] = useState(false);
@@ -95,7 +95,7 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
             {/* Loop Jawaban */}
             {question.answers.map((option) => {
                 const isSelected = selectedAnswer?.answerId === option.id;
-                
+
                 return (
                     <button
                         key={option.id}
@@ -103,8 +103,8 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
                         disabled={isSaving}
                         className={`
                             w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-start gap-4 group relative overflow-hidden
-                            ${isSelected 
-                                ? 'border-emerald-500 bg-emerald-50/50 shadow-md ring-1 ring-emerald-200' 
+                            ${isSelected
+                                ? 'border-emerald-500 bg-emerald-50/50 shadow-md ring-1 ring-emerald-200'
                                 : 'border-gray-100 hover:border-emerald-200 hover:bg-gray-50'
                             }
                             ${isSaving ? 'cursor-wait opacity-70' : 'cursor-pointer'}
@@ -119,15 +119,15 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
 
                         <div className="flex-1 min-w-0"> {/* min-w-0 agar text wrap */}
                             {option.answer_image && (
-                                <img 
-                                    src={`/storage/${option.answer_image}`} 
-                                    className="mb-2 max-h-40 rounded-lg border border-gray-200 object-contain bg-white" 
+                                <img
+                                    src={`/storage/${option.answer_image}`}
+                                    className="mb-2 max-h-40 rounded-lg border border-gray-200 object-contain bg-white"
                                     alt="Opsi Gambar"
                                 />
                             )}
-                            
-                            {/* 🔥 GANTI DISINI: Support HTML & Rumus */}
-                            <div 
+
+                            {/*  GANTI DISINI: Support HTML & Rumus */}
+                            <div
                                 className={`text-base leading-relaxed prose prose-sm max-w-none ${isSelected ? 'text-emerald-900 font-medium' : 'text-gray-700'}`}
                                 dangerouslySetInnerHTML={{ __html: option.answer_text }}
                             />
@@ -144,7 +144,7 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
             <div className="flex justify-between items-center pt-2 mt-4 border-t border-gray-50">
                 <div>
                     {selectedAnswer?.answerId && (
-                        <button 
+                        <button
                             onClick={handleClear}
                             disabled={isSaving}
                             className="flex items-center gap-2 text-sm text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors font-medium"

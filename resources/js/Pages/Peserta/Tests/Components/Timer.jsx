@@ -4,7 +4,7 @@ import { Clock, AlertTriangle } from 'lucide-react';
 export default function Timer({ initialSeconds, onExpire }) {
     const [seconds, setSeconds] = useState(initialSeconds);
 
-    // 🔥 PERBAIKAN UTAMA DI SINI 🔥
+    //  PERBAIKAN UTAMA DI SINI
     // Fungsi ini mendeteksi jika 'initialSeconds' berubah (karena Admin menambah waktu)
     // Lalu memaksa state 'seconds' untuk update mengikuti waktu baru tersebut.
     useEffect(() => {
@@ -17,7 +17,7 @@ export default function Timer({ initialSeconds, onExpire }) {
             onExpire(); // Panggil fungsi selesai jika waktu habis
             return;
         }
-        
+
         const interval = setInterval(() => {
             setSeconds(prev => Math.max(0, prev - 1)); // Pakai prev agar lebih akurat & tidak minus
         }, 1000);
@@ -42,10 +42,10 @@ export default function Timer({ initialSeconds, onExpire }) {
     return (
         <div className={`
             flex flex-col items-center justify-center w-full py-2 rounded-lg transition-colors border
-            ${isCritical 
-                ? 'bg-red-50 text-red-600 border-red-100' 
-                : isWarning 
-                    ? 'bg-yellow-50 text-yellow-700 border-yellow-100' 
+            ${isCritical
+                ? 'bg-red-50 text-red-600 border-red-100'
+                : isWarning
+                    ? 'bg-yellow-50 text-yellow-700 border-yellow-100'
                     : 'bg-emerald-50 text-emerald-700 border-emerald-100'
             }
         `}>

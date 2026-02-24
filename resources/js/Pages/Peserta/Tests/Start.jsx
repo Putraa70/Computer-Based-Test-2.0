@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Head, usePage, router, Link } from '@inertiajs/react'; 
-import axios from 'axios'; 
-import { Menu, Clock, BookOpen, Calendar, AlertCircle, Lock, LogOut } from 'lucide-react'; 
-import Swal from 'sweetalert2'; 
+import { Head, usePage, router, Link } from '@inertiajs/react';
+import axios from 'axios';
+import { Menu, Clock, BookOpen, Calendar, AlertCircle, Lock, LogOut } from 'lucide-react';
+import Swal from 'sweetalert2';
 import DynamicError from '@/Pages/Errors/DynamicError';
 
 // Import Komponen Anak
@@ -11,19 +11,19 @@ import Navigation from "./Components/Navigation";
 import SubmitModal from "./Components/SubmitModal";
 
 export default function Start({ test, testUserId, questions, remainingSeconds, existingAnswers, lastIndex, currentUser }) {
-    
+
     const { auth } = usePage().props;
 
     // --- STATE ---
     const [currentIndex, setCurrentIndex] = useState(lastIndex || 0);
     const [answers, setAnswers] = useState(existingAnswers || {});
     const [timeLeft, setTimeLeft] = useState(remainingSeconds);
-    
-    // 🔥 1. STATE LOCK (WAJIB ADA)
-    const [isLocked, setIsLocked] = useState(false); 
+
+    //  1. STATE LOCK (WAJIB ADA)
+    const [isLocked, setIsLocked] = useState(false);
     const [lockMessage, setLockMessage] = useState('');
-    
-    // 🔥 2. REF (WAJIB ADA UNTUK INTERVAL)
+
+    //  2. REF (WAJIB ADA UNTUK INTERVAL)
     const isLockedRef = useRef(false);
     const timeLeftRef = useRef(timeLeft);
 
@@ -65,7 +65,7 @@ export default function Start({ test, testUserId, questions, remainingSeconds, e
         if (fatalError) return;
         // A. Timer Mundur (Visual)
         const countdown = setInterval(() => {
-            // 🔥 KODE INI YANG MEMBUAT WAKTU BERHENTI 🔥
+            //  KODE INI YANG MEMBUAT WAKTU BERHENTI
             if (isLockedRef.current) {
                 return; // Jangan kurangi waktu jika dikunci
             }
@@ -92,10 +92,10 @@ export default function Start({ test, testUserId, questions, remainingSeconds, e
                     if (!isLockedRef.current) {
                         isLockedRef.current = true;
                         setIsLocked(true);
-                        
+
                         // Update pesan admin
                         setLockMessage(data.message || 'Ujian dijeda pengawas.');
-                        
+
                         Swal.fire({
                             title: 'UJIAN DIJEDA',
                             text: data.message,
@@ -104,8 +104,8 @@ export default function Start({ test, testUserId, questions, remainingSeconds, e
                             timer: 3000
                         });
                     }
-                    // 🔥 JANGAN UPDATE WAKTU DARI SERVER SAAT LOCKED
-                    return; 
+                    //  JANGAN UPDATE WAKTU DARI SERVER SAAT LOCKED
+                    return;
                 }
 
                 // --- HANDLE UNLOCK ---
@@ -177,16 +177,16 @@ export default function Start({ test, testUserId, questions, remainingSeconds, e
     return (
         <div className="min-h-screen bg-gray-50 font-sans text-gray-900 flex flex-col relative">
             <Head title={`Ujian: ${test.title}`} />
-            
-            {/* 🔥 4. OVERLAY SCREEN SAAT DIKUNCI */}
+
+            {/*  4. OVERLAY SCREEN SAAT DIKUNCI */}
             {isLocked && (
                 <div className="fixed inset-0 z-[100] bg-gray-900/95 backdrop-blur flex flex-col items-center justify-center text-white p-6 text-center transition-all duration-300">
                     <div className="bg-white/10 p-6 rounded-full mb-6 animate-pulse">
                         <Lock className="w-16 h-16 text-red-400" />
                     </div>
-                    
+
                     <h1 className="text-4xl font-bold mb-4 tracking-tight">UJIAN DIJEDA</h1>
-                    
+
                     <div className="bg-white/10 px-6 py-4 rounded-xl max-w-lg mb-8 border border-white/10">
                         <p className="text-yellow-300 font-bold mb-1 text-sm uppercase tracking-wider">Pesan Pengawas:</p>
                         <p className="text-white text-lg leading-relaxed">
@@ -204,7 +204,7 @@ export default function Start({ test, testUserId, questions, remainingSeconds, e
                         </div>
 
                         {/* Tombol Kembali ke Dashboard */}
-                        <Link 
+                        <Link
                             href={route('peserta.dashboard')}
                             className="mt-4 flex items-center gap-2 px-6 py-2 bg-transparent border border-gray-600 text-gray-400 rounded-lg hover:bg-gray-800 hover:text-white transition-all text-sm font-medium"
                         >
@@ -234,7 +234,7 @@ export default function Start({ test, testUserId, questions, remainingSeconds, e
 
             {/* MAIN CONTENT */}
             <main className={`flex-1 pt-20 pb-8 px-4 md:px-6 max-w-[1600px] mx-auto w-full grid grid-cols-12 gap-6 items-start ${isLocked ? 'blur-sm pointer-events-none' : ''}`}>
-                
+
                 {/* Sidebar Navigasi */}
                 <aside className={`lg:col-span-3 lg:block lg:sticky lg:top-24 space-y-4 ${isSidebarOpen ? 'fixed inset-0 z-40 bg-white p-4 overflow-y-auto block' : 'hidden'}`}>
                     <div className="flex justify-between items-center lg:hidden mb-4">
@@ -257,8 +257,8 @@ export default function Start({ test, testUserId, questions, remainingSeconds, e
 
                 {/* Kartu Soal */}
                 <section className="col-span-12 lg:col-span-6 flex flex-col gap-6">
-                    <QuestionCard 
-                        key={currentQuestion.id} 
+                    <QuestionCard
+                        key={currentQuestion.id}
                         question={currentQuestion}
                         selectedAnswer={answers[currentQuestion.id]}
                         testUserId={testUserId}
@@ -284,7 +284,7 @@ export default function Start({ test, testUserId, questions, remainingSeconds, e
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                         <div className="bg-gray-50 px-5 py-3 border-b border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">Peserta Ujian</div>
                         <div className="p-5">

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Head, router, Link } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import {
-    Clock, CheckCircle, XCircle, Plus, StopCircle, ArrowLeft, 
+    Clock, CheckCircle, XCircle, Plus, StopCircle, ArrowLeft,
     RefreshCw, Lock, AlertCircle, ThumbsUp, ThumbsDown, FileText
 } from "lucide-react";
 
-// 🔥 IMPORT CSS WAJIB (Agar Simbol/Icon Medis & Rumus Tampil)
+//  IMPORT CSS WAJIB (Agar Simbol/Icon Medis & Rumus Tampil)
 import 'katex/dist/katex.min.css';
 import 'react-quill/dist/quill.snow.css';
 
@@ -22,7 +22,7 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
     useEffect(() => {
         if (testUser?.status !== 'ongoing' || !isAutoRefresh) return;
         const timer = setInterval(() => {
-            if (testUser.is_locked) return; 
+            if (testUser.is_locked) return;
             setTimeLeft((prev) => Math.max(0, prev - 1));
         }, 1000);
         return () => clearInterval(timer);
@@ -77,7 +77,7 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
         }
     };
 
-    // --- 🔥 FUNGSI UNTUK RAPID GRADING ESSAY ---
+    // ---  FUNGSI UNTUK RAPID GRADING ESSAY ---
     const handleGrade = (answerId, isCorrect) => {
         router.post(route('admin.tests.grade-essay'), {
             answer_id: answerId,
@@ -91,19 +91,19 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
     return (
         <AdminLayout>
             <Head title={`Detail: ${testUser.user?.name}`} />
-            
+
             <div className="space-y-6 pb-20">
-                
+
                 {/* NAVIGASI & TIMER */}
                 <div className="flex justify-between items-center mb-2">
-                    <Link 
+                    <Link
                         href={route('admin.tests.index', { section: 'analitics', test_id: testUser.test_id })}
                         className="inline-flex items-center gap-2 text-gray-500 hover:text-blue-600 font-bold transition bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200"
                     >
                         <ArrowLeft className="w-5 h-5" /> Kembali ke Daftar
                     </Link>
 
-                    <button 
+                    <button
                         onClick={() => setIsAutoRefresh(!isAutoRefresh)}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition border ${
                             isAutoRefresh ? 'bg-green-100 text-green-700 border-green-200 animate-pulse' : 'bg-gray-100 text-gray-500 border-gray-200'
@@ -185,7 +185,7 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
                 {/* LIST JAWABAN */}
                 <div className="space-y-4">
                     <h3 className="font-bold text-lg text-gray-800 border-l-4 border-blue-500 pl-3">Rincian Jawaban ({answeredCount}/{totalQuestions})</h3>
-                    
+
                     <div className="grid gap-6">
                         {testUser.test?.questions?.map((q, idx) => {
                             const ans = userAnswers.find(a => a.question_id === q.id);
@@ -202,7 +202,7 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
                                         }`}>
                                             {idx + 1}
                                         </div>
-                                        
+
                                         <div className="flex-1 flex flex-col gap-3 min-w-0">
                                             {q.question_image && (
                                                 <div className="max-w-xl">
@@ -210,12 +210,12 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
                                                 </div>
                                             )}
 
-                                            <div 
-                                                className="text-gray-800 font-medium text-sm prose max-w-none ql-editor break-words !h-auto !overflow-visible" 
+                                            <div
+                                                className="text-gray-800 font-medium text-sm prose max-w-none ql-editor break-words !h-auto !overflow-visible"
                                                 style={{ padding: 0 }}
-                                                dangerouslySetInnerHTML={{ __html: q.question_text }} 
+                                                dangerouslySetInnerHTML={{ __html: q.question_text }}
                                             />
-                                            
+
                                             {(!studentAnswerId && !ans?.answer_text) && (
                                                 <div className="flex pt-1">
                                                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
@@ -233,15 +233,15 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
                                             /* --- TAMPILAN ESSAY + RAPID GRADING --- */
                                             <div className="space-y-4">
                                                 <div className={`p-4 rounded-xl border-l-4 shadow-sm ${
-                                                    isCorrect === 1 ? 'bg-emerald-50 border-emerald-500' : 
-                                                    (isCorrect === 0 && ans?.answer_text) ? 'bg-red-50 border-red-500' : 
+                                                    isCorrect === 1 ? 'bg-emerald-50 border-emerald-500' :
+                                                    (isCorrect === 0 && ans?.answer_text) ? 'bg-red-50 border-red-500' :
                                                     'bg-gray-50 border-gray-300'
                                                 }`}>
                                                     <div className="flex items-center gap-2 mb-2 text-gray-400">
                                                         <FileText className="w-3 h-3" />
                                                         <span className="text-[10px] font-bold uppercase tracking-wider">Jawaban Peserta:</span>
                                                     </div>
-                                                    <div 
+                                                    <div
                                                         className="text-sm text-gray-800 ql-editor !p-0 !h-auto !overflow-visible"
                                                         dangerouslySetInnerHTML={{ __html: ans?.answer_text || '<i class="text-gray-400">Tidak ada jawaban teks.</i>' }}
                                                     />
@@ -250,21 +250,21 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
                                                 {/* TOMBOL PENILAIAN CEPAT */}
                                                 {ans?.id && (
                                                     <div className="flex justify-end gap-2">
-                                                        <button 
+                                                        <button
                                                             onClick={() => handleGrade(ans.id, 0)}
                                                             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all border ${
-                                                                isCorrect === 0 
-                                                                ? 'bg-red-600 text-white border-red-700 shadow-md ring-2 ring-red-200' 
+                                                                isCorrect === 0
+                                                                ? 'bg-red-600 text-white border-red-700 shadow-md ring-2 ring-red-200'
                                                                 : 'bg-white text-gray-500 border-gray-200 hover:bg-red-50 hover:text-red-600'
                                                             }`}
                                                         >
                                                             <ThumbsDown className="w-3.5 h-3.5" /> Salah
                                                         </button>
-                                                        <button 
+                                                        <button
                                                             onClick={() => handleGrade(ans.id, 1)}
                                                             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all border ${
-                                                                isCorrect === 1 
-                                                                ? 'bg-emerald-600 text-white border-emerald-700 shadow-md ring-2 ring-emerald-200' 
+                                                                isCorrect === 1
+                                                                ? 'bg-emerald-600 text-white border-emerald-700 shadow-md ring-2 ring-emerald-200'
                                                                 : 'bg-white text-gray-500 border-gray-200 hover:bg-emerald-50 hover:text-emerald-600'
                                                             }`}
                                                         >
@@ -290,7 +290,7 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
                                                         optionClass = "border-red-500 bg-red-50 text-red-700 font-bold ring-1 ring-red-500";
                                                         icon = <XCircle className="w-4 h-4 text-red-600 ml-auto" />;
                                                     } else if (isKey) {
-                                                        optionClass = "border-blue-300 bg-blue-50 text-blue-700 font-semibold"; 
+                                                        optionClass = "border-blue-300 bg-blue-50 text-blue-700 font-semibold";
                                                         icon = <span className="text-[10px] bg-blue-200 px-2 py-0.5 rounded text-blue-800 ml-auto">Kunci</span>;
                                                     }
 
@@ -299,15 +299,15 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
                                                             <span className="w-6 h-6 rounded-full bg-white border border-gray-300 flex items-center justify-center text-xs font-bold shrink-0 text-gray-500 mt-0.5">
                                                                 {String.fromCharCode(65 + optIdx)}
                                                             </span>
-                                                            
+
                                                             <div className="flex-1 flex flex-col gap-1 min-w-0">
                                                                 {option.answer_image && (
                                                                     <img src={`/storage/${option.answer_image}`} alt="Opsi" className="max-h-20 rounded border border-gray-200 self-start" />
                                                                 )}
-                                                                <div 
-                                                                    className="ql-editor !h-auto !overflow-visible break-words" 
-                                                                    style={{ padding: 0 }} 
-                                                                    dangerouslySetInnerHTML={{ __html: option.answer_text }} 
+                                                                <div
+                                                                    className="ql-editor !h-auto !overflow-visible break-words"
+                                                                    style={{ padding: 0 }}
+                                                                    dangerouslySetInnerHTML={{ __html: option.answer_text }}
                                                                 />
                                                             </div>
 

@@ -11,15 +11,15 @@ export default function Results({ testUsers = [], test }) {
   const [searchUser, setSearchUser] = useState("");
   const [sortBy, setSortBy] = useState("started_at");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
-  // 🔥 FIX UTAMA: Deteksi apakah data paginated atau array biasa
+
+  //  FIX UTAMA: Deteksi apakah data paginated atau array biasa
   const dataList = testUsers.data ? testUsers.data : testUsers;
 
   // Selection State
   const [selectedIds, setSelectedIds] = useState([]);
 
   // Modals State
-  const [lockModal, setLockModal] = useState(false); 
+  const [lockModal, setLockModal] = useState(false);
   const [lockReason, setLockReason] = useState("");
   const [addTimeModal, setAddTimeModal] = useState(false);
   const [addMinutes, setAddMinutes] = useState(10);
@@ -36,7 +36,7 @@ export default function Results({ testUsers = [], test }) {
                 onFinish: () => setIsRefreshing(false),
             });
         }
-    }, 5000); 
+    }, 5000);
     return () => clearInterval(interval);
   }, [lockModal, addTimeModal]);
 
@@ -64,7 +64,7 @@ export default function Results({ testUsers = [], test }) {
 
   // Filter Logic (Pakai dataList)
   const filteredData = useMemo(() => {
-    let data = dataList; // 🔥 Ganti testUsers jadi dataList
+    let data = dataList; //  Ganti testUsers jadi dataList
     if (filterTest) data = data.filter((tu) => tu.test_id === filterTest);
     if (searchUser) {
       const lowerSearch = searchUser.toLowerCase();
@@ -388,7 +388,7 @@ export default function Results({ testUsers = [], test }) {
           </table>
         </div>
       </div>
-      
+
       <div className="mt-6 text-center text-xs text-gray-500">
         <p>Menampilkan {filteredData.length} dari {testUsers.total || testUsers.length} hasil ujian</p>
       </div>

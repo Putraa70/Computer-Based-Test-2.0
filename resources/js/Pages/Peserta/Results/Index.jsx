@@ -80,7 +80,7 @@ export default function Index({ auth, results }) {
                     key: "status_nilai", // Ganti key jadi bebas aja, karena kita pakai 'row'
                     className: "text-center",
                     render: (_, row) => {
-                      // 🔥 FIX DISINI: Ambil langsung dari 'row.result'
+                      //  FIX DISINI: Ambil langsung dari 'row.result'
                       const resultData = row.result;
 
                       // 1. Jika Data Result Belum Ada (Data Lama / Belum di-Publish)

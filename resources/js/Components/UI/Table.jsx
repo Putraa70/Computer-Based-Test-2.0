@@ -66,7 +66,7 @@ export default function Table({
                   <td
                     key={col.key}
                     className={`px-6 py-4 font-medium text-gray-700 ${col.className || ""}`}>
-                    {col.render ? col.render(row[col.key], row) : row[col.key]}
+                    {col.render ? col.render(row[col.key], row, idx) : row[col.key]}
                   </td>
                 ))}
                 {renderActions && (
@@ -96,7 +96,7 @@ export default function Table({
                   {col.label}
                 </span>
                 <span className="text-sm font-bold text-gray-700 text-right">
-                  {col.render ? col.render(row[col.key], row) : row[col.key]}
+                  {col.render ? col.render(row[col.key], row, idx) : row[col.key]}
                 </span>
               </div>
             ))}

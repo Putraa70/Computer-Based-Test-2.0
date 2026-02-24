@@ -19,7 +19,7 @@ class TestUser extends Model
         'last_question_id',
         'last_activity_at',
 
-        // 🔥 WAJIB ADA AGAR WAKTU BISA BERTAMBAH SAAT UNLOCK
+        //  WAJIB ADA AGAR WAKTU BISA BERTAMBAH SAAT UNLOCK
         'extra_time',
 
         // Field Locking
@@ -39,7 +39,7 @@ class TestUser extends Model
         'locked_at'        => 'datetime',
         'current_index'    => 'integer',
         'is_locked'        => 'boolean',
-        'extra_time'       => 'integer', 
+        'extra_time'       => 'integer',
     ];
 
     /* ================= RELATIONS ================= */

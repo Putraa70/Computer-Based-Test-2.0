@@ -19,17 +19,17 @@ export default function Index(props) {
       case "tests":
         // Mode Management Biasa
         return <Management {...props} isStatisticMode={false} />;
-      
+
       case "results":
         return <Results {...props} />;
-      
-      // 🔥 INI BAGIAN PENTING YANG KURANG 🔥
+
+      //  INI BAGIAN PENTING YANG KURANG
       case "statistic":
         // Panggil Management lagi, TAPI aktifkan mode statistik
         return <Management {...props} isStatisticMode={true} />;
 
       case "analitics":
-        // 🔥 Analytics Mode - Tampilkan Analisis Data Ujian
+        //  Analytics Mode - Tampilkan Analisis Data Ujian
         return <Analitics {...props} />;
 
       default:

@@ -113,7 +113,7 @@ class TestController extends Controller
             'groups' => Group::select('id', 'name')->orderBy('name')->get(),
             'topics' => Topic::with('module')->where('is_active', true)->get(),
 
-            // 🔥 DATA HASIL UJIAN (PAGINATION 200) 🔥
+            //  DATA HASIL UJIAN (PAGINATION 200)
             'testUsers' => TestUser::with([
                 'user:id,name,email,npm',
                 'test:id,title,duration,description',

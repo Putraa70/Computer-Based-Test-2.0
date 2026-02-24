@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Test;
 use App\Models\TestUser;
 use App\Models\Result;
-// 🔥 PENTING: Tambahkan Import Service Ini
+//  PENTING: Tambahkan Import Service Ini
 use App\Services\CBT\ScoringService;
 use App\Services\CBT\QuestionGeneratorService;
 use App\Services\CBT\ExamStateService; // Opsional jika masih dipakai
@@ -19,7 +19,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // 1. 🔒 LOGIKA BARU: Force Submit Ujian yang Waktunya Habis
+        // 1.  LOGIKA BARU: Force Submit Ujian yang Waktunya Habis
         // Ambil semua ujian yang statusnya masih 'ongoing' (sedang dikerjakan)
         $ongoingTests = TestUser::with('test')
             ->where('user_id', $user->id)
@@ -76,7 +76,7 @@ class DashboardController extends Controller
         $averageScore = Result::whereHas('testUser', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         })
-            ->where('status', 'validated') // 🔥 Tambahkan filter ini
+            ->where('status', 'validated') //  Tambahkan filter ini
             ->avg('total_score');
 
         $summary = [

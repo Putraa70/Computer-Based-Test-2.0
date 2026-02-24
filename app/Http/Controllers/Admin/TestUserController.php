@@ -158,9 +158,6 @@ class TestUserController extends Controller
         }
     }
 
-    // =========================================================================
-    // 🔥 NEW BULK ACTIONS (Agar Tombol Massal Berfungsi)
-    // =========================================================================
 
     /**
      * Tambah Waktu Massal (Bulk Add Time)
@@ -188,7 +185,7 @@ class TestUserController extends Controller
         // Update Massal dengan mencatat waktu locked_at
         TestUser::whereIn('id', $request->ids)->update([
             'is_locked' => true,
-            'locked_at' => now(), // 🔥 Catat waktu
+            'locked_at' => now(),
             'lock_reason' => $request->lock_reason ?? 'Dikunci massal'
         ]);
 
@@ -227,33 +224,6 @@ class TestUserController extends Controller
         return back()->with('success', 'Peserta terpilih dibuka & waktu dikompensasi.');
     }
 
-    /**
-     * Validasi Massal (Bulk Validate) - VERSI Putra
-     */
-    // public function bulkValidate(Request $request)
-    // {
-    //     $request->validate(['ids' => 'required|array']);
-
-    //     // Simpan jumlah baris yang BENAR-BENAR terupdate
-    //     $affected = \App\Models\Result::whereIn('test_user_id', $request->ids)
-    //         ->update([
-    //             'status' => 'validated',
-    //             'validated_by' => auth()->id(),
-    //             'validated_at' => now()
-    //         ]);
-
-    //     // Jika tidak ada yang terupdate (0), beri pesan peringatan
-    //     if ($affected === 0) {
-    //         return back()->with('error', 'Tidak ada data yang divalidasi. Pastikan peserta statusnya sudah SELESAI.');
-    //     }
-
-    //     // Jika ada yang terupdate, tampilkan jumlah aslinya
-    //     return back()->with('success', "$affected Hasil peserta berhasil divalidasi.");
-    // }
-
-
-
-    // Versi bram
     public function bulkValidate(Request $request)
     {
         // Validasi: pastikan ada ID yang dikirim
