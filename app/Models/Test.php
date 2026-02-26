@@ -17,6 +17,7 @@ class Test extends Model
         'end_time',
         'is_active',
         'results_to_users',
+        'require_seb',
     ];
 
     // ==========================================

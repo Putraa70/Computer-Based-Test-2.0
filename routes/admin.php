@@ -46,6 +46,9 @@ Route::middleware([
     Route::post('/users/assign-groups', [UserController::class, 'assignGroups'])
         ->name('users.assign-groups');
 
+    Route::post('/users/bulk-delete', [UserController::class, 'bulkDelete'])
+        ->name('users.bulk-delete');
+
     // 2. Import Questions (PINDAHKAN KE SINI - SEBELUM RESOURCE)
     Route::get('/questions/import', [ImportQuestionController::class, 'create'])->name('questions.import.view');
     Route::post('/import/questions', [ImportQuestionController::class, 'store'])->name('import.questions');

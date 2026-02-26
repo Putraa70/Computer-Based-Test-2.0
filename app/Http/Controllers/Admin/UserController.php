@@ -158,6 +158,33 @@ class UserController extends Controller
             ->with('success', count($users) . ' pengguna berhasil ditambahkan ke grup baru.');
     }
 
+    public function bulkDelete(Request $request)
+    {
+        // Validasi Input
+        $request->validate([
+            'user_ids' => 'required|array|min:1',
+        ]);
+
+        try {
+            DB::transaction(function () use ($request) {
+                // Hapus user yang terpilih, kecuali admin yang sedang login
+                $deletedCount = User::whereIn('id', $request->user_ids)
+                    ->where('id', '!=', auth()->id()) // Jangan hapus user yang sedang login
+                    ->delete();
+
+                if ($deletedCount === 0) {
+                    throw new \Exception('Tidak ada pengguna yang dapat dihapus.');
+                }
+            });
+
+            return redirect()->route('admin.users.index', ['section' => 'selection'])
+                ->with('success', count($request->user_ids) . ' pengguna berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.users.index', ['section' => 'selection'])
+                ->with('error', 'Gagal menghapus pengguna: ' . $e->getMessage());
+        }
+    }
+
     // logic buat nampilin rapor atau hasil individu
     private function handleIndividualResult(Request $request)
     {

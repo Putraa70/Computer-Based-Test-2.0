@@ -176,6 +176,7 @@ class TestController extends Controller
                 'end_time' => $data['end_time'],
                 'is_active' => $data['is_active'] ?? true,
                 'results_to_users' => $data['results_to_users'] ?? false,
+                'require_seb' => $data['require_seb'] ?? true,
             ]);
 
             if (isset($data['groups'])) {
@@ -237,6 +238,7 @@ class TestController extends Controller
             'end_time' => $data['end_time'],
             'is_active' => $data['is_active'] ?? $test->is_active,
             'results_to_users' => $data['results_to_users'] ?? $test->results_to_users,
+            'require_seb' => $data['require_seb'] !== null ? $data['require_seb'] : true,
         ]);
 
         if (isset($data['groups'])) {

@@ -20,6 +20,7 @@ class UpdateTestRequest extends FormRequest
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
             'is_active' => 'nullable|boolean',
+            'require_seb' => 'nullable|boolean',
 
             'groups' => 'required|array|min:1',
             'groups.*' => 'exists:groups,id',

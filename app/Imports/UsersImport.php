@@ -76,7 +76,7 @@ class UsersImport implements ToCollection
             'name'      => $name,
             'npm'       => $npm,
             'email'     => $email,
-            'password'  => Hash::make('password123'),
+            'password'  => Hash::make($npm),
             'role'      => 'peserta',
             'is_active' => true,
         ]);

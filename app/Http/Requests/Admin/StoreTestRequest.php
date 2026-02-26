@@ -54,6 +54,7 @@ class StoreTestRequest extends FormRequest {
             'start_time'  => 'required|date',
             'end_time'    => 'required|date|after:start_time',
             'is_active'   => 'nullable|boolean',
+            'require_seb' => 'nullable|boolean',
 
             'groups'   => 'required|array|min:1',
             'groups.*' => 'exists:groups,id',
@@ -102,10 +103,11 @@ class StoreTestRequest extends FormRequest {
         ];
     }
 
-    // konversi nilai is_active menjadi boolean sebelum validasi
+    // konversi nilai is_active dan require_seb menjadi boolean sebelum validasi
     protected function prepareForValidation() {
         $this->merge([
             'is_active' => $this->boolean('is_active'),
+            'require_seb' => $this->boolean('require_seb'),
         ]);
     }
 }
