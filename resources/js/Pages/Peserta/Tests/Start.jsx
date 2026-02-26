@@ -31,7 +31,7 @@ export default function Start({
     const { auth } = usePage().props;
 
     // 🔒 Enable anti-copy & anti-screenshot protection ketika SEB dinonaktifkan
-    useSecurityProtection(!test.require_seb);
+    useSecurityProtection(test.require_seb);
 
     // --- STATE ---
     const [currentIndex, setCurrentIndex] = useState(lastIndex || 0);

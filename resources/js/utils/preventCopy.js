@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 /**
  * Utility untuk mencegah copy-paste & screenshot saat SEB dinonaktifkan
  * Disable: right-click, Ctrl+C, Ctrl+X, Ctrl+A, drag & drop, text selection, screenshot
@@ -124,15 +126,15 @@ export const enableAntiCopyProtection = () => {
  * Hanya aktif ketika SEB dinonaktifkan
  * Usage: useSecurityProtection(requireSeb) di component
  */
-export const useSecurityProtection = (requireSeb) => {
-    React.useEffect(() => {
+export const useSecurityProtection = (isSebEnabled) => {
+    useEffect(() => {
         // Jika SEB diaktifkan, jangan aktifkan proteksi aplikasi
-        if (requireSeb) {
+        if (isSebEnabled) {
             return;
         }
 
         // Jika SEB dinonaktifkan, aktifkan proteksi anti-copy & anti-screenshot
         const cleanup = enableAntiCopyProtection();
         return cleanup;
-    }, [requireSeb]);
+    }, [isSebEnabled]);
 };
