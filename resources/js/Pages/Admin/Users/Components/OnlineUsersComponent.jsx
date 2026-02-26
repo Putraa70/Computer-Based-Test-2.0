@@ -23,7 +23,7 @@ export default function OnlineUsersComponent({ users, totalOnline }) {
 
             try {
                 const response = await fetch(
-                    route("admin.users.force-logout", userId),
+                    route("admin.users.force-logout", { userId: userId }),
                     {
                         method: "POST",
                         headers: {
@@ -33,7 +33,7 @@ export default function OnlineUsersComponent({ users, totalOnline }) {
                                 )?.content || "",
                             "Content-Type": "application/json",
                         },
-                        body: JSON.stringify({ user_id: userId }),
+                        body: JSON.stringify({}),
                     },
                 );
 
@@ -102,8 +102,8 @@ export default function OnlineUsersComponent({ users, totalOnline }) {
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="border-b border-gray-200 bg-gray-50">
-                                <th className="px-6 py-3 text-left font-bold text-gray-700">
-                                    Status
+                                <th className="px-6 py-3 text-left font-bold text-gray-700 w-16">
+                                    No
                                 </th>
                                 <th className="px-6 py-3 text-left font-bold text-gray-700">
                                     Nama
@@ -115,7 +115,7 @@ export default function OnlineUsersComponent({ users, totalOnline }) {
                                     Role
                                 </th>
                                 <th className="px-6 py-3 text-left font-bold text-gray-700">
-                                    Email
+                                    Status
                                 </th>
                                 <th className="px-6 py-3 text-center font-bold text-gray-700">
                                     Aksi
@@ -124,33 +124,14 @@ export default function OnlineUsersComponent({ users, totalOnline }) {
                         </thead>
                         <tbody>
                             {users.data && users.data.length > 0 ? (
-                                users.data.map((user) => (
+                                users.data.map((user, index) => (
                                     <tr
                                         key={user.id}
                                         className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                                     >
-                                        {/* Status Online/Offline */}
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
-                                                <div
-                                                    className={`w-3 h-3 rounded-full ${
-                                                        user.is_online
-                                                            ? "bg-green-500 animate-pulse"
-                                                            : "bg-gray-300"
-                                                    }`}
-                                                />
-                                                <span
-                                                    className={`text-xs font-bold ${
-                                                        user.is_online
-                                                            ? "text-green-600"
-                                                            : "text-gray-500"
-                                                    }`}
-                                                >
-                                                    {user.is_online
-                                                        ? "Online"
-                                                        : "Offline"}
-                                                </span>
-                                            </div>
+                                        {/* No */}
+                                        <td className="px-6 py-4 text-gray-600">
+                                            {index + 1}
                                         </td>
 
                                         {/* Nama */}
@@ -187,16 +168,35 @@ export default function OnlineUsersComponent({ users, totalOnline }) {
                                             </span>
                                         </td>
 
-                                        {/* Email */}
-                                        <td className="px-6 py-4 text-gray-600 text-xs">
-                                            {user.email}
+                                        {/* Status Online/Offline */}
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <div
+                                                    className={`w-3 h-3 rounded-full ${
+                                                        user.is_online
+                                                            ? "bg-green-500 animate-pulse"
+                                                            : "bg-gray-300"
+                                                    }`}
+                                                />
+                                                <span
+                                                    className={`text-xs font-bold ${
+                                                        user.is_online
+                                                            ? "text-green-600"
+                                                            : "text-gray-500"
+                                                    }`}
+                                                >
+                                                    {user.is_online
+                                                        ? "Online"
+                                                        : "Offline"}
+                                                </span>
+                                            </div>
                                         </td>
 
                                         {/* Aksi */}
                                         <td className="px-6 py-4">
                                             <div className="flex justify-center">
                                                 {user.is_online &&
-                                                user.id !== auth.user?.id ? (
+                                                user.id !== auth.user.id ? (
                                                     <button
                                                         onClick={() =>
                                                             handleForceLogout(

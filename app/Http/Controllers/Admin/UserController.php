@@ -56,11 +56,20 @@ class UserController extends Controller
 
     private function handleOnline(Request $request)
     {
+        $currentUserId = auth()->id();
+
         // Ambil semua user dengan session active
         $allUsers = User::select('id', 'name', 'npm', 'role', 'email', 'active_session_id')->get();
 
         // Mapping & Inject Data Session
         $processedUsers = $allUsers->map(function ($user) {
+            // Jika user yang sedang login, selalu tampilkan sebagai online
+            if ($user->id === auth()->id()) {
+                $user->is_online = true;
+                $user->session_id = $user->active_session_id ?? '-';
+                return $user;
+            }
+
             // Cek apakah session masih aktif di tabel sessions
             $sessionActive = $user->active_session_id
                 ? DB::table('sessions')->where('id', $user->active_session_id)->exists()
@@ -78,7 +87,7 @@ class UserController extends Controller
         // Hitung Total Online untuk Badge Frontend
         $totalOnlineCount = $sortedUsers->where('is_online', true)->count();
 
-        $perPage = 10;
+        $perPage = 100;
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $currentItems = $sortedUsers->slice(($currentPage - 1) * $perPage, $perPage)->values()->all();
         $paginatedUsers = new LengthAwarePaginator(
@@ -100,10 +109,8 @@ class UserController extends Controller
     }
 
     // 🔒 FORCE LOGOUT USER
-    public function forceLogout(Request $request)
+    public function forceLogout(Request $request, $userId)
     {
-        $userId = $request->input('user_id');
-
         if (!$userId) {
             return response()->json(['error' => 'User ID diperlukan'], 400);
         }
