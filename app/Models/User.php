@@ -17,6 +17,7 @@ class User extends Authenticatable
         'npm',
         'role',
         'is_active',
+        'active_session_id',
     ];
 
     protected $hidden = [
