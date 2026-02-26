@@ -31,13 +31,19 @@ export default function OnlineUsersComponent({ users, totalOnline }) {
                                 document.querySelector(
                                     'meta[name="csrf-token"]',
                                 )?.content || "",
+                            Accept: "application/json",
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({}),
                     },
                 );
 
-                const data = await response.json();
+                const contentType = response.headers.get("content-type") || "";
+                const data = contentType.includes("application/json")
+                    ? await response.json()
+                    : {
+                          error: "Respons tidak valid. Silakan refresh halaman dan coba lagi.",
+                      };
 
                 if (response.ok) {
                     Swal.fire({
