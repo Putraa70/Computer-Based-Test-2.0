@@ -19,16 +19,29 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
-
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // 🔒 INVALIDATE SESSION LAMA (Logout dari device lain)
+        // 🔒 CEK APAKAH USER SUDAH LOGIN DI PERANGKAT LAIN
         if ($user->active_session_id) {
-            // Hapus session lama dari tabel sessions
-            DB::table('sessions')->where('id', $user->active_session_id)->delete();
+            // Cek apakah session lama masih valid di DB
+            $oldSessionExists = DB::table('sessions')
+                ->where('id', $user->active_session_id)
+                ->exists();
+
+            if ($oldSessionExists) {
+                // Jika session lama masih aktif, TOLAK LOGIN
+                Auth::logout();
+                request()->session()->invalidate();
+                request()->session()->regenerateToken();
+
+                throw ValidationException::withMessages([
+                    'email' => 'Akun Anda sedang digunakan di perangkat lain. Hubungi administrator jika ingin logout paksa.',
+                ]);
+            }
         }
+
+        $request->session()->regenerate();
 
         // Update session baru
         $user->update(['active_session_id' => session()->getId()]);
@@ -52,4 +65,5 @@ class AuthenticatedSessionController extends Controller
         return redirect()->route('login');
     }
 }
+
 

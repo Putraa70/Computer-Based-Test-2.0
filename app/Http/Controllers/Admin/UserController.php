@@ -56,29 +56,24 @@ class UserController extends Controller
 
     private function handleOnline(Request $request)
     {
-        // butuh semua data dulu untuk menentukan siapa yang online di seluruh database
-        $allUsers = User::select('id', 'name', 'npm', 'role', 'email')->get();
+        // Ambil semua user dengan session active
+        $allUsers = User::select('id', 'name', 'npm', 'role', 'email', 'active_session_id')->get();
 
-        // Mapping & Inject Data dari cache, validasi 1 Kali
-        // Kita hitung timestamp aktivitasnya untuk bahan sorting
+        // Mapping & Inject Data Session
         $processedUsers = $allUsers->map(function ($user) {
-            $cacheKey = 'user-online-' . $user->id;
-            $data = Cache::get($cacheKey);
+            // Cek apakah session masih aktif di tabel sessions
+            $sessionActive = $user->active_session_id
+                ? DB::table('sessions')->where('id', $user->active_session_id)->exists()
+                : false;
 
-            $user->is_online = $data ? true : false;
-            $user->ip_address = $data['ip'] ?? '-';
-            $user->last_activity = $data['last_activity'] ?? null;
-
-            // Konversi waktu ke timestamp angka agar mudah disortir , 0 kalo offline
-            $user->sort_time = $data && isset($data['last_activity'])
-                ? strtotime($data['last_activity'])
-                : 0;
+            $user->is_online = $sessionActive ? true : false;
+            $user->session_id = $user->active_session_id ?? '-';
 
             return $user;
         });
 
-        // Sorting server side supaya yang terakhir online bakal ditaruh diatas
-        $sortedUsers = $processedUsers->sortByDesc('sort_time')->values();
+        // Sorting: online users first, then offline
+        $sortedUsers = $processedUsers->sortByDesc('is_online')->values();
 
         // Hitung Total Online untuk Badge Frontend
         $totalOnlineCount = $sortedUsers->where('is_online', true)->count();
@@ -103,6 +98,41 @@ class UserController extends Controller
             'totalOnline' => $totalOnlineCount,
         ]);
     }
+
+    // 🔒 FORCE LOGOUT USER
+    public function forceLogout(Request $request)
+    {
+        $userId = $request->input('user_id');
+
+        if (!$userId) {
+            return response()->json(['error' => 'User ID diperlukan'], 400);
+        }
+
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => 'User tidak ditemukan'], 404);
+        }
+
+        // Jangan logout user yang sedang login sebagai admin
+        if ($user->id === auth()->id()) {
+            return response()->json(['error' => 'Tidak dapat logout user yang sedang login'], 403);
+        }
+
+        // Hapus session user dari tabel sessions
+        if ($user->active_session_id) {
+            DB::table('sessions')->where('id', $user->active_session_id)->delete();
+        }
+
+        // Reset active_session_id
+        $user->update(['active_session_id' => null]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $user->name . ' berhasil di-logout paksa.'
+        ]);
+    }
+
 
     // logic buat nampilin tabel seleksi massal
     private function handleSelection(Request $request)

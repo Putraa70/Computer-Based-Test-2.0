@@ -57,6 +57,8 @@ Route::middleware([
 
 
     Route::resource('users', UserController::class);
+    Route::post('/users/{user}/force-logout', [UserController::class, 'forceLogout'])->name('users.force-logout');
+
     Route::resource('modules', ModuleController::class);
     Route::resource('topics', TopicController::class);
 
