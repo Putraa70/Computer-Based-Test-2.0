@@ -192,4 +192,42 @@ class QuestionController extends Controller
             ->route('admin.modules.index', ['section' => 'questions'])
             ->with('success', 'Soal berhasil dihapus');
     }
+
+    /**
+     * Bulk delete questions
+     */
+    public function bulkDelete(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'exists:questions,id'
+        ]);
+
+        $count = 0;
+
+        DB::transaction(function () use ($request, &$count) {
+            $questions = Question::with('answers')->whereIn('id', $request->ids)->get();
+
+            foreach ($questions as $question) {
+                // 1. Hapus Gambar Soal
+                if ($question->question_image && Storage::disk('public')->exists($question->question_image)) {
+                    Storage::disk('public')->delete($question->question_image);
+                }
+
+                // 2. Hapus Gambar Jawaban
+                foreach ($question->answers as $ans) {
+                    if ($ans->answer_image && Storage::disk('public')->exists($ans->answer_image)) {
+                        Storage::disk('public')->delete($ans->answer_image);
+                    }
+                }
+
+                // 3. Hapus Data
+                $question->answers()->delete();
+                $question->delete();
+                $count++;
+            }
+        });
+
+        return back()->with('success', "{$count} soal berhasil dihapus beserta jawabannya.");
+    }
 }

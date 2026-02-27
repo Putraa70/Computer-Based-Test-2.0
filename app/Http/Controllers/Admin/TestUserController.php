@@ -120,18 +120,10 @@ class TestUserController extends Controller
                 });
             }
 
-            if ($sort === 'npm_asc') {
-                $query->orderBy('users.npm', 'asc');
-            } elseif ($sort === 'score_desc') {
-                $query->orderBy('results.total_score', 'desc');
-            } elseif ($sort === 'score_asc') {
-                $query->orderBy('results.total_score', 'asc');
-            } else {
-                $query->orderBy('test_users.started_at', 'desc');
-            }
-
+            // Fetch data tanpa sorting dulu
             $data = $query->get();
 
+            // Hitung custom score untuk setiap item
             foreach ($data as $item) {
                 $totalQ = 0;
                 if ($item->test && $item->test->topics) {
@@ -144,11 +136,34 @@ class TestUserController extends Controller
                     $correct = $item->answers->where('is_correct', 1)->count();
                     $raw = ($correct / $totalQ) * 100;
                     $item->custom_score = number_format($raw, 2, '.', '');
+                    $item->custom_score_raw = $raw; // Simpan nilai raw untuk sorting
                 } else {
                     $dbScore = $item->result->total_score ?? 0;
                     $item->custom_score = number_format((float)$dbScore, 2, '.', '');
+                    $item->custom_score_raw = (float)$dbScore;
                 }
             }
+
+            // Sort data sesuai parameter setelah custom score dihitung
+            switch ($sort) {
+                case 'npm_asc':
+                    $data = $data->sortBy(function ($item) {
+                        return $item->user->npm ?? '';
+                    });
+                    break;
+                case 'score_desc':
+                    $data = $data->sortByDesc('custom_score_raw');
+                    break;
+                case 'score_asc':
+                    $data = $data->sortBy('custom_score_raw');
+                    break;
+                default:
+                    $data = $data->sortByDesc('started_at');
+                    break;
+            }
+
+            // Reset keys setelah sorting
+            $data = $data->values();
 
             $pdf = Pdf::loadView('admin.exports.results_pdf', [
                 'data' => $data

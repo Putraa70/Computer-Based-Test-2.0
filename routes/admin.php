@@ -54,7 +54,8 @@ Route::middleware([
     Route::post('/import/questions', [ImportQuestionController::class, 'store'])->name('import.questions');
     Route::get('/questions/import/template', [ImportQuestionController::class, 'downloadTemplate'])->name('questions.import.template');
 
-
+    // Bulk Delete Questions
+    Route::post('/questions/bulk-delete', [QuestionController::class, 'bulkDelete'])->name('questions.bulk-delete');
 
     Route::resource('users', UserController::class);
     Route::post('/users/{userId}/force-logout', [UserController::class, 'forceLogout'])->name('users.force-logout');

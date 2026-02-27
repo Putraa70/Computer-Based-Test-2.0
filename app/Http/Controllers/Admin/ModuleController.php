@@ -90,6 +90,43 @@ class ModuleController extends Controller
                 ->withQueryString()
                 : null;
 
+            // Ringkasan seluruh soal (bukan hanya halaman paginate)
+            if ($topicId) {
+                $summaryQuestions = Question::with('answers')
+                    ->where('topic_id', $topicId)
+                    ->get();
+
+                $multipleChoice = $summaryQuestions->where('type', 'multiple_choice');
+                $optionCounts = [];
+                $expectedOptions = 5;
+                $noCorrectAnswer = 0;
+                $incompleteOptions = 0;
+
+                foreach ($multipleChoice as $question) {
+                    $answerCount = $question->answers->count();
+                    $optionCounts[$answerCount] = ($optionCounts[$answerCount] ?? 0) + 1;
+
+                    if ($answerCount < $expectedOptions) {
+                        $incompleteOptions++;
+                    }
+
+                    if (!$question->answers->contains('is_correct', true)) {
+                        $noCorrectAnswer++;
+                    }
+                }
+
+                $data['summary'] = [
+                    'total' => $summaryQuestions->count(),
+                    'multipleChoice' => $multipleChoice->count(),
+                    'noCorrectAnswer' => $noCorrectAnswer,
+                    'incompleteOptions' => $incompleteOptions,
+                    'optionCounts' => $optionCounts,
+                    'hasIssues' => $noCorrectAnswer > 0 || $incompleteOptions > 0,
+                ];
+            } else {
+                $data['summary'] = null;
+            }
+
             $data['filters'] = [
                 'module_id' => $moduleId,
                 'topic_id'  => $topicId,

@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
                 request()->session()->regenerateToken();
 
                 throw ValidationException::withMessages([
-                    'email' => 'Akun Anda sedang digunakan di perangkat lain. Hubungi administrator jika ingin logout paksa.',
+                    'login' => 'Akun Anda sedang digunakan di perangkat lain. Hubungi administrator jika ingin logout paksa.',
                 ]);
             }
         }

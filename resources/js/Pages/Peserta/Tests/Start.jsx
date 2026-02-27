@@ -150,10 +150,21 @@ export default function Start({
 
                 // --- SINKRONISASI WAKTU (Hanya saat TIDAK locked) ---
                 if (!isLockedRef.current && data.remaining_seconds) {
-                    const diff = Math.abs(
-                        data.remaining_seconds - timeLeftRef.current,
-                    );
-                    if (diff > 3) setTimeLeft(data.remaining_seconds);
+                    const diff = data.remaining_seconds - timeLeftRef.current;
+
+                    if (diff >= 45) {
+                        const addedMinutes = Math.max(1, Math.round(diff / 60));
+                        Swal.fire({
+                            title: "Waktu Ditambah",
+                            text: `Admin menambahkan ${addedMinutes} menit ke waktu ujian Anda.`,
+                            icon: "info",
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                        });
+                    }
+
+                    if (Math.abs(diff) > 3) setTimeLeft(data.remaining_seconds);
                 }
 
                 // --- HANDLE STOP ---
