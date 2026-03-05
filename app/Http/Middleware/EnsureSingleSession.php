@@ -19,15 +19,21 @@ class EnsureSingleSession
             return $next($request);
         }
 
-        $currentSessionId = session()->getId();
+        $currentSessionId = $request->session()->getId();
 
         // 2. Jika di DB berbeda dengan browser sekarang
         if ($user->active_session_id && $user->active_session_id !== $currentSessionId) {
+
+            $currentTimestamp = now()->getTimestamp();
+            $sessionLifetime = (int) config('session.lifetime') * 60;
+            $minimumLastActivity = $currentTimestamp - $sessionLifetime;
 
             //  CEK VALIDITAS SESSION LAMA
             // Ambil dari tabel sessions bawaan Laravel
             $sessionMasihAktif = DB::table('sessions')
                 ->where('id', $user->active_session_id)
+                ->where('user_id', $user->id)
+                ->whereBetween('last_activity', [$minimumLastActivity, $currentTimestamp + 300])
                 ->exists();
 
             if (!$sessionMasihAktif) {

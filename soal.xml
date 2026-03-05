@@ -1,0 +1,1130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tcexamquestions version="11.4.001">
+	<header lang="en" date="2026-03-05 08:46:26">
+	</header>
+	<body>
+		<module>
+			<name>Angkatan 2025</name>
+			<enabled>true</enabled>
+			<subject>
+				<name>UTB DMS Jumat 06 Maret 2026</name>
+				<description>UTB DMS Jumat 06 Maret 2026</description>
+				<enabled>true</enabled>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Lapisan kulit berurutan dari bagian luar ke paling dalam adalah sebagai berikut:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Epidermis- subcutis- dermis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Epidermis- hipodermis- dermis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hipodermis- subkutis-dermis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Epidermis- dermis- hipodermis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Subcutis- dermis- epidermis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Sel melanosit terdapat di lapisan sel epidermis pada bagian sebagai berikut:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Stratum lusidum</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Stratum granulosum</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Stratum korneum</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Stratum spinosum</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Stratum basale</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pernyataan tentang adneksa kulit yang benar adalah sebagai berikut:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Kelenjar ekrin merupakan kelenjar keringat yang terletak di lapisan dermis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kelenjar apokrin merupakan kelenjar keringat yang terletak di epidermis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kelenjar ekrin dan apokrin merupakan kelenjar keringat yang terletak di hipodermis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Glandula sudorifera merupakan kelenjar keringat yang terletak di superficial</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Glandula sebasea merupakan kelenjar palit yang terletak di subkutis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Contoh effloresensi tersier/ khusus kulit adalah sebagai berikut:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Komedo</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Papul</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pustul</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Nodul</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Vesikel</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Effloresensi primer kulit dominan pada pasien Prurigo Nodularis adalah sebagai berikut:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Vesikel</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Skuama</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pustul</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Nodul</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Erosi</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Effloresensi skunder kulit pada pasien Tinea versicolor adalah sebagai berikut:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Makula hipopigmentasi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Skuama</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pustul</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Papul</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Makula eritem</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Effloresensi skunder berupa kerusakan kulit sampai stratum spinosum sehingga kulit tampak menjadi merah dan keluar cairan serosa adalah…</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Krusta</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Skuama</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Erosi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ekskoriasi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ulkus</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Effloresensi skunder berupa penebalan kulit sehingga garis/ relief kulit tampak jelas adalah…</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Krusta</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Plak</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Makula</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Likhenifikasi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Scar</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Effloresensi skunder berupa jaringan ikat yang menggantikan epidermis dan dermis yang sudah hilang namun lebih cekung dari kulit sekitarnya adalah…</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Keloid</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sikatrik hipertrofi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Sikatrik atrofi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sikatrik eutrofi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ulkus</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Diagnosa Scabies dapat ditegakkan bila terdapat …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pruritus nokturnal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Menyerang sekelompok orang</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Terowongan atau burrow</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sarcoptes scabei</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Tiga dari empat tanda kardinal</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pernyataan di bawah ini sesuai dengan Creeping eruption, kecuali ...</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Keluhannya bercak merah meninggi berkelok-kelok disertai gatal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ada riwayat main di pasir sebelum ada ruam</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Terkadang kucing peliharaan yang bawa larva ke rumah</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Bentukan khas morfologinya ada gambaran serpiginosa</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Tidak mati dengan obat cacing golongan albendazol</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pernyataan di bawah ini yang tidak sesuai dengan diagnosa Insect bite adalah ...</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Merupakan reaksi peradangan atau alergi di tempat gigitan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Keluhannya terasa gatal atau nyeri pada tempat gigitan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dapat bengkak pada tempat gigitan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dapat terjadi keluhan sistemik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Tidak pernah terjadi kematian</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pernyataan yang tidak sesuai dengan pediculus pubis adalah:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ada rasa gatal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Mahluk penyebab penyakit ini tanpa mata</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Anak-anak yang terkena termasuk infeksi menular seksual (IMS)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Disebabkan oleh Phthirus pubis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Predileksi di tubuh terutama di daerah berambut sekitar pubis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pernyataan yang tidak benar tentang temuan klinis pada gigitan serangga/ insect bite adalah:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Makula eritematous</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Urtika papular persisten (lebih dari 48 jam)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dapat terjadi ekskoreasi dan atau vesikel</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Lesi bula: tegang, cairan bening, dasar inflamasi ringan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Lesi krusta tidak nyeri</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pernyataan yang tidak sesuai tentang penatalaksanaan terhadap pasien gigitan semut api/ Ant (Formicidae) adalah:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Konfirmasi, informasi dan edukasi pasien</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pengobatan simtomatik minimal dan perawatan luka untuk cegah infeksi skunder</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Krim antibiotik bila ada infeksi sekunder bakteri</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Steroid topikal untuk atasi pruritus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Krim antimikotik untuk atasi pruritus dan cegah infeksi kuman</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Berikut adalah pernyataan yang benar tentang gambaran klinis angiodema:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Terjadi keterlibatan jaringan yang lebih dalam sampai dermis dan subcutis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Angiodema sering unilateral dan non pruritic</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Angioedema dapat berlangsung selama 1-2 jam hingga 2-5 hari</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>A, B dan C benar</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>A, B dan C salah</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Berikut adalah pernyataan yang benar tentang tatalaksana urtikaria:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Identifikasi dan eliminasi penyebab dan atau faktor pencetus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Topikal diberikan antipruritus seperti menthol, atau calamin dalam bentuk bedak kocok atau lotio</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sistemik diberikan antihistamin mengikuti perkembangannya</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>A, B dan C benar</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>A, B dan C salah</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Diagnosis banding dari eksima vekular palmoplantar adalah, kecuali:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Atopic hand dermatitis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Psoriasis palmoplantar</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Tinea manus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pustular hand dermatitis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Neurodermatitis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pernyataan yang benar tentang penyakit autoimun kulit adalah, kecuali:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Suatu keadaan dengan ciri-ciri ketidakmampuan sistem imun untuk membedakan sel atau jaringan sendiri (self) dari sel atau jaringan asing (non-self)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Jaringan tubuh dianggap antigen asing</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Menimbulkan respon imun humoral atau respon imun selular</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Respon imun humoral membentuk antibodi yang disebut auto antibodi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Respon imun seluler melakukan infiltrasi/pengrusakan jaringan dengan limfosit B</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pernyataan yang benar terkait gejala klinis dermatomyositis adalah sebagai berikut, kecuali:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ada tanda heliotrope</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Terdapat papul Gottron</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dapat terjadi calsinosis kutis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dapat terjadi perubahan kulit poikiloderma</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Gangguan menelan, berbicara atau bernafas tidak terjadi gangguan</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pernyataan yang benar terkait gejala klinis skleroderma adalah sebagai berikut, kecuali:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Manifestasi klinis bergantung pada perluasan dan stadium penyakit</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Tidak dapat terjadi fenomena Raynaud</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pengerasan kulit dapat terjadi secara progresif</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dapat terjadi fibrosis paru, keterlibatan jantung dan gangguan ginjal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Organ sering terkena adalah kulit, saluran cerna, paru dan jantung</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang perempuan berusia 25 tahun datang ke UGD dengan keluhan sejak 2 hari yang lalu muncul bercak merah di kulit yang semakin banyak. Keluhan disertai timbul keropeng di bibir, mata merah berair dan sedikit demam. Terdapat riwayat minum obat sebelumnya yaitu sekitar 5 hari yang lalu untuk keluhan batuk dan pilek. Pada pemeriksaan fisik ditemukan makula eritema, vesikel, bula, purpura dan erosi di wajah, dada, punggung, lengan dan tungkai, pada mulut terdapat sariawan, krusta kehitaman dan erosi pada bibir dan nyeri menelan, mata terlihat konjungtivitis. Diagnosis?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Viral exanthema</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pemphigus vulgaris</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Selulitis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Sindrom Steven Johnson/ Toxic epidermal necrolysis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Psoriasis pustulosa generalisata</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang perempuan usia 22 tahun berobat ke klinik dengan keluhan timbul bercak putih pada dahi, pipi, sekitar bibir, dada, dan lengan bawah kanan dan kiri sejak usia 8 tahun dan bertambah luas tanpa disertai rasa gatal ataupun nyeri. Pada pemeriksaan kulit ditemukan UKK berupa makula hipopigmentasi, makula depigmentasi dengan distribusi simetris. Pada pemeriksaan histopatologi tidak ditemukan pigmen melanin dan hilangnya melanosit pada epidermis. Apakah diagnosis pada pasien ini?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pityriasis versicolor</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pityriasis alba</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Morbus hansen</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Vitiligo</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sifilis sekunder</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki usia 20 tahun datang ke IGD pada malam hari dengan keluhan timbul bentol-bentol pucat dan bagian pinggir kemerahan pada wajah, lengan, dan badan sejak 1 hari yang lalu. Pasien mengkonsumsi cumi-cumi di sebuah restoran 1 hari yang lalu dan sudah mengkonsumsi obat Cetirizine yang dibeli sendiri di apotek tetapi bentol belum menghilang. Pada pemeriksaan fisik didapatkan UKK berupa urtika dengan berbagai ukuran. Tata laksana yang tepat untuk pasien ini adalah ...</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Chlorpheniramin maleat dan prednison 10 mg</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dosis Cetirizine dinaikkan 4x dosis biasa</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Chlorpheniramin maleat 4x4 mg</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Loratadine 10 mg</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Loratadine 10 mg dan prednison 20 mg</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki usia 30 tahun berobat ke klinik dengan keluhan timbul bercak kehitaman pada kulit buah zakarnya sejak 7 hari yang lalu. Keluhan diawali dengan bercak kemerahan dengan rasa terbakar. Keluhan serupa pernah dialami di lokasi yang sama sebanyak 3 kali setiap setelah meminum obat antinyeri. Pada pemeriksaan kulit didapatkan UKK makula hiperpigmentasi, soliter, ukuran numular pada skrotum. Diagnosis yang tepat untuk pasien ini adalah ...</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Liken Planus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Urtikaria</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sindrom Steven-Johnson</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Tinea kruris</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Fixed drug eruption</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang wanita usia 60 tahun, berobat ke poli kulit dan kelamin dengan keluhan timbul beruntus dengan permukaan datar berwarna merah keunguan yang terasa gatal pada kedua tungkai bawah, lengan dan badan sejak 3 bulan yang lalu. Pada pemeriksaan fisik didapatkan UKK berupa papul dan plak eritema berbentuk poligonal dan terdapat skuama retikuler putih halus pada dinding mukosa mulut. Hasil pemeriksaan histopatologi yang dapat ditemukan pada pasien ini adalah ...</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hiperkeratosis, hipergranulosis, palisading granulomatosa, dikelilingi kolagen degeneratif (necrobiosis), musin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Hiperkeratosis, hipergranulosis, rete-ridges saw-tooth pattern, badan Civatte pada tau dermal-epidermal, eosinophillic colloid bodies dan band-like lymphocytic appearance pada dermal papilaris</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hiperplasia epidermal psoriasiform yang irregular dan spongiosis, infiltrat perivaskular limfosit dan eosinofil</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hiperkeratosis, parakeratosis fokal, hipergranulosis, akantosis, penebalan collagen bundles pada dermis superfisial</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hiperkeratosis, akantosis reguler, hipogranulosis, rete-ridges berbentuk klub, penipisan lempeng suprapapiler, edema dan pemanjangan papila dermal, mikroabses Munro</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang wanita usia 25 tahun berobat ke klinik dengan keluhan beruntus kemerahan yang tidak terasa gatal ataupun nyeri tersusun melingkar pada punggung tangan, lengan, dan batang tubuh sejak 6 bulan yang lalu. Pada pemeriksaan fisik UKK didapatkan papul eritema berbentuk anular. Pada pemeriksaan histopatologi didapatkan Palisading granulomatosa, dikelilingi kolagen degeneratif (necrobiosis), musin. Diagnosis yang tepat untuk pasien ini adalah ...</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Morbus Hansen tipe Multibasilar</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Granuloma annulare</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Tinea korporis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sifilis sekunder</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Eritema multiforme</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang wanita usia 34 tahun dibawa ke IGD dengan keluhan demam dan timbul bercak kemerahan dan melepuh pada badan, lengan, dan wajah sejak 1 hari yang lalu. Keluhan disertai mata merah dan nyeri menelan. Status dermatologis didapatkan makula eritema disertai bula kendur, dengan tanda nikolsky positif sekitar 15% luas permukaan badan. Hal yang menentukan prognosis buruk pada pasien ini adalah ...</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Glukosa darah &lt; 252 mg/dL</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Bicarbonate &gt;20 mmol/L</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Heart rate &lt;120/min</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Serum urea nitrogen &gt; 28 mg/dL</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Keterlibatan 2 mukosa</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Faktor risiko terpenting dalam patogenesis timbulnya makula hiperpigmentasi pada melasma adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Riwayat trauma fisik pada wajah</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Infeksi jamur kulit</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Konsumsi obat-obatan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Penggunaan kosmetik berbahan dasar minyak</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Paparan sinar ultraviolet (UV) dan faktor hormonal</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Berikut adalah tumor epithelial yang jinak adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Basalioma</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Keratosis aktinik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Melanoma maligna</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Squamous cell carcinoma in situ</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Keratosis seboroik</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki usia 20 tahun datang ke klinik dengan keluhan beruntus tebal sewarna kulit-kekuningan dengan permukaan kasar tanpa pertumbuhan rambut di atasnya pada kulit kepala berambut bagian atas yang tidak gatal. Pada pemeriksaan fisik didapatkan plak verukosa soliter, kuning, waxy, tanpa rambut ukuran 2x1x0,3 cm pada parietal kanan. Diagnosis yang mungkin untuk kondisi pasien ini adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Nevus sebaseus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Skar hipertrofik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Keratosis seboroik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Fibroma mole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Veruka vulgaris</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang anak laki-laki usia 6 tahun dibawa berobat ke poli kulit dan kelamin dengan keluhan berupa beruntus kecokelatan yang tidak terasa gatal ataupun nyeri pada perut kanan yang tersusun seperti pita. Keluhan sudah timbul sejak lahir dan seiring usia semakin menebal sehingga tampak seperti beruntus yang bergerombol dengan permukaan kasar. Pada pemeriksaan fisik UKK didapatkan plak hiperpigmentasi, verukosa, dengan distribusi Blaschkoid. Diagnosis yang tepat untuk pasien ini adalah ...</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Nevus Unius Lateris</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Inflammatory Linear Verrucous Epidermal Nevus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Nevus Epidermal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Melanoma maligna</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Epidermal polycystic disease</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki usia 67 tahun, datang ke Poliklinik dengan keluhan timbul bercak coklat-kehitaman di dahi dan pipi sejak 2 tahun yang lalu. Bercak tidak menghilang, membesar atau berubah warna, gatal dan nyeri disangkal oleh pasien. Pasien merupakan seorang nelayan. Dari pemeriksaan kulit di dahi dan pipi didapatkan lesi makula hiperpigmentasi berukuran 2 cm, batas tegas, bentuk ireguler. Apakah diagnosis yang paling mungkin dari pasien ini?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Nevus pigmentosus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Keratosis seboroik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Lentigo solaris</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hiperpigmentasi pasca inflamasi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Freckles</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki usia 53 tahun berobat ke poliklinik kulit dan kelamin dengan keluhan bercak putih di dinding mulut kiri yang tidak terasa nyeri sejak 1 tahun yang lalu. Pasien memiliki riwayat merokok 1 bungkus per hari sejak usia 17 tahun dan memiliki tato pada lengan kiri atasnya. Pada pemeriksaan mukosa bukal didapatkan plak putih asimetris dengan permukaan verukosa. Diagnosis yang tepat untuk pasien ini adalah ...</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kandidiasis oral</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Liken planus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Leukoderma</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Liken sklerosus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Leukoplakia</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki usia 38 tahun, mengeluhkan kerontokan rambut pada belakang telinga kanannya sejak 3 bulan terakhir. Riwayat menarik-narik rambut tidak ada. Tidak ada keluarga yang mengalami hal serupa. Pada pemeriksaan fisik didapatkan satu area tanpa rambut pada bagian temporooksipital kanan berbentuk oval ukuran 5x8 cm, dikelilingi rambut yang tumbuh normal. Exclamation hair (+). Diagnosis pasien ini adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Alopesia areata</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Alopesia androgenic</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Alopecia totalis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Telogen effluvium</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Anagen effluvium</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang perempuan usia 40 tahun datang dengan keluhan rambut rontok yang dialami sejak enam bulan yang lalu. Rambut rontok di seluruh kepala. Keadaan ini dialami pasien setelah pasien pindah tugas dan mendapat tanggung jawab yang lebih berat dari sebelumnya. Riwayat menderita SLE dan gangguan tiroid disangkal. Pada pemeriksaan fisik tidak ditemukan bekas garukan, bekas trauma maupun kebotokan. Pada pemeriksaan Pull Test terdapat 25-40 helai tercabut. Diagnosis pada pasien ini adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Anagen effluvium</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Alopecia androgenic</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Alopecia totalis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Telogen effluvium</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sebopsoriasis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Berikut ini yang menjadi penanda prognosis yang buruk pada alopesia areata adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Patchy alopecia areata</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Tidak disertai kelainan kuku</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Tidak ada riwayat keluarga alopesia areata</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Onset diatas usia 20 tahun</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Riwayat Atopi</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Apa mekanisme patofisiologi utama yang mendasari alopesia androgenetic?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Autoimun yang menyerang folikel rambut</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Sensitivitas folikel rambut terhadap dihidrotestosteron (DHT)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kekurangan zat besi dan protein yang ekstrem</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Stress psikis berkepanjangan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kekurangan vitamin B12</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Berbeda dengan pria, pola kebotakan pada Wanita (Female Pattern Hair Loss) menurut skala Ludwig umumnya ditandai dengan …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Garis rambut depan (frontal hairline) mundur drastis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kebotakan total di bagian vertex</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Penipisan rambut difus di atas kepala dengan garis rambut frontal yang umumnya dipertahankan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kerontokan hanya di bagian temporal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kerontokan dimulai dari bagian oksipital</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>A patient with atopic dermatitis experienced a flare-up after being exposed to house dust mites. Which primary allergen causes skin inflammation by damaging the epithelial layer?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Der p 1</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Der p 2</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Der f 5</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Der p 10</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Der f 10</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang anak berusia 7 tahun dengan riwayat dermatitis atopik mengalami eksaserbasi setelah terpapar tungau debu rumah. Studi terbaru menunjukkan bahwa sel epitel kulit pasien AD memiliki ekspresi tinggi terhadap Pattern Recognition Receptors (PRRs). Apa yang berperan dalam mengenali alergen tungau debu rumah dan memicu inflamasi?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Toll-like receptor 4 (TLR4)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>NOD-like receptor (NLRP3 inflammasome)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>C-type lectin receptor (Dectin-1)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>RIG-I-like receptor (RLR)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Scavenger receptor B1 (SR-B1)</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki berusia 65 tahun dibawa ke IGD dengan keluhan lemas, pucat, letih, dan gatal di malam hari. Hasil pemeriksaan laboratorium menunjukkan Hemoglobin 5.2 g/dL. Pasien tersebut didiagnosis terinfestasi parasit. Manakah karakteristik infestasi tersebut yang benar?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Tungau ini dapat menggigit dan menghisap darah manusia</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Respon imun akibat infestasi lebih mengarah ke hipersensitivitas tipe 1</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Infestasi ini dapat menyebabkan blister dengan sensasi kulit terbakar</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Parasit ini hanya menginfestasi saat butuh makan darah manusia</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Respon imun terjadi karena adanya toksin pederin yang menyebabkan nekrosis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Laki-laki berusia 10 tahun dibawa ibunya ke IGD karena kejang otot dan kesulitan membuka mulut (trismus). Pasien diketahui tidak pernah mendapatkan imunisasi dasar lengkap. Terdapat riwayat luka berlubang dengan krusta hitam di jari kaki akibat infestasi Tunga penetrans dua minggu yang lalu. Apakah nama bakteri komplikasi sekunder yang paling mungkin masuk melalui lubang lesi penyebab kondisi pasien tersebut?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Streptococcus pyogenes</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Staphylococcus aureus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Clostridium tetani</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pseudomonas aeruginosa</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Bacillus anthracis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pasien yang baru saja sembuh dari Paederus dermatitis pada minggu lalu kembali datang ke klinik untuk berkonsultasi. Lesinya telah mengering, mengelupas (deskuamasi), dan tidak lagi terasa perih. Apakah keluhan penyerta jangka panjang yang paling sering dikeluhkan secara kosmetik oleh pasien pada fase penyembuhan ini?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pembentukan jaringan parut keloid</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Hiperpigmentasi atau hipopigmentasi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kontraktur sendi akibat perlengketan bula</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Atrofi kulit (stretch marks) yang dalam</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Alopesia permanen di area bekas ruam</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Lesi vesikobulosa akibat Paederus dermatitis pada area dermatom tertentu sering kali salah didiagnosis sebagai infeksi Herpes Zoster pada fase akutnya. Untuk mencegah kesalahan treatment, dapat melakukan pemeriksaan sitologi Tzanck smear dari dasar vesikel. Manakah temuan sitologis khas di bawah ini yang mengonfirmasi bahwa lesi tersebut adalah iritasi akibat Paederus?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ditemukannya agregasi kristal Charcot-Leyden secara masif di sekitar vesikel</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ditemukannya badan inklusi (inclusion bodies) asidofilik di sitoplasma sel epitel</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Tidak ditemukannya multinucleated giant cells (sel datia berinti banyak)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Adanya sebukan sel limfosit atipikal dengan inti cerebriform</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Terdapat hifa pseudomiselium yang memanjang di antara debris seluler</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pemeriksaan penunjang alergi untuk House Dust Mites dapat menggunakan metode tes pada kulit. Jika dicurigai bahwa keluhan dermatitis disebabkan oleh hypersensitivity tipe 4 (reaksi tipe lambat) akibat kontak kronis dengan HDM, apakah tes yang paling evidence-based untuk menegakkan diagnosis tersebut?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Skin Prick Test (Uji Tusuk Kulit)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Tes injeksi intradermal (Tes Mantoux/PPD)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Patch Test (Uji Tempel)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pengukuran IgE spesifik serum via Enzyme-Linked Immunosorbent Assay (ELISA)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Uji provokasi bronkial menggunakan aerosol ekstrak metakolin</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Skrofuloderma menunjukkan gambaran histopatologik berupa:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Spongiosis dan vesikel intraepidermal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Nekrosis kaseosa dengan granuloma dan sel datia Langhans</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Akantolisis suprabasal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hiperplasia lentiginosa</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pagetoid spread</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Merupakan tumor ganas kulit dengan kelainan pigmentasi dan terjadi keganasan pada sel-sel melanosit:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Karsinoma sel basal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Karsinoma sel skuamous</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Keratosis seboroik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Porokarsinoma</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Melanoma maligna</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Tumor ganas pada kulit dengan gambaran mikroskopis berupa proliferasi sel basal dengan sel-sel tersusun dalam sarang-sarang tumor, sebagian solid, dengan tepi sarang-sarang tumor tersusun palisading, merupakan ciri-ciri mikroskopis dari:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Karsinoma sel basal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Karsinoma sel skuamous</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Keratosis seboroik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Porokarsinoma</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Melanoma maligna</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Merupakan kelainan pada epidermis, berupa lesi eksofitik dan berbatas tegas dari epidermis di dekatnya, terdiri dari sel kecil yang menyerupai sel basal, dijumpai pigmen melanin dan ditemukan juga produksi keratin yang berlebihan (hiperkeratosis) pada permukaan dengan kista kecil berisi keratin (horn cyst) dan invaginasi keratin ke dalam massa utama (kista invaginasi). Deskripsi mikroskopis di atas merupakan gambaran yang dijumpai pada kelainan kulit:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Karsinoma sel basal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Karsinoma sel skuamous</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Keratosis seboroik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Urtikaria</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Melanoma maligna</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Merupakan tumor jinak mesenkhimal yang dijumpai pada dermis:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Karsinoma sel skuamous</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Benign Fibrous Histiocytoma</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Fibrosarkoma</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Meningioma</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Melanoma Maligna</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Gambaran "spaghetti and meatballs" pada pemeriksaan mikroskopis ditemukan pada:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Verruca vulgaris</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Molluscum contagiosum</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Tinea versikolor</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Skabies</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Folikulitis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Penyakit psikodermatologi yang masuk kategori atau kelompok penyakit Psikiatri Primer adalah:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Trikotilomania</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Alopesia Areata</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Akne Kistik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hemangioma</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Iktiosis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Penyakit psikodermatologi yang masuk kategori atau kelompok kelainan Dermatologi Primer adalah:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis Artefacta</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Psoriasis Vitiligo</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dismorfofobia</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Bromidrofobia</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Delusional Parasitosis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pernyataan berikut di bawah ini adalah benar kecuali:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Penatalaksanaan utama kondisi psikodermatologi adalah melakukan evaluasi kelainan kulitnya</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Penyakit psikodermatologi adalah kondisi penyakit yang mencakup adanya interaksi antara pikiran dan kulit</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kulit juga merupakan organ yang sangat berespon terhadap emosi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kulit adalah salah satu organ persepsi yang paling besar menerima afek dari persepsi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Melampiaskan impuls agresif, kecemasan, ataupun perilaku akibat delusi pada kulit dapat menyebabkan manifestasi lesi kulit</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Berikut merupakan Delusional Parasitosis:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kelainan psikiatri primer dengan manifestasi pada kulit</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Secara epidemiologi predominan pada wanita usia pertengahan dan usia tua</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Penderita meyakini dengan kuat bahwa di kulitnya telah terinfestasi oleh suatu organisme</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Lesi kulit bervariasi dari ekskoriasi ringan sampai dengan ulkus yang luas</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Semua jawaban diatas benar</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Tatalaksana pemberian farmakologi pada penderita psikodermatologi secara garis besar dikelompokkan/digolongkan sebagai berikut:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Antipsikotik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Antidepresan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Antiansietas</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Psikotropika</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Semua jawaban diatas benar</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Beberapa pilihan psikoterapi/ terapi non-farmakologi dengan kelainan psikodermatologi antara lain:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hipnosis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Terapi Kognitif Perilaku</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Terapi Keluarga</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Edukasi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Mindfulness</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Apa jenis obat antivirus non-ARV yang bekerja dengan menghambat replikasi virus influenza:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Inhibitor protease</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Inhibitor integrase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Inhibitor neuraminidase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Inhibitor reverse transcriptase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Antiviral topikal</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Obat antivirus non-ARV yang digunakan untuk mengobati infeksi hepatitis B dan C biasanya termasuk dalam kelas obat:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Antimetabolit</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Inhibitor protease</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Interferon</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Penicillin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Antagonis reseptor</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Antiviral topikal sering digunakan untuk mengobati infeksi kulit yang disebabkan oleh virus seperti:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Influenza</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hepatitis B</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Human Papillomavirus (HPV)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Cytomegalovirus (CMV)</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Herpes Simplex Virus (HSV)</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Apa jenis obat antivirus non-ARV yang digunakan untuk mengobati infeksi herpes genitalis:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Inhibitor reverse transcriptase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Inhibitor integrase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Inhibitor neuraminidase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Antimetabolit</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Antiviral topikal</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Apa jenis obat antivirus non-ARV yang bekerja dengan menghambat revers transcriptase virus:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Interferon</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Inhibitor neuraminidase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Inhibitor reverse transcriptase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Antimetabolit</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Antagonis reseptor</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Ny. S memiliki keluhan gatal-gatal di kulit lipat ketiaknya sejak 1 minggu yang lalu. Dokter mengatakan bahwa penyebabnya adalah jamur. Obat apa yang kurang sesuai untuk keluhan tersebut?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Miconazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Griseofulvin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Flucytosine</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Clotrimazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Nystatin</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki 34 tahun datang dengan infeksi jamur yang berat. Pasien juga mengeluhkan tubuhnya sering merasa lemah dan berat badannya menurun. Riwayat penggunaan jarum suntik (+). Setelah dilakukan pemeriksaan laboratorium, didapatkan penurunan CD4. Obat apa yang disarankan untuk pasien tersebut?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Miconazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Griseofulvin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Econazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Nystatin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Amfoterisin B</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Griseofulvin efektif untuk pengobatan jamur yang disebabkan oleh …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Histoplasma capsulatum</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Trichopyton sp</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Coocidiodes immitis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Aspergillus sp</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Blastomyces dermatitidis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Anti jamur apakah yang mekanisme kerjanya berikatan pada mikrotubulus dan mencegah pembentukan spindel dan mitosis pada sel jamur?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Nystatin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ketokonazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Griseofulvin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Miconazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Amfoterisin B</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Manakah pernyataan berikut ini yang benar mengenai flucytosine?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Efektif dengan pemberian oral</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Penetrasi buruk ke CNS</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Neurotoksisitas</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Menembus sawar plasenta</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ekskresi melalui empedu</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Manakah obat antijamur di bawah ini yang merupakan antimetabolit sintetik pirimidin?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Miconazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Griseofulvin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Flucytosine</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Clotrimazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Nystatin</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Obat antijamur yang tidak bisa diberikan secara parenteral dikarenakan toksisitasnya adalah ……</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Nystatin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Amfoterisin B</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Ketokonazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Flucytosine</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Fluconazole</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki datang ke klinik Anda dengan keluhan merasa tidak nyaman di dadanya. Ia merasakan dadanya membesar. Ia mengaku sering mengonsumsi obat anti jamur tanpa resep dokter disebabkan keluhan gatalnya yang seringkali kambuh. Obat apakah yang ia konsumsi?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Griseofulvin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Itraconazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Ketokonazole</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Flucytosine</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Fluconazole</description><explanation></explanation></answer>
+				</question>
+
+
+                <question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pada pemeriksaan jenazah yang ditemukan di area terbuka, ditemukan larva instar III dari lalat famili Calliphoridae pada regio orofasial. Suhu lingkungan rata-rata 30°C dalam 3 hari terakhir. Kesimpulan yang paling tepat adalah:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Waktu kematian &lt; 12 jam</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Waktu kematian sekitar 1 hari</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Waktu kematian minimal 2–3 hari</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Waktu kematian &gt; 7 hari</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Tidak dapat ditentukan tanpa pemeriksaan toksikologi</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Spesies lalat yang paling sering pertama kali mengkolonisasi jenazah pada fase awal kematian di daerah tropis adalah:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Muscidae</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sarcophagidae</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Calliphoridae</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermestidae</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Silphidae</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Dalam siklus hidup Sarcoptes scabiei:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Betina gravid akan meletakkan telurnya di permukaan kulit</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Jantan dan betina akan kopulasi di dalam molting pouch dari betina dewasa</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Larva dan nymphae ditemukan pada permanent burrows</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Betina gravid akan meletakkan telurnya di dalam molting pouch</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Betina gravid akan melahirkan larva dan meletakkannya di permanent burrows</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Untuk menemukan Sarcoptes scabiei dengan pemeriksaan laboratorium, dilakukan dengan cara:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Kerokan kulit diletakkan pada objek glass – KOH 10% – dipanasi – ditutup kaca penutup – lihat di bawah mikroskop</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kerokan kulit diletakkan pada objek glass – NaCl 10% – dipanasi – ditutup kaca penutup – lihat di bawah mikroskop</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kerokan kulit diletakkan pada objek glass – KOH 10% – dikeringkan – ditutup kaca penutup – lihat di bawah mikroskop</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kerokan kulit diletakkan pada objek glass – NaCl 0,9% – dipanasi – ditutup kaca penutup – lihat di bawah mikroskop</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kerokan kulit diletakkan pada objek glass – KOH 0,9% – dipanasi – ditutup kaca penutup – lihat di bawah mikroskop</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Trias Visceral Larva Migrans adalah:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Hepatomegali – Eosinofilia – Hiperglobulinemia</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hepatomegali – Anemia – Demam</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Splenomegali – Eosinofilia – Hiperglobulinemia</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Splenomegali – Anemia – Hiperglobulinemia</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hepatomegali – Eosinofilia – Demam</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Creeping eruption terutama disebabkan oleh:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Larva Ancylostoma braziliensis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Larva Gnatostoma spinegerum</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Larva Ascaris lumbricoides</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Larva Toxocara canis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Larva Toxocara cati</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pediculus humanus var capitis, seperti tersebut di bawah ini:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hanya dewasa yang menghisap darah</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hidup pada serat pakaian</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Ukuran betina lebih besar dibandingkan jantan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Mulut berupa chelicerae bergerigi dengan pedipalpi 3 segmen</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kaki posterior terdiri dari dua pasang</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pediculus humanus var corporis, seperti tersebut di bawah ini:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Memiliki morfologi yang sangat berbeda dengan varian Capitis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Habitat dewasa hidup pada kulit kepala</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Telur diletakkan pada rambut kepala dan kemaluan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Infeksi yang ditularkan oleh parasit ini melalui posterior contaminative</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Mulut berupa chelicerae bergerigi dengan pedipalpi 3 segmen</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Phtirus pubis, seperti tersebut di bawah ini:</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Metamorfosis sempurna</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Habitat dapat hidup pada serat pakaian</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Ditularkan melalui hubungan seksual</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Merupakan vektor Rickettsia prowazecki</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kaki terdiri dari empat pasang</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang anak laki-laki, berusia 8 tahun, dibawa ke klinik RS dengan keluhan adanya binti-bintil yang pecah dan mengering merah kekuningan di sekitar mulut dan hidung. Hasil pemeriksaan nanah didapatkan bakteri pada pengecatan Gram berbentuk kokus, Gram positif, bersifat β-hemolytic. Berdasarkan hasil pemeriksaan fisik dan penunjang apakah penyebab infeksi?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Staphylococcus aureus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Streptococcus pyogenes</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Staphylococcus saphrophyticus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Staphylococcus epidermidis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Streptococcus pneumonia</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki datang dengan keluhan bintil-bintil bernanah di area kaki. Bakteri penyebab tersering pada penyakit tersebut adalah…</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Staphylococcus aureus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Streptococcus pyogenes</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Streptococcus pneumonia</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pseudomonas auroginosa</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Staphylococcus saprophyticus</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang laki-laki datang dengan keluhan bintil-bintil bernanah sekitar rambut di area kaki yang kemudian semakin memberat. Apakah faktor virulensi yang menyebabkan terbentuknya abses pada penyakit tersebut?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kemampuan bakteri menghasilkan enzim koagulase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kemampuan bakteri menghasilkan enzim katalase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Kemampuan bakteri melakukan invasi ke jaringan dan menghasilkan enzim koagulase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kemampuan bakteri melakukan invasi ke jaringan dan menghasilkan enzim katalase</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Reaksi inflamasi kronik</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang anak laki-laki usia 6 tahun dibawa ibunya ke klinik RS dengan keluhan adanya bintil-bintil kecil berisi cairan di badan. 3 hari sebelumnya pasien demam dan malaise. Pasien baru pertama kali menderita penyakit ini. 2 minggu yang lalu kakaknya menderita sakit yang sama. Apakah pemeriksaan penunjang yang dapat dilakukan untuk mengetahui etiologi penyakit tersebut?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pewarnaan Gram</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pewarnaan Neisser</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pewarnaan BTA</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Tzank smear</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Apusan darah tipis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pasien laki-laki berusia 35 tahun datang ke klinik karena keluhan bintil disertai bercak kemerahan terasa gatal pada kedua tangan. Kondisi ini dialami sejak 2 minggu terakhir. Pasien adalah seorang pekerja bangunan dan sering mengaduk semen. Pada pemeriksaan status dermatologis ditemukan vesikel dasar eritematosa, disertai edema, skuama, dan erosi pada telapak tangan dan sela jari. Pemeriksaan apakah yang dapat dilakukan setelah pasien sembuh untuk menunjang diagnosa?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Uji tzanck</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Uji tusuk</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Uji Gores</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Uji provokasi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Uji Tempel</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pasien anak berusia 8 tahun datang dibawa ibunya ke dokter karena keluhan gatal-gatal pada daerah siku kanan dan kiri. Keluhan serupa juga dirasakan di kedua lipat lutut dan pergelangan tangan. Pasien mempunyai riwayat bersin di pagi hari dan ibu pasien menderita asma. Pada pemeriksaan langsung tampak lesi papul multiple, likenifikasi disertai skuama dan hiperpigmentasi. Diagnosa yang paling sesuai untuk kasus di atas adalah?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis numularis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis kontak</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis Seboroik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis atopi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Neurodermatitis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Pasien laki-laki berusia 32 tahun datang dengan keluhan bercak kemerahan dan bersisik pada lipatan hidung dan pipi disertai gatal, keluhan juga dirasakan di leher dan di dada. Keluhan sudah dialami sejak 3 hari yang lalu dan sering hilang timbul. Tidak ada orang serumah yang alami keluhan serupa. Pada pemeriksaan dermatologis tampak makula eritematosa, skuama halus berminyak dengan warna kekuningan, simetris. Terapi lini pertama untuk penyakit ini adalah?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Antifungal topikal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kortikosteroid topikal potensi sedang</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kortikosteroid topikal potensi tinggi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Antibiotik topikal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sampo antifungal</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang perempuan, usia 38 tahun, datang ke puskesmas dengan keluhan gatal-gatal di kedua tangan sejak 2 minggu SMRS. Pada pemeriksaan fisis tampak papul eritematosa multipel. Pada anamnesis didapatkan keluhan tersebut muncul dan memburuk saat mencuci piring. Apakah kemungkinan diagnosis pada kasus ini?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis kontak alergi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis Atopi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis kontak iritan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Urtikaria</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Scabies</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Manakah yang termasuk kriteria MINOR dari Hanifin-Rajka?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Riwayat onset dibawah usia 2 tahun</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>White dermographism</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pruritus</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Lesi pada flexor</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Onset dibawah usia 1 tahun</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang perempuan, usia 45 tahun, datang ke puskesmas dengan keluhan bercak kemerahan di punggung tangan dan paha disertai gatal sejak 2 hari SMRS. Pada pemeriksaan fisis tampak papul-vesikel eritematosa yang berkonfluens berbentuk discoid disertai skuama tipis dengan batas tegas berjumlah multipel, pasien mengatakan sedang stres. Apakah kemungkinan diagnosis pada kasus ini?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Neurodermatitis sirkumskripta</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Psoriasis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Tinea corporis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis atopi</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis numularis</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang pasien dengan riwayat tirah baring lama dan demam tinggi mengalami ruam berupa papul kemerahan multipel di punggung, terasa gatal dan perih. Mekanisme utama terjadinya kelainan ini adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Infeksi bakteri folikel rambut</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Sumbatan duktus kelenjar ekrin akibat retensi keringat</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hiperkeratinisasi folikel</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Produksi sebum berlebih</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Reaksi hipersensitivitas tipe IV</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang anak laki-laki usia 18 tahun mengeluh ruam di wajah sejak 1 tahun. Pada pemeriksaan ditemukan komedo terbuka dan tertutup, papul, dan pustul. Patogenesis utama dari kelainan ini adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Hiperplasia kelenjar ekrin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Sumbatan duktus ekrin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Disfungsi kelenjar keringat</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Gangguan maturasi duktus ekrin</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Peningkatan produksi sebum</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang bayi usia 15 hari dibawa ke puskesmas karena muncul bintil-bintil kecil bening di dahi dan leher sejak 2 hari terakhir. Bayi sering dibedong dan berada di lingkungan panas. Keluhan tidak disertai demam, gatal, maupun rewel. Status dermatologikus: tampak vesikel multipel, ukuran ±1–2 mm, berdinding tipis, berisi cairan jernih, tersebar diskret, tanpa dasar eritem, tidak berhubungan dengan folikel rambut, dan kulit sekitarnya tampak normal. Diagnosis yang paling tepat adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Miliaria crystallina</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Miliaria profunda</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Miliaria rubra</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis kontak iritan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Akne neonatorum</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang remaja laki-laki usia 18 tahun mengeluh ruam di wajah sejak 8 bulan. Pada pemeriksaan tampak 15 komedo terbuka dan tertutup disertai 10 pustul dan 2 kista. Tidak ditemukan nodul. Derajat keparahan akne pada pasien ini adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Akne ringan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Akne nodulokistik</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Akne berat</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Akne sedang</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Akne fulminans</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang remaja laki-laki usia 16 tahun mengeluh ruam di wajah sejak 8 bulan. Pada pemeriksaan tampak 15 komedo terbuka dan tertutup disertai 10 pustul dan 2 kista. Tidak ditemukan nodul. Terapi yang paling tepat pada pasien ini adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Retinoid topikal + antibiotik topikal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Retinoid topikal + antibiotik topikal + antifungal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Retinoid topikal + Benzoil peroksida</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Isotretinoin oral + benzoil peroksida</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Benzoil peroksida topikal + antibiotik topikal</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang perempuan 55 tahun datang dengan keluhan lepuh pada kulit sejak 3 bulan. Lepuh mudah pecah dan meninggalkan erosi nyeri di punggung. Pada pemeriksaan didapatkan bula flasid dan tanda Nikolsky positif. Diagnosis paling mungkin adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Bullous pemphigoid</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Stevens–Johnson syndrome</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis herpetiformis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Pemfigus vulgaris</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Epidermolisis bulosa</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Manakah temuan histopatologi yang PALING khas pada pemfigus vulgaris?</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Subepidermal blister</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Nekrosis epidermis menyeluruh</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Spongiosis berat</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Infiltrat eosinofil dominan</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Akantolisis suprabasal</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Target autoantibodi pada bullous pemphigoid adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>BP180 dan BP230</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Kolagen tipe VII</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Desmoglein 1 dan 3</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Transglutaminase epidermal</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Desmokolin</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang anak usia 5 tahun datang dengan lepuh tegang berkelompok di perut dan ekstremitas. Lesi tersusun melingkar seperti "string of pearls / cluster of jewels configuration". Mukosa mulut dapat ikut terkena. Diagnosis paling mungkin adalah …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Bullous pemphigoid</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Chronic bullous disease of childhood</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Dermatitis herpetiformis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Pemfigus vulgaris</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Impetigo bulosa</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang remaja 16 tahun datang dengan satu bercak kemerahan di dada sejak 8 hari. Lesi tidak nyeri, gatal ringan. Satu minggu kemudian muncul banyak bercak lebih kecil di badan. Status dermatologikus: pada regio toraks anterior tampak 1 plak oval soliter ±6 cm, eritematosa, skuama tipis kolaret di tepi, batas tegas. Lesi awal pada kasus ini disebut …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Target lesion</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Mother plaque psoriasis</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Plaque en nappe</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Herald patch</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Primary chancre</description><explanation></explanation></answer>
+				</question>
+
+				<question>
+					<enabled>true</enabled><type>single</type><difficulty>1</difficulty><position></position><timer>0</timer><fullscreen>false</fullscreen><inline_answers>false</inline_answers><auto_next>false</auto_next>
+					<description>Seorang perempuan usia 50 tahun datang dengan keluhan bercak merah bersisik pada lipatan tangan, lutut, siku yang berulang sejak 5 tahun terakhir. Dari pemeriksaan fisik terdapat patch eritematosa dengan skuama kasar berlapis berwarna putih seperti mika. Pada pasien dilakukan pengerokan skuama dan muncul perdarahan titik-titik. Tanda klinis ini disebut …</description>
+					<explanation></explanation>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Nikolsky sign</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Halo sign</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Darier sign</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>false</isright><position></position><keyboard_key></keyboard_key><description>Koebner phenomenon</description><explanation></explanation></answer>
+					<answer><enabled>true</enabled><isright>true</isright><position></position><keyboard_key></keyboard_key><description>Auspitz sign</description><explanation></explanation></answer>
+				</question>
+
+
+			</subject>
+		</module>
+	</body>
+</tcexamquestions>
