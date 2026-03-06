@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { router, Link } from "@inertiajs/react";
-import { Clock, RefreshCw, Hash, Eye, ChevronDown } from "lucide-react"; 
+import { Clock, RefreshCw, Hash, Eye, ChevronDown } from "lucide-react";
 
 export default function Analitics({ tests = [], currentTestId, participants = [] }) {
   const [isAutoRefresh, setIsAutoRefresh] = useState(true);
@@ -28,7 +28,7 @@ export default function Analitics({ tests = [], currentTestId, participants = []
 
     setIsLoading(true); // Mulai loading
     router.get(route('admin.tests.index'), {
-        section: 'analitics',
+        section: 'analytics',
         test_id: testId
     }, {
         onFinish: () => setIsLoading(false) // Selesai loading

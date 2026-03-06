@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Peserta;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Peserta\SaveAnswerRequest;
+use App\Http\Requests\Peserta\BatchAnswerRequest;
+use App\Jobs\BatchSaveAnswers;
 use App\Models\Test;
 use App\Models\TestUser;
 use App\Services\CBT\AnswerService;
@@ -14,12 +16,59 @@ use App\Services\CBT\QuestionGeneratorService;
 use App\Services\CBT\ScoringService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Models\Answer;
-use App\Models\Question;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 
 class TestController extends Controller
 {
+    private function touchActivityIfNeeded(TestUser $testUser): void
+    {
+        $now = now();
+        $threshold = (clone $now)->subSeconds(20);
+
+        TestUser::whereKey($testUser->id)
+            ->where(function ($query) use ($threshold) {
+                $query->whereNull('last_activity_at')
+                    ->orWhere('last_activity_at', '<', $threshold);
+            })
+            ->update([
+                'last_activity_at' => $now,
+            ]);
+    }
+
+    private function resolveAnswerMeta(int $questionId, ?int $answerId): array
+    {
+        if (!$answerId) {
+            return [
+                'isCorrect' => null,
+                'score' => null,
+            ];
+        }
+
+        $answerMeta = DB::table('answers as a')
+            ->join('questions as q', 'q.id', '=', 'a.question_id')
+            ->where('a.id', $answerId)
+            ->where('a.question_id', $questionId)
+            ->select('a.is_correct', 'q.score')
+            ->first();
+
+        if (!$answerMeta) {
+            return [
+                'isCorrect' => null,
+                'score' => 0,
+            ];
+        }
+
+        $isCorrect = (bool) $answerMeta->is_correct;
+
+        return [
+            'isCorrect' => $isCorrect,
+            'score' => $isCorrect ? (int) $answerMeta->score : 0,
+        ];
+    }
+
     public function index()
     {
         $user = Auth::user();
@@ -123,6 +172,9 @@ class TestController extends Controller
                 ];
             });
 
+        // ✅ Generate stateless token for polling (no session locking)
+        $examToken = \App\Services\CBT\ExamStatusToken::issue($testUser->id);
+
         return inertia('Peserta/Tests/Start', [
             'test' => $test,
             'testUserId' => $testUser->id,
@@ -131,6 +183,7 @@ class TestController extends Controller
             'existingAnswers' => $existingAnswers,
             'currentUser' => $user,
             'lastIndex' => $testUser->current_index ?? 0,
+            'examToken' => $examToken,  // ✅ For stateless polling
         ]);
     }
 
@@ -156,19 +209,28 @@ class TestController extends Controller
             'question_id' => 'nullable|exists:questions,id'
         ]);
 
-        $testUser->update([
-            'current_index' => $validated['index'],
-            'last_question_id' => $validated['question_id'] ?? null,
-            'last_activity_at' => now()
-        ]);
+        $newQuestionId = $validated['question_id'] ?? null;
+        $updatePayload = [];
+
+        if ((int) $testUser->current_index !== (int) $validated['index']) {
+            $updatePayload['current_index'] = (int) $validated['index'];
+        }
+
+        if ($testUser->last_question_id != $newQuestionId) {
+            $updatePayload['last_question_id'] = $newQuestionId;
+        }
+
+        if (!empty($updatePayload)) {
+            TestUser::whereKey($testUser->id)->update($updatePayload);
+        }
+
+        $this->touchActivityIfNeeded($testUser);
 
         return response()->json(['status' => 'saved']);
     }
 
     public function answer(SaveAnswerRequest $request, TestUser $testUser)
     {
-        ExamStateService::autoExpire($testUser);
-
         if ($testUser->status !== 'ongoing') {
             return response()->json(['status' => 'error', 'message' => 'Ujian telah berakhir.'], 403);
         }
@@ -182,42 +244,65 @@ class TestController extends Controller
 
         $data = $request->validated();
 
-        $isCorrect = null;
-        $score = null;
+        $answerMeta = $this->resolveAnswerMeta(
+            (int) $data['question_id'],
+            isset($data['answer_id']) ? (int) $data['answer_id'] : null
+        );
 
-        // Logika Scoring hanya untuk Multiple Choice (jika ada answer_id)
-        if (!empty($data['answer_id'])) {
-            $answer = Answer::find($data['answer_id']);
-            if ($answer) {
-                $isCorrect = (bool) $answer->is_correct;
-                if ($isCorrect) {
-                    $question = Question::find($data['question_id']);
-                    $score = $question?->score ?? 0;
-                } else {
-                    $score = 0;
-                }
-            }
-        }
-        // Jika Essay (answer_id kosong tapi answer_text ada)
-        // isCorrect dan score tetap null agar nanti bisa dinilai manual oleh admin
-        else if (!empty($data['answer_text'])) {
-            $isCorrect = null;
-            $score = null;
-        }
-
-        // Pindahkan AnswerService::save ke luar IF agar Essay tetap tersimpan
         AnswerService::save(
             $testUser->id,
             $data['question_id'],
             $data['answer_id'] ?? null,
             $data['answer_text'] ?? null,
-            $isCorrect,
-            $score
+            $answerMeta['isCorrect'],
+            $answerMeta['score']
         );
 
-        $testUser->update(['last_activity_at' => now()]);
+        $this->touchActivityIfNeeded($testUser);
 
         return response()->json(['status' => 'saved']);
+    }
+
+    /**
+     * Batch save multiple answers at once (optimized for performance)
+     *
+     * @param BatchAnswerRequest $request
+     * @param TestUser $testUser
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function batchAnswer(BatchAnswerRequest $request, TestUser $testUser)
+    {
+        if ($testUser->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ($testUser->status !== 'ongoing') {
+            return response()->json(['status' => 'error', 'message' => 'Ujian telah berakhir.'], 403);
+        }
+
+        if ($testUser->is_locked) {
+            return response()->json([
+                'status' => 'locked',
+                'message' => 'Ujian Anda sedang dikunci oleh pengawas.'
+            ], 403);
+        }
+
+        $validated = $request->validated();
+        $answers = $validated['answers'] ?? [];
+
+        if (empty($answers)) {
+            return response()->json(['status' => 'skipped'], 202);
+        }
+
+        // ✅ Queue async batch save instead of synchronous DB write
+        // This prevents lock contention and improves response time to <50ms
+        Bus::dispatch(new BatchSaveAnswers($testUser->id, $answers));
+
+        // Return immediately (202 Accepted) - don't wait for save to complete
+        return response()->json([
+            'status' => 'queued',
+            'message' => 'Answers queued for processing',
+        ], 202);
     }
 
     public function submit(TestUser $testUser)
@@ -257,22 +342,69 @@ class TestController extends Controller
      */
     public function checkStatus(TestUser $testUser)
     {
-        $baseDuration = ($testUser->test->duration + $testUser->extra_time) * 60; // detik
-
-        if ($testUser->is_locked && $testUser->locked_at) {
-            // Hanya hitung sampai waktu dikunci
-            $elapsed = $testUser->locked_at->diffInSeconds($testUser->started_at);
-            $remaining = $baseDuration - $elapsed;
-        } else {
-            // Normal
-            $elapsed = now()->diffInSeconds($testUser->started_at);
-            $remaining = $baseDuration - $elapsed;
-        }
+        $remaining = ExamTimeService::remainingSeconds($testUser);
 
         return response()->json([
             'status' => $testUser->is_locked ? 'locked' : 'ongoing',
             'remaining_seconds' => max(0, $remaining),
             'message' => $testUser->lock_reason,
+        ]);
+    }
+
+    /**
+     * Stateless polling using token (no session reads)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkStatusStateless(Request $request)
+    {
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['error' => 'Missing token'], 401);
+        }
+
+        // Verify token without reading session
+        $payload = \App\Services\CBT\ExamStatusToken::verify($token);
+
+        if (!$payload) {
+            return response()->json(['error' => 'Invalid or expired token'], 401);
+        }
+
+        $testUserId = $payload['test_user_id'];
+
+        // ✅ Query Redis directly (or cache, no session lock)
+        $status = Cache::remember(
+            "exam_status:{$testUserId}",
+            300,  // 5-minute cache
+            function () use ($testUserId) {
+                $testUser = TestUser::find($testUserId);
+
+                if (!$testUser) {
+                    return null;
+                }
+
+                return [
+                    'is_locked' => $testUser->is_locked,
+                    'lock_reason' => $testUser->lock_reason,
+                    'extra_time' => $testUser->extra_time,
+                    'status' => $testUser->status,
+                ];
+            }
+        );
+
+        if (!$status) {
+            return response()->json(['error' => 'Test user not found'], 404);
+        }
+
+        $testUser = TestUser::find($testUserId);
+        $remaining = ExamTimeService::remainingSeconds($testUser);
+
+        return response()->json([
+            'status' => $status['is_locked'] ? 'locked' : 'ongoing',
+            'remaining_seconds' => max(0, $remaining),
+            'message' => $status['lock_reason'],
         ]);
     }
 }

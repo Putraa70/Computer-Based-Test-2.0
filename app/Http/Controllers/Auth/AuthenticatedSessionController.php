@@ -6,10 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
+    private function shouldBypassForLoadTest(LoginRequest $request): bool
+    {
+        return (bool) config('app.load_test_bypass_single_session', false)
+            && $request->headers->get('X-Load-Test') === '1';
+    }
+
+    private function singleSessionFeatureReady(): bool
+    {
+        return Schema::hasColumn('users', 'active_session_id')
+            && Schema::hasTable('sessions')
+            && Schema::hasColumn('sessions', 'user_id')
+            && Schema::hasColumn('sessions', 'last_activity');
+    }
+
     public function create()
     {
         return inertia('Auth/Login');
@@ -18,6 +33,8 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request)
     {
         $previousSessionId = $request->session()->getId();
+        $singleSessionReady = $this->singleSessionFeatureReady()
+            && !$this->shouldBypassForLoadTest($request);
 
         $request->authenticate();
 
@@ -25,14 +42,18 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
         $userId = $user->id;
 
-        DB::transaction(function () use ($request, $userId, $previousSessionId, &$user) {
+        DB::transaction(function () use ($request, $userId, $previousSessionId, $singleSessionReady, &$user) {
             // Lock row user untuk mencegah race condition pada concurrent login
             $user = \App\Models\User::where('id', $userId)
                 ->lockForUpdate()
                 ->first();
 
             // Cek apakah user punya session lama di browser/perangkat lain
-            if ($user->active_session_id && $user->active_session_id !== $previousSessionId) {
+            if (
+                $singleSessionReady
+                && $user->active_session_id
+                && $user->active_session_id !== $previousSessionId
+            ) {
 
                 $currentTimestamp = now()->timestamp;
                 $sessionLifetime = (int) config('session.lifetime') * 60;
@@ -62,8 +83,10 @@ class AuthenticatedSessionController extends Controller
 
             // Regenerate session & update active_session_id
             $request->session()->regenerate();
-            $user->active_session_id = $request->session()->getId();
-            $user->save();
+            if ($singleSessionReady) {
+                $user->active_session_id = $request->session()->getId();
+                $user->save();
+            }
         });
 
         return $user->role === 'admin'
@@ -77,9 +100,11 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
 
         if ($user) {
-            $user->update([
-                'active_session_id' => null
-            ]);
+            if ($this->singleSessionFeatureReady()) {
+                $user->update([
+                    'active_session_id' => null
+                ]);
+            }
         }
 
         Auth::logout();

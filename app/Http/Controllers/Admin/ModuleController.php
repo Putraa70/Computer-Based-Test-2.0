@@ -82,19 +82,14 @@ class ModuleController extends Controller
                 ->get()
                 : [];
 
-            $data['questions'] = $topicId
-                ? Question::with('answers')
-                ->where('topic_id', $topicId)
-                ->latest()
-                ->paginate(50)
-                ->withQueryString()
-                : null;
-
-            // Ringkasan seluruh soal (bukan hanya halaman paginate)
+            // ═══════════════════════════════════════════════════════════════════════
+            // PENTING: Hitung SUMMARY DULU (sebelum pagination) untuk data LENGKAP
+            // Summary harus menampilkan TOTAL SEMUA SOAL, bukan hanya 50 per halaman
+            // ═══════════════════════════════════════════════════════════════════════
             if ($topicId) {
                 $summaryQuestions = Question::with('answers')
                     ->where('topic_id', $topicId)
-                    ->get();
+                    ->get();  // ← Ambil SEMUA soal, tidak dipaginate
 
                 $multipleChoice = $summaryQuestions->where('type', 'multiple_choice');
                 $optionCounts = [];
@@ -115,6 +110,7 @@ class ModuleController extends Controller
                     }
                 }
 
+                // ← Summary dihitung dari SEMUA soal, bukan hanya halaman saat ini
                 $data['summary'] = [
                     'total' => $summaryQuestions->count(),
                     'multipleChoice' => $multipleChoice->count(),
@@ -126,6 +122,17 @@ class ModuleController extends Controller
             } else {
                 $data['summary'] = null;
             }
+
+            // ═══════════════════════════════════════════════════════════════════════
+            // Questions: Pagination 50 per halaman untuk display list
+            // ═══════════════════════════════════════════════════════════════════════
+            $data['questions'] = $topicId
+                ? Question::with('answers')
+                ->where('topic_id', $topicId)
+                ->latest()
+                ->paginate(50)  // ← Halaman hanya 50 items
+                ->withQueryString()
+                : null;
 
             $data['filters'] = [
                 'module_id' => $moduleId,

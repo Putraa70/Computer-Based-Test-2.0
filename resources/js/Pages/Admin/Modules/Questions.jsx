@@ -47,7 +47,7 @@ export default function Questions({
             {
                 preserveState: true,
                 preserveScroll: true,
-                only: ["topics", "questions", "filters"],
+                only: ["topics", "questions", "summary", "filters"],
                 onFinish: () => setIsLoading(false),
             },
         );
@@ -189,7 +189,7 @@ export default function Questions({
             hasIssues:
                 noCorrectAnswer.length > 0 || incompleteOptions.length > 0,
         };
-    }, [questionList, summary]);
+    }, [summary, questionList]);
 
     return (
         <div className="space-y-6 duration-500">

@@ -10,9 +10,9 @@ import Pagination from "@/Components/UI/Pagination";
 
 export default function TestManagement({
   tests,
-  groups,
-  topics,
-  modules,
+  groups = [],
+  topics = [],
+  modules = [],
   isStatisticMode = false,
 }) {
   const { filters } = usePage().props;

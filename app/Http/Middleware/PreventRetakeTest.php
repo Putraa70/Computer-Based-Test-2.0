@@ -8,8 +8,18 @@ use Illuminate\Support\Facades\Auth;
 
 class PreventRetakeTest
 {
+    private function shouldBypassForLoadTest($request): bool
+    {
+        return (bool) config('app.load_test_bypass_single_session', false)
+            && $request->headers->get('X-Load-Test') === '1';
+    }
+
     public function handle($request, Closure $next)
     {
+        if ($this->shouldBypassForLoadTest($request)) {
+            return $next($request);
+        }
+
         $user = Auth::user();
         $test = $request->route('test');
 

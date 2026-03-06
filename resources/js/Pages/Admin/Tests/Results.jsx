@@ -1,16 +1,28 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { router, Head } from "@inertiajs/react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
+import { router, Head, Link } from "@inertiajs/react";
 import {
   Clock, CheckCircle2, XCircle, HelpCircle, Filter, User, BookOpen,
   Lock, Unlock, AlertCircle, PlusCircle, CheckSquare, Square, Eye,
   FileCheck, FileSpreadsheet, FileText, Trash2
 } from "lucide-react";
 
-export default function Results({ testUsers = [], test }) {
-  const [filterTest, setFilterTest] = useState(null);
+export default function Results({ testUsers = [], test, testUsersStats = null, resultsFilters = {}, resultsTestOptions = [] }) {
+  const [filterTest, setFilterTest] = useState(resultsFilters?.test_id ? parseInt(resultsFilters.test_id) : null);
   const [searchUser, setSearchUser] = useState("");
   const [sortBy, setSortBy] = useState("started_at");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const refreshInFlight = useRef(false);
+
+  useEffect(() => {
+    setFilterTest(resultsFilters?.test_id ? parseInt(resultsFilters.test_id) : null);
+  }, [resultsFilters?.test_id]);
+
+  const withResultsSection = (url) => {
+    if (!url) return url;
+    const parsed = new URL(url, window.location.origin);
+    parsed.searchParams.set("section", "results");
+    return `${parsed.pathname}${parsed.search}`;
+  };
 
   //  FIX UTAMA: Deteksi apakah data paginated atau array biasa
   const dataList = testUsers.data ? testUsers.data : testUsers;
@@ -27,45 +39,35 @@ export default function Results({ testUsers = [], test }) {
   // Auto Refresh
   useEffect(() => {
     const interval = setInterval(() => {
-        if (!lockModal && !addTimeModal) {
+        if (!lockModal && !addTimeModal && !refreshInFlight.current && !document.hidden) {
+            refreshInFlight.current = true;
             router.reload({
-                only: ['testUsers'],
+              only: ['testUsers', 'testUsersStats'],
                 preserveScroll: true,
                 preserveState: true,
                 onStart: () => setIsRefreshing(true),
-                onFinish: () => setIsRefreshing(false),
+                onFinish: () => {
+                  refreshInFlight.current = false;
+                  setIsRefreshing(false);
+                },
+                onError: () => {
+                  refreshInFlight.current = false;
+                  setIsRefreshing(false);
+                },
             });
         }
-    }, 5000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [lockModal, addTimeModal]);
 
-  // Grouping Logic (Pakai dataList)
-  const testsByGroup = useMemo(() => {
-    const grouped = {};
-    dataList.forEach((testUser) => {
-      const testId = testUser.test_id;
-      if (!grouped[testId]) {
-        grouped[testId] = { test: testUser.test, users: [] };
-      }
-      grouped[testId].users.push(testUser);
-    });
-    return grouped;
-  }, [dataList]);
-
   const calculateScore = (testUser) => {
-    const answers = testUser.answers || [];
-    const correctCount = answers.filter(a => a.is_correct).length;
-    const totalQuestions = testUser.test?.questions_count || answers.length;
-    if (totalQuestions === 0) return "0.00";
-    const score = (correctCount / totalQuestions) * 100;
-    return score.toFixed(2);
+    const rawScore = testUser.result?.total_score ?? 0;
+    return Number(rawScore).toFixed(2);
   };
 
   // Filter Logic (Pakai dataList)
   const filteredData = useMemo(() => {
     let data = dataList; //  Ganti testUsers jadi dataList
-    if (filterTest) data = data.filter((tu) => tu.test_id === filterTest);
     if (searchUser) {
       const lowerSearch = searchUser.toLowerCase();
       data = data.filter((tu) =>
@@ -90,7 +92,19 @@ export default function Results({ testUsers = [], test }) {
     return data;
   }, [dataList, filterTest, searchUser, sortBy]);
 
+  // STATS: Use backend stats if available and no filters applied, otherwise calculate from filtered data
   const stats = useMemo(() => {
+    // Backend stats always represent server-side filtered dataset (test_id)
+    if (!searchUser && testUsersStats) {
+      return {
+        total: testUsersStats.total,
+        completed: testUsersStats.completed,
+        pending: testUsersStats.pending,
+        avgScore: testUsersStats.avgScore
+      };
+    }
+
+    // If filters applied, calculate from filtered data (client-side)
     const total = filteredData.length;
     const completed = filteredData.filter((tu) => tu.finished_at).length;
     const pending = total - completed;
@@ -98,7 +112,7 @@ export default function Results({ testUsers = [], test }) {
     if (total > 0) totalScore = filteredData.reduce((sum, tu) => sum + parseFloat(calculateScore(tu)), 0);
     const avgScore = total > 0 ? (totalScore / total).toFixed(2) : "0.00";
     return { total, completed, pending, avgScore };
-  }, [filteredData]);
+  }, [filteredData, filterTest, searchUser, testUsersStats]);
 
   const formatDateTime = (dateStr) => {
     if (!dateStr) return "-";
@@ -203,6 +217,20 @@ export default function Results({ testUsers = [], test }) {
       window.open(url, '_blank');
   };
 
+  const handleFilterTestChange = (nextValue) => {
+    const nextTestId = nextValue ? parseInt(nextValue) : null;
+    setFilterTest(nextTestId);
+    router.get(route('admin.tests.index'), {
+      section: 'results',
+      test_id: nextTestId,
+      per_page: 100,
+    }, {
+      preserveScroll: true,
+      preserveState: false,
+      replace: true,
+    });
+  };
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -239,10 +267,9 @@ export default function Results({ testUsers = [], test }) {
                     <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block mb-2">
                         Filter Ujian {isRefreshing && <span className="ml-2 text-blue-500 text-[10px] animate-pulse">● Live Updating...</span>}
                     </label>
-                    <select value={filterTest || ""} onChange={(e) => setFilterTest(e.target.value ? parseInt(e.target.value) : null)} className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Semua Ujian</option>
-                    {Object.entries(testsByGroup).sort((a, b) => b[0] - a[0]).map(([testId, group]) => (
-                        <option key={testId} value={testId}>{group.test?.title} ({group.users.length})</option>
+                    <select value={filterTest || ""} onChange={(e) => handleFilterTestChange(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {resultsTestOptions.map((testOption) => (
+                      <option key={testOption.id} value={testOption.id}>{testOption.title}</option>
                     ))}
                     </select>
                 </div>
@@ -331,6 +358,7 @@ export default function Results({ testUsers = [], test }) {
                 const statusColor = timeStatus.color === "red" ? "bg-red-100 text-red-700" : timeStatus.color === "orange" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700";
                 const isSelected = selectedIds.includes(testUser.id);
                 const isValidated = testUser.result?.status === 'validated';
+                const rowNumber = (testUsers?.from || 1) + index;
 
                 return (
                   <tr key={testUser.id} className={`border-b border-gray-100 transition ${isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
@@ -339,14 +367,16 @@ export default function Results({ testUsers = [], test }) {
                             {isSelected ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
                         </button>
                     </td>
-                    <td className="px-4 py-3 font-bold text-gray-600">{index + 1}</td>
+                    <td className="px-4 py-3 font-bold text-gray-600">{rowNumber}</td>
                     <td className="px-4 py-3 text-gray-600 font-mono font-bold">{testUser.user?.npm || '-'}</td>
                     <td className="px-4 py-3 text-gray-600 font-mono">{formatDateTime(testUser.started_at)}</td>
                     <td className="px-4 py-3 text-gray-600">{getDurationTaken(testUser)}</td>
                     <td className="px-4 py-3">
                       <div>
                         <p className="font-bold text-gray-900">{testUser.user?.name || "-"}</p>
-                        <p className="text-gray-500 text-xs">{testUser.user?.email || "-"}</p>
+                        {testUser.user?.email && (
+                          <p className="text-gray-500 text-xs">{testUser.user.email}</p>
+                        )}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -389,8 +419,37 @@ export default function Results({ testUsers = [], test }) {
         </div>
       </div>
 
-      <div className="mt-6 text-center text-xs text-gray-500">
-        <p>Menampilkan {filteredData.length} dari {testUsers.total || testUsers.length} hasil ujian</p>
+      {/* Pagination */}
+      <div className="mt-6 flex items-center justify-between">
+        <div className="text-xs text-gray-500">
+          <p>
+            Menampilkan {testUsers.from || 1} - {testUsers.to || filteredData.length} dari {testUsers.total || filteredData.length} hasil ujian
+            {(testUsers.current_page && testUsers.last_page) ? ` • Halaman ${testUsers.current_page} / ${testUsers.last_page}` : ''}
+          </p>
+        </div>
+
+        {testUsers.links && testUsers.links.length > 3 && (
+          <div className="flex gap-2">
+            {testUsers.links.map((link, index) => {
+              if (link.url === null) return null;
+
+              return (
+                <Link
+                  key={index}
+                  href={withResultsSection(link.url)}
+                  preserveState
+                  preserveScroll
+                  className={`px-3 py-1 rounded text-xs font-medium ${
+                    link.active
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                  dangerouslySetInnerHTML={{ __html: link.label }}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {lockModal && (

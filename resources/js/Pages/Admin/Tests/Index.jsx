@@ -11,7 +11,8 @@ export default function Index(props) {
   // Membaca section dari URL dengan lebih stabil
   const section = useMemo(() => {
     const urlObj = new URL(url, window.location.origin);
-    return urlObj.searchParams.get("section") || "tests";
+    const rawSection = (urlObj.searchParams.get("section") || "tests").toLowerCase();
+    return rawSection === "analitics" ? "analytics" : rawSection;
   }, [url]);
 
   const renderContent = () => {
@@ -28,7 +29,7 @@ export default function Index(props) {
         // Panggil Management lagi, TAPI aktifkan mode statistik
         return <Management {...props} isStatisticMode={true} />;
 
-      case "analitics":
+      case "analytics":
         //  Analytics Mode - Tampilkan Analisis Data Ujian
         return <Analitics {...props} />;
 

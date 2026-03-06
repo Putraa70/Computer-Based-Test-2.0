@@ -38,6 +38,11 @@ export default function Start({
     const [answers, setAnswers] = useState(existingAnswers || {});
     const [timeLeft, setTimeLeft] = useState(remainingSeconds);
 
+    // ✅ BATCH AUTOSAVE STATE
+    const [pendingAnswers, setPendingAnswers] = useState({});
+    const autosaveBatchRef = useRef(null);
+    const isBatchSavingRef = useRef(false);
+
     //  1. STATE LOCK (WAJIB ADA)
     const [isLocked, setIsLocked] = useState(false);
     const [lockMessage, setLockMessage] = useState("");
@@ -45,6 +50,7 @@ export default function Start({
     //  2. REF (WAJIB ADA UNTUK INTERVAL)
     const isLockedRef = useRef(false);
     const timeLeftRef = useRef(timeLeft);
+    const pollInFlightRef = useRef(false);
 
     // UI State
     const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -62,8 +68,45 @@ export default function Start({
         return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
     };
 
+    // ✅ BATCH AUTOSAVE FUNCTION
+    const scheduleBatchAutosave = () => {
+        // Clear existing timeout
+        if (autosaveBatchRef.current) {
+            clearTimeout(autosaveBatchRef.current);
+        }
+
+        // Schedule new batch save
+        autosaveBatchRef.current = setTimeout(async () => {
+            if (Object.keys(pendingAnswers).length === 0) return;
+            if (isBatchSavingRef.current) return;
+
+            isBatchSavingRef.current = true;
+
+            try {
+                const response = await axios.post(
+                    route('peserta.tests.batch_answer', testUserId),
+                    { answers: pendingAnswers },
+                    { timeout: 5000 }
+                );
+
+                if (response.status === 202 || response.status === 200) {
+                    // ✅ Batch queued successfully, clear pending
+                    setPendingAnswers({});
+                    console.log('Batch autosave queued', {
+                        answerCount: Object.keys(pendingAnswers).length,
+                    });
+                }
+            } catch (error) {
+                console.error('Batch autosave failed:', error);
+                // TODO: Show toast notification if desired
+            } finally {
+                isBatchSavingRef.current = false;
+            }
+        }, 3000); // 3-second batch window
+    };
+
     const answeredCount = questions.filter((q) => {
-        const userAnswer = answers[q.id];
+        const userAnswer = answers[q.id] || pendingAnswers[q.id];
         return (
             userAnswer &&
             (userAnswer.answerId !== null ||
@@ -105,12 +148,20 @@ export default function Start({
 
         // B. Polling Server
         const checkServerStatus = async () => {
+            if (pollInFlightRef.current) {
+                return;
+            }
+
+            pollInFlightRef.current = true;
+
             try {
                 const url =
                     route("peserta.tests.check-status", testUserId) +
                     "?_t=" +
                     new Date().getTime();
-                const response = await axios.get(url);
+                const response = await axios.get(url, {
+                    timeout: 3000,
+                });
                 const data = response.data;
 
                 // --- HANDLE LOCKED ---
@@ -149,7 +200,10 @@ export default function Start({
                 }
 
                 // --- SINKRONISASI WAKTU (Hanya saat TIDAK locked) ---
-                if (!isLockedRef.current && data.remaining_seconds) {
+                if (
+                    !isLockedRef.current
+                    && typeof data.remaining_seconds === "number"
+                ) {
                     const diff = data.remaining_seconds - timeLeftRef.current;
 
                     if (diff >= 45) {
@@ -177,10 +231,12 @@ export default function Start({
                 }
             } catch (error) {
                 console.error(error);
+            } finally {
+                pollInFlightRef.current = false;
             }
         };
 
-        const poller = setInterval(checkServerStatus, 5000);
+        const poller = setInterval(checkServerStatus, 8000);
 
         return () => {
             clearInterval(countdown);
@@ -379,15 +435,26 @@ export default function Start({
                     <QuestionCard
                         key={currentQuestion.id}
                         question={currentQuestion}
-                        selectedAnswer={answers[currentQuestion.id]}
+                        selectedAnswer={answers[currentQuestion.id] || pendingAnswers[currentQuestion.id]}
                         testUserId={testUserId}
-                        onAnswer={(val) =>
-                            !isLocked &&
+                        disableAutoSave={true}
+                        onAnswer={(val) => {
+                            if (isLocked) return;
+
+                            // ✅ Update both answers and pending
                             setAnswers((prev) => ({
                                 ...prev,
                                 [currentQuestion.id]: val,
-                            }))
-                        }
+                            }));
+
+                            setPendingAnswers((prev) => ({
+                                ...prev,
+                                [currentQuestion.id]: val,
+                            }));
+
+                            // Schedule batch save
+                            scheduleBatchAutosave();
+                        }}
                         onFatalError={setFatalError}
                     />
                     <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm md:bg-transparent md:border-0 md:shadow-none md:p-0">

@@ -53,6 +53,7 @@ class UserController extends Controller
 
 
     // logic buat nampilin siapa aja yang lagi online
+    // Dual-check: database active_session_id + Redis activity tracking
 
     private function handleOnline(Request $request)
     {
@@ -67,16 +68,40 @@ class UserController extends Controller
             if ($user->id === auth()->id()) {
                 $user->is_online = true;
                 $user->session_id = $user->active_session_id ?? '-';
+                $user->tracking_source = 'current_session';
                 return $user;
             }
 
-            // Cek apakah session masih aktif di tabel sessions
+            // ═══════════════════════════════════════════════════════════
+            // METHOD 1: Cek session di database (untuk normal operation)
+            // ═══════════════════════════════════════════════════════════
             $sessionActive = $user->active_session_id
                 ? DB::table('sessions')->where('id', $user->active_session_id)->exists()
                 : false;
 
-            $user->is_online = $sessionActive ? true : false;
+            // ═══════════════════════════════════════════════════════════
+            // METHOD 2: Cek Redis activity tracking (untuk load test)
+            // ═══════════════════════════════════════════════════════════
+            // Saat load test 500 concurrent users, session table lag
+            // tapi Redis activity tracking lebih realtime (5 menit TTL)
+            $redisKey = 'user-online-' . $user->id;
+            $redisActivity = \Illuminate\Support\Facades\Cache::get($redisKey);
+            $isActiveInRedis = $redisActivity ? true : false;
+
+            // ═══════════════════════════════════════════════════════════
+            // DECISION: Online jika session ada ATAU Redis activity ada
+            // ═══════════════════════════════════════════════════════════
+            $user->is_online = $sessionActive || $isActiveInRedis ? true : false;
             $user->session_id = $user->active_session_id ?? '-';
+
+            // Track mana yang detect (untuk debugging)
+            if ($sessionActive) {
+                $user->tracking_source = 'database';
+            } elseif ($isActiveInRedis) {
+                $user->tracking_source = 'redis_activity';
+            } else {
+                $user->tracking_source = 'offline';
+            }
 
             return $user;
         });

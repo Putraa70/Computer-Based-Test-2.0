@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Trash2 } from 'lucide-react';
 
-export default function AnswerOptions({ question, selectedAnswer, testUserId, onAnswer, onFatalError }) {
+export default function AnswerOptions({ question, selectedAnswer, testUserId, onAnswer, onFatalError, disableAutoSave = false }) {
     const [isSaving, setIsSaving] = useState(false);
     const NETWORK_TIMEOUT = 6000; // 6 detik untuk deteksi cepat offline/kabel terputus
 
@@ -24,13 +24,15 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
 
     useEffect(() => {
         const handleOffline = () => {
-            setIsSaving(false);
-            triggerFatalError();
+            if (!disableAutoSave) {
+                setIsSaving(false);
+                triggerFatalError();
+            }
         };
 
         window.addEventListener('offline', handleOffline);
         return () => window.removeEventListener('offline', handleOffline);
-    }, []);
+    }, [disableAutoSave]);
 
     const saveAnswer = async (payload) => {
         const controller = new AbortController();
@@ -45,12 +47,17 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
         }
     };
 
-    // Logic Pilih Jawaban (TETAP SAMA)
+    // Logic Pilih Jawaban
     const handleSelect = async (answerId, answerText) => {
         if (isSaving || selectedAnswer?.answerId === answerId) return;
 
         const previousAnswer = selectedAnswer ? { ...selectedAnswer } : null;
         onAnswer({ answerId, answerText });
+
+        // ✅ If disableAutoSave is true, don't make API call (parent will batch it)
+        if (disableAutoSave) {
+            return;
+        }
 
         setIsSaving(true);
         try {
@@ -67,12 +74,17 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
         }
     };
 
-    // Logic Batal Jawab (TETAP SAMA)
+    // Logic Batal Jawab
     const handleClear = async () => {
         if (isSaving || !selectedAnswer?.answerId) return;
 
         const previousAnswer = selectedAnswer ? { ...selectedAnswer } : null;
         onAnswer(null);
+
+        // ✅ If disableAutoSave is true, don't make API call
+        if (disableAutoSave) {
+            return;
+        }
 
         setIsSaving(true);
         try {

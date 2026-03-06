@@ -58,6 +58,11 @@ Route::middleware($baseMiddlewares)
         Route::get('/tests/{testUser}/check-status', [TestController::class, 'checkStatus'])
             ->name('tests.check-status');
 
+        // ✅ Stateless polling (no session reads)
+        Route::get('/tests/check-status-stateless', [TestController::class, 'checkStatusStateless'])
+            ->name('tests.check-status-stateless');
+
+
         /*
         |--------------------------------------------------------------------------
         | MODE UJIAN (LOCKED)
@@ -77,6 +82,12 @@ Route::middleware($baseMiddlewares)
                 '/tests/{testUser}/answer',
                 [TestController::class, 'answer']
             )->name('tests.answer');
+
+            /* ================= BATCH AUTOSAVE (Optimized) ================= */
+            Route::post(
+                '/tests/{testUser}/batch-answer',
+                [TestController::class, 'batchAnswer']
+            )->name('tests.batch_answer');
 
             /* ================= SUBMIT ================= */
             Route::post(

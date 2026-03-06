@@ -97,7 +97,7 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
                 {/* NAVIGASI & TIMER */}
                 <div className="flex justify-between items-center mb-2">
                     <Link
-                        href={route('admin.tests.index', { section: 'analitics', test_id: testUser.test_id })}
+                        href={route('admin.tests.index', { section: 'analytics', test_id: testUser.test_id })}
                         className="inline-flex items-center gap-2 text-gray-500 hover:text-blue-600 font-bold transition bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200"
                     >
                         <ArrowLeft className="w-5 h-5" /> Kembali ke Daftar

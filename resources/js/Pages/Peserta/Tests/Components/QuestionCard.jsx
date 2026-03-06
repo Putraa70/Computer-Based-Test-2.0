@@ -6,7 +6,7 @@ import EssayInput from './EssayInput';
 import 'katex/dist/katex.min.css';
 import 'react-quill/dist/quill.snow.css';
 
-export default function QuestionCard({ question, selectedAnswer, testUserId, onAnswer, onFatalError }) {
+export default function QuestionCard({ question, selectedAnswer, testUserId, onAnswer, onFatalError, disableAutoSave = false }) {
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 animate-fade-in">
             {/* 1. Bagian Soal (Teks & Gambar) */}
@@ -38,6 +38,7 @@ export default function QuestionCard({ question, selectedAnswer, testUserId, onA
                         testUserId={testUserId}
                         onAnswer={onAnswer}
                         onFatalError={onFatalError}
+                        disableAutoSave={disableAutoSave}
                     />
                 ) : (
                     <EssayInput
@@ -46,6 +47,7 @@ export default function QuestionCard({ question, selectedAnswer, testUserId, onA
                         testUserId={testUserId}
                         onAnswer={onAnswer}
                         onFatalError={onFatalError}
+                        disableAutoSave={disableAutoSave}
                     />
                 )}
             </div>

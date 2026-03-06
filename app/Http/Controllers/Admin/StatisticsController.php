@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\Statistics\TestStatisticsService;
 use App\Services\Statistics\StudentStatisticsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Models\Question;
 
@@ -70,6 +71,15 @@ class StatisticsController extends Controller
                 'is_correct' => $request->is_correct,
                 'score' => $score
             ]);
+
+        $testUser = DB::table('test_users')
+            ->where('id', $userAnswer->test_user_id)
+            ->select('test_id')
+            ->first();
+
+        if ($testUser) {
+            Cache::forget("statistics:test:summary:{$testUser->test_id}");
+        }
 
         return back()->with('success', 'Nilai berhasil disimpan.');
     }

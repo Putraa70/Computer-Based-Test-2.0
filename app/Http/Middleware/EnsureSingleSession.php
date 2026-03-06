@@ -6,11 +6,34 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class EnsureSingleSession
 {
+    private function shouldBypassForLoadTest(Request $request): bool
+    {
+        return (bool) config('app.load_test_bypass_single_session', false)
+            && $request->headers->get('X-Load-Test') === '1';
+    }
+
+    private function singleSessionFeatureReady(): bool
+    {
+        return Schema::hasColumn('users', 'active_session_id')
+            && Schema::hasTable('sessions')
+            && Schema::hasColumn('sessions', 'user_id')
+            && Schema::hasColumn('sessions', 'last_activity');
+    }
+
     public function handle(Request $request, Closure $next)
     {
+        if ($this->shouldBypassForLoadTest($request)) {
+            return $next($request);
+        }
+
+        if (!$this->singleSessionFeatureReady()) {
+            return $next($request);
+        }
+
         /** @var \App\Models\User|null $user */
         $user = Auth::user();
 
