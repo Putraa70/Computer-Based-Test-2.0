@@ -10,14 +10,16 @@ import {
 import 'katex/dist/katex.min.css';
 import 'react-quill/dist/quill.snow.css';
 
-export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
+export default function ShowAnalytics({ testUser, serverRemainingSeconds, currentScore }) {
     const [addTimeInput, setAddTimeInput] = useState("");
     const [isAutoRefresh, setIsAutoRefresh] = useState(true);
     const [timeLeft, setTimeLeft] = useState(serverRemainingSeconds || 0);
+    const [score, setScore] = useState(currentScore || 0);
 
     useEffect(() => {
         setTimeLeft(serverRemainingSeconds || 0);
-    }, [serverRemainingSeconds]);
+        setScore(currentScore || 0);
+    }, [serverRemainingSeconds, currentScore]);
 
     useEffect(() => {
         if (testUser?.status !== 'ongoing' || !isAutoRefresh) return;
@@ -33,8 +35,9 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
         if (isAutoRefresh && testUser?.status === 'ongoing') {
             interval = setInterval(() => {
                 router.reload({
-                    only: ['testUser', 'serverRemainingSeconds'],
-                    preserveScroll: true, preserveState: true,
+                    only: ['testUser', 'serverRemainingSeconds', 'currentScore'],
+                    preserveScroll: true,
+                    preserveState: true,
                 });
             }, 5000);
         }
@@ -145,7 +148,7 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
                 </div>
 
                 {/* STATISTIK */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center justify-center">
                         <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">Progress</p>
                         <p className="text-3xl font-bold text-blue-600 flex items-baseline gap-1">{answeredCount}<span className="text-lg text-gray-300 font-medium">/{totalQuestions}</span></p>
@@ -161,6 +164,10 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds }) {
                     <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center justify-center">
                         <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">Kosong</p>
                         <p className="text-3xl font-bold text-yellow-500">{unansweredCount}</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-2xl shadow-md border-2 border-purple-200 flex flex-col items-center justify-center">
+                        <p className="text-xs text-purple-600 font-bold uppercase tracking-wider mb-2">Nilai Realtime</p>
+                        <p className="text-4xl font-bold text-purple-600">{score}</p>
                     </div>
                 </div>
 

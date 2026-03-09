@@ -107,10 +107,16 @@ class TestUserController extends Controller
         }
 
         if ($type === 'pdf') {
-            $query = TestUser::with(['user', 'test.topics.questions', 'answers', 'result'])
+            // ✅ OPTIMIZED: Only load necessary data + add limit to prevent memory exhaustion
+            $query = TestUser::with([
+                'user:id,name,npm',
+                'test:id,title',
+                'result:id,test_user_id,total_score'
+            ])
                 ->join('users', 'test_users.user_id', '=', 'users.id')
                 ->leftJoin('results', 'test_users.id', '=', 'results.test_user_id')
-                ->select('test_users.*');
+                ->select('test_users.*')
+                ->limit(500); // ✅ Limit to prevent memory exhaustion
 
             if ($testId) $query->where('test_users.test_id', $testId);
             if ($search) {
@@ -120,28 +126,22 @@ class TestUserController extends Controller
                 });
             }
 
-            // Fetch data tanpa sorting dulu
+            // Fetch data
             $data = $query->get();
 
-            // Hitung custom score untuk setiap item
+            // ✅ Use ScoringService for consistent calculation (lightweight)
             foreach ($data as $item) {
-                $totalQ = 0;
-                if ($item->test && $item->test->topics) {
-                    foreach ($item->test->topics as $topic) {
-                        $totalQ += $topic->questions->count();
-                    }
+                // Calculate realtime score
+                $realtimeScore = ScoringService::calculate($item);
+
+                // Use realtime for ongoing, saved result for submitted
+                if ($item->status === 'ongoing' || $item->status === 'not_started') {
+                    $item->custom_score = $realtimeScore;
+                } else {
+                    $item->custom_score = $item->result->total_score ?? 0;
                 }
 
-                if ($totalQ > 0) {
-                    $correct = $item->answers->where('is_correct', 1)->count();
-                    $raw = ($correct / $totalQ) * 100;
-                    $item->custom_score = number_format($raw, 2, '.', '');
-                    $item->custom_score_raw = $raw; // Simpan nilai raw untuk sorting
-                } else {
-                    $dbScore = $item->result->total_score ?? 0;
-                    $item->custom_score = number_format((float)$dbScore, 2, '.', '');
-                    $item->custom_score_raw = (float)$dbScore;
-                }
+                $item->custom_score_raw = (float) $item->custom_score;
             }
 
             // Sort data sesuai parameter setelah custom score dihitung
@@ -164,6 +164,9 @@ class TestUserController extends Controller
 
             // Reset keys setelah sorting
             $data = $data->values();
+
+            // ✅ Increase memory limit for PDF generation
+            ini_set('memory_limit', '256M');
 
             $pdf = Pdf::loadView('admin.exports.results_pdf', [
                 'data' => $data

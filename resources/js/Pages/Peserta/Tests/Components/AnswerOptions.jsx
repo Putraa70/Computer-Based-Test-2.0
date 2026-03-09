@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Trash2 } from 'lucide-react';
+import { Trash2, CheckCircle } from 'lucide-react';
+import Swal from 'sweetalert2';
 
-export default function AnswerOptions({ question, selectedAnswer, testUserId, onAnswer, onFatalError, disableAutoSave = false }) {
+export default function AnswerOptions({ question, selectedAnswer, testUserId, onAnswer, onFatalError }) {
     const [isSaving, setIsSaving] = useState(false);
     const NETWORK_TIMEOUT = 6000; // 6 detik untuk deteksi cepat offline/kabel terputus
 
@@ -24,15 +25,13 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
 
     useEffect(() => {
         const handleOffline = () => {
-            if (!disableAutoSave) {
-                setIsSaving(false);
-                triggerFatalError();
-            }
+            setIsSaving(false);
+            triggerFatalError();
         };
 
         window.addEventListener('offline', handleOffline);
         return () => window.removeEventListener('offline', handleOffline);
-    }, [disableAutoSave]);
+    }, []);
 
     const saveAnswer = async (payload) => {
         const controller = new AbortController();
@@ -42,6 +41,20 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
             await axios.post(route('peserta.tests.answer', testUserId), payload, {
                 signal: controller.signal,
             });
+
+            // ✅ Show success notification
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
         } finally {
             clearTimeout(timeoutId);
         }
@@ -53,11 +66,6 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
 
         const previousAnswer = selectedAnswer ? { ...selectedAnswer } : null;
         onAnswer({ answerId, answerText });
-
-        // ✅ If disableAutoSave is true, don't make API call (parent will batch it)
-        if (disableAutoSave) {
-            return;
-        }
 
         setIsSaving(true);
         try {
@@ -80,11 +88,6 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
 
         const previousAnswer = selectedAnswer ? { ...selectedAnswer } : null;
         onAnswer(null);
-
-        // ✅ If disableAutoSave is true, don't make API call
-        if (disableAutoSave) {
-            return;
-        }
 
         setIsSaving(true);
         try {

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
-export default function EssayInput({ question, selectedAnswer, testUserId, onAnswer, onFatalError, disableAutoSave = false }) {
+export default function EssayInput({ question, selectedAnswer, testUserId, onAnswer, onFatalError }) {
     const [text, setText] = useState("");
     const [status, setStatus] = useState("idle"); // idle, saving, saved, error
     const NETWORK_TIMEOUT = 6000;
@@ -34,14 +35,12 @@ export default function EssayInput({ question, selectedAnswer, testUserId, onAns
 
     useEffect(() => {
         const handleOffline = () => {
-            if (!disableAutoSave) {
-                triggerFatalError();
-            }
+            triggerFatalError();
         };
 
         window.addEventListener('offline', handleOffline);
         return () => window.removeEventListener('offline', handleOffline);
-    }, [disableAutoSave]);
+    }, []);
 
     const saveEssayAnswer = async () => {
         const controller = new AbortController();
@@ -55,6 +54,21 @@ export default function EssayInput({ question, selectedAnswer, testUserId, onAns
             }, {
                 signal: controller.signal,
             });
+
+            // ✅ Show success notification
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+
         } finally {
             clearTimeout(timeoutId);
         }
@@ -63,12 +77,6 @@ export default function EssayInput({ question, selectedAnswer, testUserId, onAns
     const handleSave = async () => {
         setStatus("saving");
         onAnswer({ answerText: text });
-
-        // ✅ If disableAutoSave is true, don't make API call
-        if (disableAutoSave) {
-            setStatus("idle");
-            return;
-        }
 
         try {
             await saveEssayAnswer();
@@ -90,20 +98,20 @@ export default function EssayInput({ question, selectedAnswer, testUserId, onAns
                     setText(e.target.value);
                     onAnswer({ answerText: e.target.value });
                 }}
-                onBlur={disableAutoSave ? null : handleSave} // ✅ Only auto-save if not disabled
+                onBlur={handleSave}
                 placeholder="Tulis jawaban Anda di sini..."
                 className="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all min-h-[200px] text-gray-800 leading-relaxed"
             />
 
             <div className="flex justify-between items-center text-xs">
                 <span className="text-gray-400">
-                    {disableAutoSave ? "Jawaban akan disimpan otomatis setiap 3 detik" : "Klik di luar area teks untuk menyimpan."}
+                    Klik di luar area teks untuk menyimpan.
                 </span>
 
-                {!disableAutoSave && status === "saving" && (
+                {status === "saving" && (
                     <span className="text-emerald-600 animate-pulse font-medium">Menyimpan...</span>
                 )}
-                {!disableAutoSave && status === "saved" && (
+                {status === "saved" && (
                     <span className="text-green-600 font-medium">✓ Tersimpan</span>
                 )}
             </div>

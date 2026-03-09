@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 //  1. IMPORT SERVICE
 use App\Services\CBT\ExamTimeService;
+use App\Services\CBT\ScoringService;
 
 class AnalyticsController extends Controller
 {
@@ -29,8 +30,9 @@ class AnalyticsController extends Controller
                 ->latest('updated_at')
                 ->get()
                 ->map(function ($p) use ($totalQuestions) {
-                    $correctCount = $p->answers()->where('is_correct', true)->count();
-                    $score = $totalQuestions > 0 ? round(($correctCount / $totalQuestions) * 100) : 0;
+                    // ✅ Use ScoringService for consistent realtime calculation
+                    $score = ScoringService::calculate($p);
+
                     return [
                         'id' => $p->id,
                         'user' => $p->user,
@@ -70,10 +72,14 @@ class AnalyticsController extends Controller
         //  2. HITUNG SISA WAKTU DARI SERVER (YANG SUDAH SUPPORT LOCK)
         $remainingSeconds = ExamTimeService::remainingSeconds($testUser);
 
+        //  3. HITUNG SCORE REALTIME
+        $currentScore = ScoringService::calculate($testUser);
+
         return Inertia::render('Admin/Tests/ShowAnalytics', [
             'testUser' => $testUser,
-            //  3. KIRIM KE FRONTEND
-            'serverRemainingSeconds' => $remainingSeconds
+            //  4. KIRIM KE FRONTEND
+            'serverRemainingSeconds' => $remainingSeconds,
+            'currentScore' => $currentScore
         ]);
     }
 

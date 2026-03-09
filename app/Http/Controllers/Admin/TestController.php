@@ -11,6 +11,7 @@ use App\Models\Module;
 use App\Models\Topic;
 use App\Models\TestUser;
 use App\Models\Question; // Pastikan import ini ada untuk fitur grading
+use App\Services\CBT\ScoringService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -118,6 +119,13 @@ class TestController extends Controller
                     'test_id' => $selectedTestId,
                     'per_page' => $perPage,
                 ]));
+
+            // ✅ Add realtime score for each test user
+            $testUsers->getCollection()->transform(function ($testUser) {
+                // Calculate realtime score using ScoringService
+                $testUser->realtime_score = ScoringService::calculate($testUser);
+                return $testUser;
+            });
 
             return inertia('Admin/Tests/Index', [
                 'testUsers' => $testUsers,

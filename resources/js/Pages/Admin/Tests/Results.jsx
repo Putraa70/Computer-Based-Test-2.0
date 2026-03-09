@@ -61,7 +61,17 @@ export default function Results({ testUsers = [], test, testUsersStats = null, r
   }, [lockModal, addTimeModal]);
 
   const calculateScore = (testUser) => {
-    const rawScore = testUser.result?.total_score ?? 0;
+    // ✅ Use realtime_score for ongoing tests, result.total_score for submitted tests
+    let rawScore = 0;
+
+    if (testUser.status === 'ongoing' || testUser.status === 'not_started') {
+      // Use realtime calculated score
+      rawScore = testUser.realtime_score ?? 0;
+    } else {
+      // Use saved result score
+      rawScore = testUser.result?.total_score ?? 0;
+    }
+
     return Number(rawScore).toFixed(2);
   };
 
