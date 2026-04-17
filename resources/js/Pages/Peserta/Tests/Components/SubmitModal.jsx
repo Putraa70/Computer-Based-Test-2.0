@@ -2,12 +2,18 @@ import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 import { router } from '@inertiajs/react';
 
-export default function SubmitModal({ isOpen, onClose, testUserId, unanswered }) {
+export default function SubmitModal({ isOpen, onClose, testUserId, unanswered, onSubmit }) {
     if (!isOpen) return null;
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        if (typeof onSubmit === 'function') {
+            await onSubmit();
+            onClose();
+            return;
+        }
+
         router.post(route('peserta.tests.submit', testUserId), {}, {
-            // onFinish: () => onClose(),
+            onFinish: () => onClose(),
         });
     };
 
@@ -29,13 +35,13 @@ export default function SubmitModal({ isOpen, onClose, testUserId, unanswered })
                             onClick={handleSubmit}
                             className="flex-1 px-4 py-2.5 rounded-xl text-white font-bold hover:opacity-90 transition-opacity shadow-lg
                             bg-emerald-600  hover:bg-emerald-700"
-                            
+
                         >
                             Ya, Kumpulkan
                         </button>
                     </div>
                 </div>
             </div>
-        
+
     );
 }

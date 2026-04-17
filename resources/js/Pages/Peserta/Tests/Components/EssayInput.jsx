@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
-import Swal from 'sweetalert2';
 
-export default function EssayInput({ question, selectedAnswer, testUserId, onAnswer, onFatalError }) {
+export default function EssayInput({ question, selectedAnswer, onAnswer, onQueueSave }) {
     const [text, setText] = useState("");
     const [status, setStatus] = useState("idle"); // idle, saving, saved, error
-    const NETWORK_TIMEOUT = 6000;
 
     // Load jawaban yang sudah ada (jika user kembali ke soal ini)
     useEffect(() => {
@@ -17,60 +14,21 @@ export default function EssayInput({ question, selectedAnswer, testUserId, onAns
         setStatus("idle");
     }, [selectedAnswer]);
 
-    const buildErrorMessage = (error) => {
-        const networkHint = "Jawaban belum tersimpan karena koneksi terputus. Periksa kabel LAN atau jaringan Anda, lalu coba lagi.";
-        if (typeof navigator !== "undefined" && navigator.onLine === false) {
-            return networkHint;
-        }
-        if (!error?.response || error?.code === "ERR_NETWORK" || error?.code === "ERR_CANCELED") {
-            return networkHint;
-        }
-        return "Terjadi kesalahan saat menyimpan jawaban. Silakan coba lagi.";
-    };
-
-    const triggerFatalError = (error) => {
-        const message = buildErrorMessage(error);
-        onFatalError?.({ status: 503, message });
-    };
-
-    useEffect(() => {
-        const handleOffline = () => {
-            triggerFatalError();
-        };
-
-        window.addEventListener('offline', handleOffline);
-        return () => window.removeEventListener('offline', handleOffline);
-    }, []);
-
     const saveEssayAnswer = async () => {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), NETWORK_TIMEOUT);
-
         try {
-            await axios.post(route("peserta.tests.answer", { testUser: testUserId }), {
-                question_id: question.id,
-                answer_text: text,
-                answer_id: null,
-            }, {
-                signal: controller.signal,
+            await onQueueSave?.(question.id, {
+                answerId: null,
+                answerText: text,
             });
-
-            // ✅ Show success notification
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-
-
+            setStatus("saved");
+            setTimeout(() => setStatus("idle"), 1200);
+            return true;
+        } catch (error) {
+            console.error(error);
+            setStatus("error");
+            return false;
         } finally {
-            clearTimeout(timeoutId);
+            return;
         }
     };
 
@@ -80,13 +38,8 @@ export default function EssayInput({ question, selectedAnswer, testUserId, onAns
 
         try {
             await saveEssayAnswer();
-
-            setStatus("saved");
-            setTimeout(() => setStatus("idle"), 2000);
         } catch (error) {
             console.error(error);
-            setStatus("error");
-            triggerFatalError(error);
         }
     };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Head, usePage, router, Link } from "@inertiajs/react";
 import axios from "axios";
 import {
@@ -27,6 +27,7 @@ export default function Start({
     existingAnswers,
     lastIndex,
     currentUser,
+    examToken,
 }) {
     const { auth } = usePage().props;
 
@@ -46,6 +47,9 @@ export default function Start({
     const isLockedRef = useRef(false);
     const timeLeftRef = useRef(timeLeft);
     const pollInFlightRef = useRef(false);
+    const batchQueueRef = useRef({});
+    const batchFlushTimerRef = useRef(null);
+    const batchSendingRef = useRef(false);
 
     // UI State
     const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -54,6 +58,7 @@ export default function Start({
     const [fatalError, setFatalError] = useState(null);
 
     const currentQuestion = questions[currentIndex];
+    const BATCH_FLUSH_DELAY = 1200;
 
     // --- HELPERS ---
     const formatTime = (seconds) => {
@@ -79,6 +84,92 @@ export default function Start({
     useEffect(() => {
         timeLeftRef.current = timeLeft;
     }, [timeLeft]);
+
+    const clearBatchFlushTimer = useCallback(() => {
+        if (batchFlushTimerRef.current) {
+            clearTimeout(batchFlushTimerRef.current);
+            batchFlushTimerRef.current = null;
+        }
+    }, []);
+
+    const flushBatchAnswers = useCallback(async () => {
+        const pendingAnswers = batchQueueRef.current;
+        const pendingCount = Object.keys(pendingAnswers).length;
+
+        if (pendingCount === 0) {
+            return true;
+        }
+
+        if (batchSendingRef.current) {
+            return false;
+        }
+
+        batchSendingRef.current = true;
+        clearBatchFlushTimer();
+
+        const payload = { answers: pendingAnswers };
+        batchQueueRef.current = {};
+
+        try {
+            const response = await axios.post(
+                route("peserta.tests.batch_answer", testUserId),
+                payload,
+                {
+                    headers: {
+                        Accept: "application/json",
+                    },
+                    timeout: 6000,
+                },
+            );
+
+            if (![200, 202].includes(response.status)) {
+                throw new Error("Batch save failed");
+            }
+
+            return true;
+        } catch (error) {
+            batchQueueRef.current = {
+                ...payload.answers,
+                ...batchQueueRef.current,
+            };
+
+            setFatalError({
+                status: 503,
+                message:
+                    "Jawaban belum tersimpan karena koneksi terganggu. Periksa jaringan LAN dan coba lagi.",
+            });
+
+            return false;
+        } finally {
+            batchSendingRef.current = false;
+        }
+    }, [clearBatchFlushTimer, testUserId]);
+
+    const scheduleBatchFlush = useCallback(() => {
+        clearBatchFlushTimer();
+
+        batchFlushTimerRef.current = setTimeout(() => {
+            void flushBatchAnswers();
+        }, BATCH_FLUSH_DELAY);
+    }, [BATCH_FLUSH_DELAY, clearBatchFlushTimer, flushBatchAnswers]);
+
+    const queueBatchAnswer = useCallback(
+        async (questionId, answerPayload) => {
+            batchQueueRef.current = {
+                ...batchQueueRef.current,
+                [questionId]: answerPayload,
+            };
+
+            scheduleBatchFlush();
+
+            if (Object.keys(batchQueueRef.current).length >= 3) {
+                void flushBatchAnswers();
+            }
+
+            return true;
+        },
+        [flushBatchAnswers, scheduleBatchFlush],
+    );
 
     useEffect(() => {
         if (fatalError) return;
@@ -115,12 +206,23 @@ export default function Start({
             pollInFlightRef.current = true;
 
             try {
-                const url =
-                    route("peserta.tests.check-status", testUserId) +
-                    "?_t=" +
-                    new Date().getTime();
+                const isStateless = Boolean(examToken);
+                const url = isStateless
+                    ? route("peserta.tests.check-status-stateless")
+                    : route("peserta.tests.check-status", testUserId);
+
                 const response = await axios.get(url, {
                     timeout: 3000,
+                    headers: isStateless
+                        ? {
+                              Authorization: `Bearer ${examToken}`,
+                          }
+                        : undefined,
+                    params: isStateless
+                        ? undefined
+                        : {
+                              _t: new Date().getTime(),
+                          },
                 });
                 const data = response.data;
 
@@ -187,9 +289,19 @@ export default function Start({
                     data.status === "submitted" ||
                     data.status === "expired"
                 ) {
+                    void flushBatchAnswers();
                     window.location.href = route("peserta.dashboard");
                 }
             } catch (error) {
+                if (error?.response?.status === 401 && examToken) {
+                    setFatalError({
+                        status: 401,
+                        message:
+                            "Sesi pemantauan ujian tidak valid. Silakan hubungi pengawas.",
+                    });
+                    return;
+                }
+
                 console.error(error);
             } finally {
                 pollInFlightRef.current = false;
@@ -216,6 +328,7 @@ export default function Start({
         if (newIndex < 0 || newIndex >= questions.length) return;
         setCurrentIndex(newIndex);
         setIsSidebarOpen(false);
+        void flushBatchAnswers();
         axios
             .post(route("peserta.tests.update_progress", testUserId), {
                 index: newIndex,
@@ -224,7 +337,8 @@ export default function Start({
             .catch(() => {});
     };
 
-    const submitTest = () => {
+    const submitTest = async () => {
+        await flushBatchAnswers();
         router.post(
             route("peserta.tests.submit", testUserId),
             {},
@@ -404,6 +518,7 @@ export default function Start({
                                 [currentQuestion.id]: val,
                             }));
                         }}
+                        onQueueSave={queueBatchAnswer}
                         onFatalError={setFatalError}
                     />
                     <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm md:bg-transparent md:border-0 md:shadow-none md:p-0">

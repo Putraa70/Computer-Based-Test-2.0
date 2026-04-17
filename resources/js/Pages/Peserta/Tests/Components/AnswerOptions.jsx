@@ -1,64 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Trash2, CheckCircle } from 'lucide-react';
-import Swal from 'sweetalert2';
+import React, { useState } from 'react';
+import { Trash2 } from 'lucide-react';
 
-export default function AnswerOptions({ question, selectedAnswer, testUserId, onAnswer, onFatalError }) {
+export default function AnswerOptions({ question, selectedAnswer, onAnswer, onQueueSave }) {
     const [isSaving, setIsSaving] = useState(false);
-    const NETWORK_TIMEOUT = 6000; // 6 detik untuk deteksi cepat offline/kabel terputus
-
-    const buildErrorMessage = (error) => {
-        const networkHint = "Gagal menyimpan jawaban. Periksa koneksi jaringan atau kabel LAN Anda, lalu coba lagi.";
-        if (typeof navigator !== "undefined" && navigator.onLine === false) {
-            return networkHint;
-        }
-        if (!error?.response || error?.code === "ERR_NETWORK" || error?.code === "ERR_CANCELED") {
-            return networkHint;
-        }
-        return "Gagal menyimpan jawaban. Silakan coba lagi.";
-    };
-
-    const triggerFatalError = (error) => {
-        const message = buildErrorMessage(error);
-        onFatalError?.({ status: 503, message });
-    };
-
-    useEffect(() => {
-        const handleOffline = () => {
-            setIsSaving(false);
-            triggerFatalError();
-        };
-
-        window.addEventListener('offline', handleOffline);
-        return () => window.removeEventListener('offline', handleOffline);
-    }, []);
-
-    const saveAnswer = async (payload) => {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), NETWORK_TIMEOUT);
-
-        try {
-            await axios.post(route('peserta.tests.answer', testUserId), payload, {
-                signal: controller.signal,
-            });
-
-            // ✅ Show success notification
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-
-        } finally {
-            clearTimeout(timeoutId);
-        }
-    };
 
     // Logic Pilih Jawaban
     const handleSelect = async (answerId, answerText) => {
@@ -69,14 +13,13 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
 
         setIsSaving(true);
         try {
-            await saveAnswer({
-                question_id: question.id,
-                answer_id: answerId,
+            await onQueueSave?.(question.id, {
+                answerId,
+                answerText: null,
             });
         } catch (error) {
-            console.error("Gagal menyimpan jawaban", error);
+            console.error("Gagal mengantrikan jawaban", error);
             onAnswer(previousAnswer || null);
-            triggerFatalError(error);
         } finally {
             setIsSaving(false);
         }
@@ -91,15 +34,13 @@ export default function AnswerOptions({ question, selectedAnswer, testUserId, on
 
         setIsSaving(true);
         try {
-            await saveAnswer({
-                question_id: question.id,
-                answer_id: null,
-                answer_text: null
+            await onQueueSave?.(question.id, {
+                answerId: null,
+                answerText: null,
             });
         } catch (error) {
-            console.error("Gagal menghapus jawaban", error);
+            console.error("Gagal mengantrikan penghapusan jawaban", error);
             onAnswer(previousAnswer || null);
-            triggerFatalError(error);
         } finally {
             setIsSaving(false);
         }
