@@ -35,6 +35,47 @@ if [[ "$EUID" -ne 0 ]]; then
   exit 1
 fi
 
+APT_GET_OPTS=(
+  "-o" "Acquire::Retries=5"
+  "-o" "Acquire::http::Timeout=30"
+  "-o" "Acquire::https::Timeout=30"
+)
+
+switch_apt_mirror_to_global() {
+  if [[ -f /etc/apt/sources.list ]]; then
+    sed -i 's|id.archive.ubuntu.com|archive.ubuntu.com|g' /etc/apt/sources.list || true
+  fi
+
+  if [[ -f /etc/apt/sources.list.d/ubuntu.sources ]]; then
+    sed -i 's|http://id.archive.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list.d/ubuntu.sources || true
+  fi
+}
+
+apt_update_with_retry() {
+  export DEBIAN_FRONTEND=noninteractive
+
+  if apt-get "${APT_GET_OPTS[@]}" update -y; then
+    return 0
+  fi
+
+  echo "APT update gagal, mencoba fallback mirror ke archive.ubuntu.com..."
+  switch_apt_mirror_to_global
+  apt-get "${APT_GET_OPTS[@]}" update -y
+}
+
+apt_install_with_retry() {
+  export DEBIAN_FRONTEND=noninteractive
+
+  if apt-get "${APT_GET_OPTS[@]}" install -y --fix-missing "$@"; then
+    return 0
+  fi
+
+  echo "APT install gagal, mencoba ulang setelah fallback mirror..."
+  switch_apt_mirror_to_global
+  apt-get "${APT_GET_OPTS[@]}" update -y
+  apt-get "${APT_GET_OPTS[@]}" install -y --fix-missing "$@"
+}
+
 detect_php_fpm_service() {
   local candidates=(php8.3-fpm php8.2-fpm php8.1-fpm php-fpm)
   for svc in "${candidates[@]}"; do
@@ -69,10 +110,8 @@ ensure_server_ip_bound() {
 }
 
 install_base_packages() {
-  export DEBIAN_FRONTEND=noninteractive
-
-  apt-get update -y
-  apt-get install -y \
+  apt_update_with_retry
+  apt_install_with_retry \
     software-properties-common \
     ca-certificates \
     curl \
@@ -85,10 +124,10 @@ install_base_packages() {
 
   if ! command -v php >/dev/null 2>&1; then
     add-apt-repository -y ppa:ondrej/php
-    apt-get update -y
+    apt_update_with_retry
   fi
 
-  apt-get install -y \
+  apt_install_with_retry \
     php8.3-fpm \
     php8.3-cli \
     php8.3-common \
@@ -102,7 +141,7 @@ install_base_packages() {
     php8.3-gd
 
   if [[ "$INSTALL_MYSQL" == "true" ]]; then
-    apt-get install -y mysql-server
+    apt_install_with_retry mysql-server
   fi
 
   if ! command -v composer >/dev/null 2>&1; then
@@ -120,7 +159,7 @@ install_base_packages() {
 
   if ! command -v node >/dev/null 2>&1 || [[ "$(node -v | sed 's/v//;s/\..*//')" -lt 18 ]]; then
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-    apt-get install -y nodejs
+    apt_install_with_retry nodejs
   fi
 }
 
@@ -268,7 +307,7 @@ configure_firewall() {
   fi
 
   if ! command -v ufw >/dev/null 2>&1; then
-    apt-get install -y ufw
+    apt_install_with_retry ufw
   fi
 
   if ufw status | grep -q "Status: active"; then
