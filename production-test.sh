@@ -65,7 +65,7 @@ echo ""
 
 # Default values (can be overridden)
 BASE_URL=${BASE_URL:-http://127.0.0.1}
-TEST_ID=${TEST_ID:-1}
+TEST_ID=${TEST_ID:-5}
 TOTAL_USERS=${TOTAL_USERS:-500}
 TOTAL_QUESTIONS=${TOTAL_QUESTIONS:-150}
 VUS=${VUS:-500}
