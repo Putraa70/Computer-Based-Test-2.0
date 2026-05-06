@@ -2,6 +2,7 @@
 
 namespace App\Services\CBT;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class ExamStatusToken
@@ -38,6 +39,7 @@ class ExamStatusToken
 
     /**
      * Verify token and extract metadata (idempotent)
+     * FIX KRITIS #3: Added expiration validation
      *
      * @param string $token
      * @return array|null
@@ -47,8 +49,14 @@ class ExamStatusToken
         try {
             $payload = json_decode(base64_decode($token), true);
 
-            if (!is_array($payload) || !isset($payload['token_id'], $payload['test_user_id'])) {
+            if (!is_array($payload) || !isset($payload['token_id'], $payload['test_user_id'], $payload['expires_at'])) {
                 return null;
+            }
+
+            // ✅ PERBAIKAN KRITIS #3: Check token expiration
+            $expiresAt = \Carbon\Carbon::parse($payload['expires_at']);
+            if (now()->isAfter($expiresAt)) {
+                return null;  // Token expired
             }
 
             // Verify token still exists in Redis

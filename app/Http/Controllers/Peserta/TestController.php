@@ -8,6 +8,7 @@ use App\Http\Requests\Peserta\BatchAnswerRequest;
 use App\Jobs\BatchSaveAnswers;
 use App\Models\Test;
 use App\Models\TestUser;
+use App\Models\UserAnswer;
 use App\Services\CBT\AnswerService;
 use App\Services\CBT\ExamStateService;
 //  PASTIKAN IMPORT INI BENAR (MENGARAH KE CBT)
@@ -15,6 +16,7 @@ use App\Services\CBT\ExamTimeService;
 use App\Services\CBT\QuestionGeneratorService;
 use App\Services\CBT\ScoringService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Bus\Batch;
@@ -265,6 +267,7 @@ class TestController extends Controller
 
     /**
      * Batch save multiple answers at once (optimized for performance)
+     * FIX KRITIS #1: Changed to synchronous upsert to prevent data loss
      *
      * @param BatchAnswerRequest $request
      * @param TestUser $testUser
@@ -294,15 +297,53 @@ class TestController extends Controller
             return response()->json(['status' => 'skipped'], 202);
         }
 
-        // ✅ Queue async batch save instead of synchronous DB write
-        // This prevents lock contention and improves response time to <50ms
-        Bus::dispatch(new BatchSaveAnswers($testUser->id, $answers));
+        try {
+            // ✅ PERBAIKAN KRITIS #1: Synchronous upsert with transaction
+            // Prevents data loss from queue failures
+            DB::transaction(function () use ($testUser, $answers) {
+                $data = collect($answers)->map(function ($answer, $qId) use ($testUser) {
+                    return [
+                        'test_user_id' => $testUser->id,
+                        'question_id' => (int) $qId,
+                        'answer_id' => $answer['answerId'] ?? null,
+                        'answer_text' => $answer['answerText'] ?? null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                })->toArray();
 
-        // Return immediately (202 Accepted) - don't wait for save to complete
-        return response()->json([
-            'status' => 'queued',
-            'message' => 'Answers queued for processing',
-        ], 202);
+                UserAnswer::upsert(
+                    $data,
+                    ['test_user_id', 'question_id'],
+                    ['answer_id', 'answer_text', 'updated_at']
+                );
+
+                $testUser->update(['last_activity_at' => now()]);
+            });
+
+            // ✅ Shadow cache untuk stateless polling
+            Cache::put(
+                "user_answers:{$testUser->id}",
+                count($answers),
+                300
+            );
+
+            return response()->json([
+                'status' => 'saved',
+                'answer_count' => count($answers),
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Batch answer sync save failed', [
+                'test_user_id' => $testUser->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menyimpan jawaban, refresh halaman',
+            ], 500);
+        }
     }
 
     public function submit(TestUser $testUser)
@@ -311,26 +352,43 @@ class TestController extends Controller
             abort(403);
         }
 
-        $testUser->update([
-            'status' => 'submitted',
-            'finished_at' => now()
-        ]);
+        // ✅ PERBAIKAN KRITIS #2: Pessimistic locking untuk prevent race condition
+        $testUser = TestUser::where('id', $testUser->id)
+            ->lockForUpdate()
+            ->first();
 
-        $totalScore = ScoringService::calculate($testUser);
-        $test = $testUser->test;
-        $status = $test->results_to_users ? 'validated' : 'pending';
+        if ($testUser->status !== 'ongoing') {
+            abort(403, 'Ujian tidak dalam status ongoing');
+        }
 
-        $testUser->result()->create([
-            'total_score'  => $totalScore,
-            'status'       => $status,
-            'validated_at' => $status === 'validated' ? now() : null,
-            'validated_by' => $status === 'validated' ? auth()->id() : null,
-        ]);
+        if ($testUser->is_locked) {
+            abort(403, 'Ujian sedang dikunci pengawas');
+        }
 
-        QuestionGeneratorService::clear(
-            $testUser->test_id,
-            $testUser->user_id
-        );
+        DB::transaction(function () use ($testUser) {
+            // ✅ Update status dengan lock held
+            $testUser->update([
+                'status' => 'submitted',
+                'finished_at' => now()
+            ]);
+
+            // ✅ Score calculation tetap under lock
+            $totalScore = ScoringService::calculate($testUser);
+            $test = $testUser->test;
+            $status = $test->results_to_users ? 'validated' : 'pending';
+
+            $testUser->result()->create([
+                'total_score'  => $totalScore,
+                'status'       => $status,
+                'validated_at' => $status === 'validated' ? now() : null,
+                'validated_by' => $status === 'validated' ? auth()->id() : null,
+            ]);
+
+            QuestionGeneratorService::clear(
+                $testUser->test_id,
+                $testUser->user_id
+            );
+        });
 
         return redirect()
             ->route('peserta.dashboard')
