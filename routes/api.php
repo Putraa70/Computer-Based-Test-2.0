@@ -2,12 +2,15 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use karbon\Carbon;
-
+use App\Http\Controllers\HealthCheckController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// ✅ P2: Health check endpoint for monitoring
+Route::get('/health', [HealthCheckController::class, 'check'])
+    ->withoutMiddleware([\App\Http\Middleware\HandleInertiaRequests::class]);
 
 // routes/web.php
 

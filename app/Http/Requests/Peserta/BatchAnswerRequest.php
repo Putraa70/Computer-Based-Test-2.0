@@ -25,6 +25,10 @@ class BatchAnswerRequest extends FormRequest
         ];
     }
 
+    /**
+     * Prepare data and validate question ownership
+     * ✅ P1: Added question validation to prevent cross-exam answer injection
+     */
     protected function prepareForValidation()
     {
         // Map question IDs from keys if needed
@@ -38,4 +42,39 @@ class BatchAnswerRequest extends FormRequest
             $this->merge(['answers' => $answers]);
         }
     }
+
+    /**
+     * Custom validation after basic rules pass
+     * ✅ P1: Validate that all question IDs belong to the exam
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            // Get the test user from route
+            $testUser = $this->route('testUser');
+            if (!$testUser) {
+                return;
+            }
+
+            // Get all question IDs from the test
+            $validQuestionIds = $testUser->test
+                ->topics
+                ->flatMap(function ($topic) {
+                    return $topic->questions->pluck('id');
+                })
+                ->toArray();
+
+            // Check each answer's question_id
+            $answers = $this->answers ?? [];
+            foreach ($answers as $questionId => $answer) {
+                if (!in_array($questionId, $validQuestionIds)) {
+                    $validator->errors()->add(
+                        'answers',
+                        "Question ID $questionId does not belong to this exam."
+                    );
+                }
+            }
+        });
+    }
 }
+

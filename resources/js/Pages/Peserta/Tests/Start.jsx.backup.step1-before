@@ -13,7 +13,6 @@ import {
 import Swal from "sweetalert2";
 import DynamicError from "@/Pages/Errors/DynamicError";
 import { useSecurityProtection } from "@/utils/preventCopy";
-import { DisplayTimerProvider, useDisplayTimer } from './Context/DisplayTimerContext';
 
 // Import Komponen Anak
 import QuestionCard from "./Components/QuestionCard";
@@ -55,6 +54,7 @@ export default function Start({
     // UI State
     const [showSubmitModal, setShowSubmitModal] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [currentTime, setCurrentTime] = useState(new Date());
     const [fatalError, setFatalError] = useState(null);
 
     const currentQuestion = questions[currentIndex];
@@ -170,6 +170,12 @@ export default function Start({
         },
         [flushBatchAnswers, scheduleBatchFlush],
     );
+
+    useEffect(() => {
+        if (fatalError) return;
+        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, [fatalError]);
 
     // --- LOGIC UTAMA: TIMER & POLLING ---
     useEffect(() => {
@@ -367,15 +373,8 @@ export default function Start({
         );
     }
 
-    // --- TIME DISPLAY COMPONENT (Isolated from parent rerender) ---
-    function TimeDisplay() {
-        const displayTime = useDisplayTimer();
-        return displayTime;
-    }
-
     return (
-        <DisplayTimerProvider>
-            <div className="min-h-screen bg-gray-50 font-sans text-gray-900 flex flex-col relative">
+        <div className="min-h-screen bg-gray-50 font-sans text-gray-900 flex flex-col relative">
             <Head title={`Ujian: ${test.title}`} />
 
             {/*  4. OVERLAY SCREEN SAAT DIKUNCI */}
@@ -459,7 +458,7 @@ export default function Start({
                     <div className="hidden md:flex items-center gap-3 text-xs md:text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
                         <Clock className="w-4 h-4 text-gray-500" />
                         <span className="font-mono font-bold text-gray-800">
-                            <TimeDisplay />
+                            {currentTime.toLocaleTimeString("id-ID")}
                         </span>
                     </div>
                 </div>
@@ -602,7 +601,6 @@ export default function Start({
                 unanswered={questions.length - answeredCount}
                 onSubmit={submitTest}
             />
-            </div>
-        </DisplayTimerProvider>
+        </div>
     );
 }

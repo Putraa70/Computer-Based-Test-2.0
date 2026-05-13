@@ -56,11 +56,13 @@ Route::middleware($baseMiddlewares)
         //  PERBAIKAN DI SINI:
         // Cukup tulis 'tests.check-status', karena otomatis digabung dengan group 'peserta.'
         Route::get('/tests/{testUser}/check-status', [TestController::class, 'checkStatus'])
-            ->name('tests.check-status');
+            ->name('tests.check-status')
+            ->middleware('throttle:100,1');  // ✅ P1: Rate limit polling
 
-        // ✅ Stateless polling (no session reads)
+        // ✅ P0: Stateless polling with rate limiting (no session reads, CSRF-safe)
         Route::get('/tests/check-status-stateless', [TestController::class, 'checkStatusStateless'])
-            ->name('tests.check-status-stateless');
+            ->name('tests.check-status-stateless')
+            ->middleware('throttle:100,1');  // ✅ P1: Rate limit to prevent amplification
 
 
         /*
@@ -81,13 +83,15 @@ Route::middleware($baseMiddlewares)
             Route::post(
                 '/tests/{testUser}/answer',
                 [TestController::class, 'answer']
-            )->name('tests.answer');
+            )->name('tests.answer')
+             ->middleware('throttle:300,1');  // ✅ P1: Rate limit individual answers (5/sec per user)
 
             /* ================= BATCH AUTOSAVE (Optimized) ================= */
             Route::post(
                 '/tests/{testUser}/batch-answer',
                 [TestController::class, 'batchAnswer']
-            )->name('tests.batch_answer');
+            )->name('tests.batch_answer')
+             ->middleware('throttle:100,1');  // ✅ P1: Rate limit batch saves (2/sec per user)
 
             /* ================= SUBMIT ================= */
             Route::post(

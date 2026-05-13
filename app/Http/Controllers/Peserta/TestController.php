@@ -11,10 +11,12 @@ use App\Models\TestUser;
 use App\Models\UserAnswer;
 use App\Services\CBT\AnswerService;
 use App\Services\CBT\ExamStateService;
-//  PASTIKAN IMPORT INI BENAR (MENGARAH KE CBT)
 use App\Services\CBT\ExamTimeService;
 use App\Services\CBT\QuestionGeneratorService;
 use App\Services\CBT\ScoringService;
+use App\Services\CBT\SecureExamToken;
+use App\Services\AuditService;
+use App\Guards\ExamOwnershipGuard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -144,8 +146,16 @@ class TestController extends Controller
             ['started_at' => now(), 'status' => 'ongoing']
         );
 
+        // ✅ P0: Verify ownership
+        try {
+            ExamOwnershipGuard::validate($testUser);
+        } catch (\Exception $e) {
+            return redirect()->route('peserta.dashboard')->withErrors('Akses ditolak.');
+        }
+
         if (is_null($testUser->started_at)) {
             $testUser->update(['started_at' => now(), 'status' => 'ongoing']);
+            AuditService::logExamEvent('start', $testUser->id, ['test_id' => $test->id]);
         }
 
         $testUser->update(['last_activity_at' => now()]);
@@ -174,8 +184,8 @@ class TestController extends Controller
                 ];
             });
 
-        // ✅ Generate stateless token for polling (no session locking)
-        $examToken = \App\Services\CBT\ExamStatusToken::issue($testUser->id);
+        // ✅ P0: Use secure encrypted token instead of predictable base64 token
+        $examToken = SecureExamToken::generate($testUser->id);
 
         return inertia('Peserta/Tests/Start', [
             'test' => $test,
@@ -185,14 +195,17 @@ class TestController extends Controller
             'existingAnswers' => $existingAnswers,
             'currentUser' => $user,
             'lastIndex' => $testUser->current_index ?? 0,
-            'examToken' => $examToken,  // ✅ For stateless polling
+            'examToken' => $examToken,  // ✅ Secure encrypted token
         ]);
     }
 
     public function updateProgress(Request $request, TestUser $testUser)
     {
-        if ($testUser->user_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        // ✅ P0: Ownership validation
+        try {
+            ExamOwnershipGuard::validate($testUser);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
         }
 
         if ($testUser->status !== 'ongoing') {
@@ -233,6 +246,19 @@ class TestController extends Controller
 
     public function answer(SaveAnswerRequest $request, TestUser $testUser)
     {
+        // ✅ P0: Ownership validation
+        try {
+            ExamOwnershipGuard::validate($testUser);
+        } catch (\Exception $e) {
+            AuditService::logSecurityEvent(
+                'answer_ownership_violation',
+                $testUser->id,
+                "Unauthorized answer attempt",
+                ['question_id' => $request->question_id]
+            );
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 403);
+        }
+
         if ($testUser->status !== 'ongoing') {
             return response()->json(['status' => 'error', 'message' => 'Ujian telah berakhir.'], 403);
         }
@@ -260,6 +286,13 @@ class TestController extends Controller
             $answerMeta['score']
         );
 
+        AuditService::logAnswerEvent(
+            $testUser->id,
+            $data['question_id'],
+            $data['answer_id'] ?? null,
+            false
+        );
+
         $this->touchActivityIfNeeded($testUser);
 
         return response()->json(['status' => 'saved']);
@@ -275,8 +308,17 @@ class TestController extends Controller
      */
     public function batchAnswer(BatchAnswerRequest $request, TestUser $testUser)
     {
-        if ($testUser->user_id !== Auth::id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+        // ✅ P0: Ownership validation
+        try {
+            ExamOwnershipGuard::validate($testUser);
+        } catch (\Exception $e) {
+            AuditService::logSecurityEvent(
+                'batch_answer_ownership_violation',
+                $testUser->id,
+                "Unauthorized batch answer attempt",
+                ['answer_count' => count($request->answers ?? [])]
+            );
+            return response()->json(['error' => $e->getMessage()], 403);
         }
 
         if ($testUser->status !== 'ongoing') {
@@ -328,6 +370,13 @@ class TestController extends Controller
                 300
             );
 
+            AuditService::logAnswerEvent(
+                $testUser->id,
+                0,  // Not a single question
+                null,
+                true  // is_batch
+            );
+
             return response()->json([
                 'status' => 'saved',
                 'answer_count' => count($answers),
@@ -348,24 +397,38 @@ class TestController extends Controller
 
     public function submit(TestUser $testUser)
     {
-        if ($testUser->user_id !== Auth::id()) {
-            abort(403);
+        // ✅ P0: Ownership validation
+        try {
+            ExamOwnershipGuard::validate($testUser);
+        } catch (\Exception $e) {
+            AuditService::logSecurityEvent(
+                'submit_ownership_violation',
+                $testUser->id,
+                "Unauthorized submit attempt"
+            );
+            return abort(403, $e->getMessage());
         }
 
-        // ✅ PERBAIKAN KRITIS #2: Pessimistic locking untuk prevent race condition
-        $testUser = TestUser::where('id', $testUser->id)
-            ->lockForUpdate()
-            ->first();
-
-        if ($testUser->status !== 'ongoing') {
-            abort(403, 'Ujian tidak dalam status ongoing');
-        }
-
-        if ($testUser->is_locked) {
-            abort(403, 'Ujian sedang dikunci pengawas');
-        }
-
+        // ✅ PERBAIKAN KRITIS P0: Pessimistic locking untuk prevent race condition + time check inside lock
         DB::transaction(function () use ($testUser) {
+            // ✅ Acquire lock FIRST, then check time (prevents race with admin clock adjustments)
+            $testUser = TestUser::where('id', $testUser->id)
+                ->lockForUpdate()
+                ->first();
+
+            // ✅ Now check if exam time is still valid while holding lock
+            if (!ExamTimeService::isStillRunning($testUser)) {
+                throw new \Exception('Exam time has expired', 403);
+            }
+
+            if ($testUser->status !== 'ongoing') {
+                throw new \Exception('Exam not in ongoing status', 403);
+            }
+
+            if ($testUser->is_locked) {
+                throw new \Exception('Exam is locked', 403);
+            }
+
             // ✅ Update status dengan lock held
             $testUser->update([
                 'status' => 'submitted',
@@ -384,11 +447,16 @@ class TestController extends Controller
                 'validated_by' => $status === 'validated' ? auth()->id() : null,
             ]);
 
+            AuditService::logExamEvent('submit', $testUser->id, [
+                'total_score' => $totalScore,
+                'status' => $status,
+            ]);
+
             QuestionGeneratorService::clear(
                 $testUser->test_id,
                 $testUser->user_id
             );
-        });
+        }, attempts: 5);  // ✅ Retry on deadlock (up to 5 times)
 
         return redirect()
             ->route('peserta.dashboard')
@@ -410,7 +478,9 @@ class TestController extends Controller
     }
 
     /**
-     * Stateless polling using token (no session reads)
+     * Stateless polling using secure token (no session reads, replay-safe)
+     * ✅ P0: Uses SecureExamToken for encryption + tamper detection
+     * ✅ P1: Reduced cache TTL to prevent stale lock information
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -423,19 +493,26 @@ class TestController extends Controller
             return response()->json(['error' => 'Missing token'], 401);
         }
 
-        // Verify token without reading session
-        $payload = \App\Services\CBT\ExamStatusToken::verify($token);
+        // ✅ P0: Verify secure token (detects tampering, prevents forgery)
+        $payload = SecureExamToken::verify($token);
 
         if (!$payload) {
+            AuditService::logSecurityEvent(
+                'invalid_token_polling',
+                null,
+                'Invalid or tampered token in polling',
+                ['ip' => request()->ip()]
+            );
             return response()->json(['error' => 'Invalid or expired token'], 401);
         }
 
         $testUserId = $payload['test_user_id'];
 
-        // ✅ Query Redis directly (or cache, no session lock)
+        // ✅ P1: Reduced cache TTL from 5min to 30s to prevent stale lock information
+        // If admin locks exam, client knows within 30 seconds instead of up to 5 minutes
         $status = Cache::remember(
             "exam_status:{$testUserId}",
-            300,  // 5-minute cache
+            30,  // ✅ Reduced from 300s to 30s for faster update propagation
             function () use ($testUserId) {
                 $testUser = TestUser::find($testUserId);
 

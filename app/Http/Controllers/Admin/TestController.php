@@ -56,7 +56,8 @@ class TestController extends Controller
                     ->join('users', 'test_users.user_id', '=', 'users.id')
                     ->leftJoin('results', 'test_users.id', '=', 'results.test_user_id')
                     ->where('test_users.test_id', $currentTestId)
-                    ->orderByDesc('test_users.updated_at');
+                    ->orderByDesc('test_users.updated_at')
+                    ->limit(100); // ✅ OPTIMIZED: Limit to 100 to prevent 502 errors
 
                 // Aggregate answered count per test_user
                 $answeredCountsRaw = DB::table('user_answers')
@@ -110,7 +111,7 @@ class TestController extends Controller
 
         if ($section === 'results') {
             $selectedTestId = $this->resolveResultsTestId($request);
-            $perPage = 100;
+            $perPage = 50; // ✅ Reduced from 100 to reduce response size & prevent 502 errors
 
             $testUsers = $this->buildResultsQuery($request, $selectedTestId)
                 ->paginate($perPage)
@@ -120,12 +121,12 @@ class TestController extends Controller
                     'per_page' => $perPage,
                 ]));
 
-            // ✅ Add realtime score for each test user
-            $testUsers->getCollection()->transform(function ($testUser) {
-                // Calculate realtime score using ScoringService
-                $testUser->realtime_score = ScoringService::calculate($testUser);
-                return $testUser;
-            });
+            // ✅ OPTIMIZED: Skip expensive ScoringService calculation per item
+            // Frontend can calculate realtime score on demand or use cached total_score
+            // $testUsers->getCollection()->transform(function ($testUser) {
+            //     $testUser->realtime_score = ScoringService::calculate($testUser);
+            //     return $testUser;
+            // });
 
             return inertia('Admin/Tests/Index', [
                 'testUsers' => $testUsers,
@@ -142,30 +143,27 @@ class TestController extends Controller
         }
 
         if ($section === 'statistic') {
-            $statsTestsQuery = Test::query()->select([
-                'id',
-                'title',
-                'duration',
-                'start_time',
-                'end_time',
-                'is_active',
-                'created_at',
-            ])->latest('created_at');
+            // ✅ OPTIMIZED: Use join instead of whereHas to avoid N+1 queries
+            $statsTestsQuery = Test::query()
+                ->select('tests.id', 'tests.title', 'tests.duration', 'tests.start_time', 'tests.end_time', 'tests.is_active', 'tests.created_at')
+                ->distinct()
+                ->latest('tests.created_at');
 
             if ($request->search) {
-                $statsTestsQuery->where('title', 'like', "%{$request->search}%");
+                $statsTestsQuery->where('tests.title', 'like', "%{$request->search}%");
             }
 
             if ($request->module_id) {
-                $statsTestsQuery->whereHas('topics', function ($q) use ($request) {
-                    $q->where('module_id', $request->module_id);
-                });
+                $statsTestsQuery
+                    ->join('test_topics', 'tests.id', '=', 'test_topics.test_id')
+                    ->join('topics', 'test_topics.topic_id', '=', 'topics.id')
+                    ->where('topics.module_id', $request->module_id);
             }
 
             if ($request->group_id) {
-                $statsTestsQuery->whereHas('groups', function ($q) use ($request) {
-                    $q->where('groups.id', $request->group_id);
-                });
+                $statsTestsQuery
+                    ->join('group_test', 'tests.id', '=', 'group_test.test_id')
+                    ->where('group_test.group_id', $request->group_id);
             }
 
             return inertia('Admin/Tests/Index', [
