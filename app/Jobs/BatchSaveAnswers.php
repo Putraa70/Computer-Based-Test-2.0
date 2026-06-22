@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\UserAnswer;
 use App\Models\TestUser;
+use App\Services\CBT\AnswerService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -36,26 +36,10 @@ class BatchSaveAnswers implements ShouldQueue
     public function handle(): void
     {
         try {
-            // Prepare data for bulk upsert
-            $data = collect($this->answers)->map(function ($answer, $qId) {
-                return [
-                    'test_user_id' => $this->testUserId,
-                    'question_id' => (int) $qId,
-                    'answer_id' => $answer['answerId'] ?? null,
-                    'answer_text' => $answer['answerText'] ?? null,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            })->toArray();
-
             // ✅ Batch insert with ON DUPLICATE KEY UPDATE
             // This performs a single INSERT...ON DUPLICATE KEY UPDATE statement
             // instead of individual inserts, significantly reducing lock contention
-            UserAnswer::upsert(
-                $data,
-                ['test_user_id', 'question_id'],  // Keys to check for duplicates
-                ['answer_id', 'answer_text', 'updated_at']  // Columns to update
-            );
+            AnswerService::upsertBatch($this->testUserId, $this->answers);
 
             // Update last_activity_at ONCE per batch instead of per answer
             TestUser::where('id', $this->testUserId)

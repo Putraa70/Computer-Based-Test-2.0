@@ -36,10 +36,13 @@ export default function Analitics({ tests = [], currentTestId, participants = []
   };
 
   // Helper Warna Status (Sama seperti sebelumnya)
-  const getStatusBadge = (status) => {
+    const getStatusBadge = (status, finishedAt) => {
+        if (finishedAt || status === 'submitted' || status === 'expired') {
+                return <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">Selesai</span>;
+        }
+
     switch(status) {
         case 'ongoing': return <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full animate-pulse">Mengerjakan</span>;
-        case 'submitted': return <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">Selesai</span>;
         default: return <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full">Belum Mulai</span>;
     }
   };
@@ -147,7 +150,7 @@ export default function Analitics({ tests = [], currentTestId, participants = []
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-center">{getStatusBadge(p.status)}</td>
+                                    <td className="px-6 py-4 text-center">{getStatusBadge(p.status, p.finished_at)}</td>
                                     <td className="px-6 py-4 text-center">
                                         <span className="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded text-xs">
                                             {p.answered_count} Jawab
@@ -159,11 +162,11 @@ export default function Analitics({ tests = [], currentTestId, participants = []
                                     <td className="px-6 py-4 text-center text-xs text-gray-500 font-mono">
                                         {p.finished_at ? new Date(p.finished_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) : <span className="text-gray-300">-</span>}
                                     </td>
-                                    <td className="px-6 py-4 text-center">
-                                        <div className={`inline-flex items-center gap-1 font-bold px-3 py-1 rounded-lg border ${p.score >= 70 ? 'bg-green-50 text-green-600 border-green-200' : 'bg-red-50 text-red-600 border-red-200'}`}>
-                                            {p.score ?? 0}
-                                        </div>
-                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <div className={`inline-flex items-center gap-1 font-bold px-3 py-1 rounded-lg border ${Number(p.score ?? 0) >= 70 ? 'bg-green-50 text-green-600 border-green-200' : 'bg-red-50 text-red-600 border-red-200'}`}>
+                                                            {(Number(p.score ?? 0)).toFixed(2)}
+                                                        </div>
+                                                    </td>
                                     <td className="px-6 py-4 text-right">
                                         <Link href={route('admin.analytics.show', p.id)} className="inline-flex items-center gap-2 bg-white border border-gray-300 hover:border-blue-500 hover:text-blue-600 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm">
                                             <Eye className="w-3.5 h-3.5" /> Detail

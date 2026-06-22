@@ -8,7 +8,6 @@ use App\Http\Requests\Peserta\BatchAnswerRequest;
 use App\Jobs\BatchSaveAnswers;
 use App\Models\Test;
 use App\Models\TestUser;
-use App\Models\UserAnswer;
 use App\Services\CBT\AnswerService;
 use App\Services\CBT\ExamStateService;
 use App\Services\CBT\ExamTimeService;
@@ -24,9 +23,35 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Contracts\Cache\LockTimeoutException;
+use Illuminate\Database\QueryException;
 
 class TestController extends Controller
 {
+    private function examConfigVersion(TestUser $testUser): string
+    {
+        $testUser->loadMissing('test');
+
+        $topicConfig = DB::table('test_topics')
+            ->where('test_id', $testUser->test_id)
+            ->orderBy('topic_id')
+            ->get([
+                'topic_id',
+                'total_questions',
+                'question_type',
+                'random_questions',
+                'random_answers',
+                'max_answers',
+                'answer_mode',
+                'updated_at',
+            ]);
+
+        return md5(json_encode([
+            'test_updated_at' => $testUser->test?->updated_at?->toDateTimeString(),
+            'topics' => $topicConfig,
+        ]));
+    }
+
     private function touchActivityIfNeeded(TestUser $testUser): void
     {
         $now = now();
@@ -136,6 +161,7 @@ class TestController extends Controller
     public function start(Test $test)
     {
         $user = Auth::user();
+        $startedAt = microtime(true);
 
         if (now() > $test->end_time) {
             return redirect()->route('peserta.tests.index')->withErrors('Waktu habis.');
@@ -170,7 +196,52 @@ class TestController extends Controller
                 ->withErrors(['error' => 'Akun ujian Anda dikunci: ' . ($testUser->lock_reason ?? 'Hubungi pengawas.')]);
         }
 
-        $questions = QuestionGeneratorService::getQuestions($test, $user->id);
+        $test->loadMissing('topics');
+        $questions = collect();
+        $questionError = null;
+
+        for ($attempt = 1; $attempt <= 2; $attempt++) {
+            try {
+                $questions = QuestionGeneratorService::getQuestions($test, $user->id);
+                $questionError = null;
+                break;
+            } catch (\Throwable $e) {
+                $questionError = $e;
+
+                if ($attempt === 1) {
+                    usleep(50000);
+                }
+            }
+        }
+
+        if ($questionError) {
+            Log::warning('exam.start.question_resolution_failed', [
+                'test_id' => $test->id,
+                'user_id' => $user->id,
+                'error' => $questionError->getMessage(),
+            ]);
+        }
+
+        $configuredTotalQuestions = (int) $test->topics->sum(function ($topic) {
+            return (int) ($topic->pivot->total_questions ?? 0);
+        });
+        $totalQuestions = $questions->count() > 0
+            ? $questions->count()
+            : $configuredTotalQuestions;
+
+        if ($totalQuestions <= 0) {
+            $totalQuestions = (int) $test->topics
+                ->flatMap(fn ($topic) => $topic->questions)
+                ->where('is_active', true)
+                ->count();
+        }
+
+        $answeredCount = $testUser->answers()
+            ->where(function ($query) {
+                $query->whereNotNull('answer_id')
+                    ->orWhereNotNull('answer_text');
+            })
+            ->count();
 
         $existingAnswers = $testUser->answers()
             ->select('question_id', 'answer_id', 'answer_text')
@@ -187,16 +258,30 @@ class TestController extends Controller
         // ✅ P0: Use secure encrypted token instead of predictable base64 token
         $examToken = SecureExamToken::generate($testUser->id);
 
-        return inertia('Peserta/Tests/Start', [
+        $response = inertia('Peserta/Tests/Start', [
             'test' => $test,
             'testUserId' => $testUser->id,
             'questions' => $questions,
+            'totalQuestions' => $totalQuestions,
+            'answeredCount' => $answeredCount,
             'remainingSeconds' => ExamTimeService::remainingSeconds($testUser),
             'existingAnswers' => $existingAnswers,
             'currentUser' => $user,
             'lastIndex' => $testUser->current_index ?? 0,
             'examToken' => $examToken,  // ✅ Secure encrypted token
+            'examConfigVersion' => $this->examConfigVersion($testUser),
         ]);
+
+        Log::info('exam.start.completed', [
+            'test_id' => $test->id,
+            'user_id' => $user->id,
+            'test_user_id' => $testUser->id,
+            'question_count' => $questions->count(),
+            'total_questions' => $totalQuestions,
+            'duration_ms' => (int) round((microtime(true) - $startedAt) * 1000),
+        ]);
+
+        return $response;
     }
 
     public function updateProgress(Request $request, TestUser $testUser)
@@ -343,23 +428,7 @@ class TestController extends Controller
             // ✅ PERBAIKAN KRITIS #1: Synchronous upsert with transaction
             // Prevents data loss from queue failures
             DB::transaction(function () use ($testUser, $answers) {
-                $data = collect($answers)->map(function ($answer, $qId) use ($testUser) {
-                    return [
-                        'test_user_id' => $testUser->id,
-                        'question_id' => (int) $qId,
-                        'answer_id' => $answer['answerId'] ?? null,
-                        'answer_text' => $answer['answerText'] ?? null,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                })->toArray();
-
-                UserAnswer::upsert(
-                    $data,
-                    ['test_user_id', 'question_id'],
-                    ['answer_id', 'answer_text', 'updated_at']
-                );
-
+                AnswerService::upsertBatch($testUser->id, $answers);
                 $testUser->update(['last_activity_at' => now()]);
             });
 
@@ -409,54 +478,158 @@ class TestController extends Controller
             return abort(403, $e->getMessage());
         }
 
-        // ✅ PERBAIKAN KRITIS P0: Pessimistic locking untuk prevent race condition + time check inside lock
-        DB::transaction(function () use ($testUser) {
-            // ✅ Acquire lock FIRST, then check time (prevents race with admin clock adjustments)
-            $testUser = TestUser::where('id', $testUser->id)
-                ->lockForUpdate()
-                ->first();
+        $lockKey = "cbt:submit:test_user:{$testUser->id}";
+        $lockTtlSeconds = 20;
+        $lockWaitSeconds = 5;
 
-            // ✅ Now check if exam time is still valid while holding lock
-            if (!ExamTimeService::isStillRunning($testUser)) {
-                throw new \Exception('Exam time has expired', 403);
+        try {
+            // Lapisan lock cache mencegah autosubmit + manual submit overlap lintas request.
+            $lock = Cache::lock($lockKey, $lockTtlSeconds);
+
+            $result = $lock->block($lockWaitSeconds, function () use ($testUser) {
+                // Pessimistic lock di DB menjaga konsistensi row walau lock cache tidak aktif.
+                return DB::transaction(function () use ($testUser) {
+                    $lockedTestUser = TestUser::where('id', $testUser->id)
+                        ->lockForUpdate()
+                        ->firstOrFail();
+
+                    if ($lockedTestUser->is_locked) {
+                        throw new \Exception('Exam is locked', 403);
+                    }
+
+                    if ($lockedTestUser->status === 'expired' || !ExamTimeService::isStillRunning($lockedTestUser)) {
+                        throw new \RuntimeException('Exam time has expired');
+                    }
+
+                    // Idempotent: request submit ulang tidak mengulang insert dan dianggap sukses.
+                    if ($lockedTestUser->status === 'submitted') {
+                        $existingResult = $lockedTestUser->result()->first();
+
+                        Log::warning('exam.submit.duplicate_detected', [
+                            'test_user_id' => $lockedTestUser->id,
+                            'result_exists' => (bool) $existingResult,
+                        ]);
+
+                        if (!$existingResult) {
+                            $totalScore = ScoringService::calculate($lockedTestUser);
+                            $test = $lockedTestUser->test;
+                            $resultStatus = $test->results_to_users ? 'validated' : 'pending';
+
+                            $lockedTestUser->result()->updateOrCreate(
+                                ['test_user_id' => $lockedTestUser->id],
+                                [
+                                    'total_score' => $totalScore,
+                                    'status' => $resultStatus,
+                                    'validated_at' => $resultStatus === 'validated' ? now() : null,
+                                    'validated_by' => $resultStatus === 'validated' ? auth()->id() : null,
+                                ]
+                            );
+
+                            Log::warning('exam.submit.result_recovered_after_duplicate', [
+                                'test_user_id' => $lockedTestUser->id,
+                                'total_score' => $totalScore,
+                                'status' => $resultStatus,
+                            ]);
+                        } else {
+                            Log::info('exam.submit.existing_result_reused', [
+                                'test_user_id' => $lockedTestUser->id,
+                                'result_id' => $existingResult->id,
+                            ]);
+                        }
+
+                        return [
+                            'already_submitted' => true,
+                        ];
+                    }
+
+                    $lockedTestUser->update([
+                        'status' => 'submitted',
+                        'finished_at' => now(),
+                    ]);
+
+                    $totalScore = ScoringService::calculate($lockedTestUser);
+                    $test = $lockedTestUser->test;
+                    $resultStatus = $test->results_to_users ? 'validated' : 'pending';
+
+                    $result = $lockedTestUser->result()->updateOrCreate(
+                        ['test_user_id' => $lockedTestUser->id],
+                        [
+                            'total_score' => $totalScore,
+                            'status' => $resultStatus,
+                            'validated_at' => $resultStatus === 'validated' ? now() : null,
+                            'validated_by' => $resultStatus === 'validated' ? auth()->id() : null,
+                        ]
+                    );
+
+                    Log::info('exam.submit.race_condition_prevented', [
+                        'test_user_id' => $lockedTestUser->id,
+                        'result_id' => $result->id,
+                        'total_score' => $totalScore,
+                        'status' => $resultStatus,
+                    ]);
+
+                    AuditService::logExamEvent('submit', $lockedTestUser->id, [
+                        'total_score' => $totalScore,
+                        'status' => $resultStatus,
+                    ]);
+
+                    QuestionGeneratorService::clear(
+                        $lockedTestUser->test_id,
+                        $lockedTestUser->user_id
+                    );
+
+                    return [
+                        'already_submitted' => false,
+                    ];
+                }, attempts: 5);
+            });
+
+            if ($result['already_submitted'] ?? false) {
+                return redirect()
+                    ->route('peserta.dashboard')
+                    ->with('success', 'Ujian sudah selesai. Silakan kembali ke dashboard.');
             }
-
-            if ($testUser->status !== 'ongoing') {
-                throw new \Exception('Exam not in ongoing status', 403);
-            }
-
-            if ($testUser->is_locked) {
-                throw new \Exception('Exam is locked', 403);
-            }
-
-            // ✅ Update status dengan lock held
-            $testUser->update([
-                'status' => 'submitted',
-                'finished_at' => now()
+        } catch (LockTimeoutException $e) {
+            Log::warning('exam.submit.lock_timeout_duplicate_submit', [
+                'test_user_id' => $testUser->id,
+                'lock_key' => $lockKey,
             ]);
 
-            // ✅ Score calculation tetap under lock
-            $totalScore = ScoringService::calculate($testUser);
-            $test = $testUser->test;
-            $status = $test->results_to_users ? 'validated' : 'pending';
+            return redirect()
+                ->route('peserta.dashboard')
+                ->with('success', 'Submit sedang diproses. Hasil akan tetap tersimpan.');
+        } catch (QueryException $e) {
+            // Proteksi terakhir jika ada race dari jalur lain di luar lock.
+            if (
+                (string) $e->getCode() === '23000' &&
+                str_contains(strtolower($e->getMessage()), 'results_test_user_id_unique')
+            ) {
+                Log::warning('exam.submit.duplicate_key_recovered', [
+                    'test_user_id' => $testUser->id,
+                    'sql_state' => $e->getCode(),
+                    'error' => $e->getMessage(),
+                ]);
 
-            $testUser->result()->create([
-                'total_score'  => $totalScore,
-                'status'       => $status,
-                'validated_at' => $status === 'validated' ? now() : null,
-                'validated_by' => $status === 'validated' ? auth()->id() : null,
-            ]);
+                return redirect()
+                    ->route('peserta.dashboard')
+                    ->with('success', 'Ujian sudah tersubmit. Hasil yang ada digunakan.');
+            }
 
-            AuditService::logExamEvent('submit', $testUser->id, [
-                'total_score' => $totalScore,
-                'status' => $status,
-            ]);
+            throw $e;
+        } catch (\Throwable $e) {
+            $message = strtolower($e->getMessage());
 
-            QuestionGeneratorService::clear(
-                $testUser->test_id,
-                $testUser->user_id
-            );
-        }, attempts: 5);  // ✅ Retry on deadlock (up to 5 times)
+            if (
+                str_contains($message, 'exam already completed') ||
+                str_contains($message, 'exam time has expired')
+            ) {
+                return redirect()
+                    ->route('peserta.dashboard')
+                    ->with('success', 'Ujian sudah selesai. Silakan kembali ke dashboard.');
+            }
+
+            throw $e;
+        }
 
         return redirect()
             ->route('peserta.dashboard')
@@ -474,6 +647,7 @@ class TestController extends Controller
             'status' => $testUser->is_locked ? 'locked' : 'ongoing',
             'remaining_seconds' => max(0, $remaining),
             'message' => $testUser->lock_reason,
+            'exam_config_version' => $this->examConfigVersion($testUser),
         ]);
     }
 
@@ -525,6 +699,7 @@ class TestController extends Controller
                     'lock_reason' => $testUser->lock_reason,
                     'extra_time' => $testUser->extra_time,
                     'status' => $testUser->status,
+                    'exam_config_version' => $this->examConfigVersion($testUser),
                 ];
             }
         );
@@ -540,6 +715,7 @@ class TestController extends Controller
             'status' => $status['is_locked'] ? 'locked' : 'ongoing',
             'remaining_seconds' => max(0, $remaining),
             'message' => $status['lock_reason'],
+            'exam_config_version' => $status['exam_config_version'],
         ]);
     }
 }

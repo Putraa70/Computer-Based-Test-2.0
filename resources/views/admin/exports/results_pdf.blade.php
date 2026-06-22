@@ -166,7 +166,7 @@
                     @endif
                 </td>
                 <td class="text-center score">
-                    {{ number_format($item->custom_score ?? ($item->result->total_score ?? 0), 2) }}
+                    {{ number_format((float) ($item->final_score ?? $item->custom_score ?? ($item->result->total_score ?? 0)), 2, '.', '') }}
                 </td>
             </tr>
             @empty

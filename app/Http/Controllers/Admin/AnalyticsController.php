@@ -25,13 +25,19 @@ class AnalyticsController extends Controller
             $testObj = Test::find($currentTestId);
             $totalQuestions = $testObj ? $testObj->questions->count() : 0;
 
-            $participants = TestUser::with('user')
+            $participantsQuery = TestUser::with('user')
+                ->select('test_users.*')
                 ->where('test_id', $currentTestId)
-                ->latest('updated_at')
+                ->limit(100);
+
+            ScoringService::selectFinalScore($participantsQuery);
+            ScoringService::orderByFinalScore($participantsQuery);
+
+            $participants = $participantsQuery
                 ->get()
                 ->map(function ($p) use ($totalQuestions) {
                     // ✅ Use ScoringService for consistent realtime calculation
-                    $score = ScoringService::calculate($p);
+                    $score = (float) ($p->final_score ?? ScoringService::calculate($p));
 
                     return [
                         'id' => $p->id,

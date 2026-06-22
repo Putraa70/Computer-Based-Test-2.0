@@ -4,6 +4,7 @@ namespace App\Http\Requests\Peserta;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class BatchAnswerRequest extends FormRequest
 {
@@ -74,7 +75,36 @@ class BatchAnswerRequest extends FormRequest
                     );
                 }
             }
+
+            $answerIds = collect($answers)
+                ->pluck('answerId')
+                ->filter()
+                ->map(fn($answerId) => (int) $answerId)
+                ->unique()
+                ->values();
+
+            if ($answerIds->isEmpty()) {
+                return;
+            }
+
+            $answerQuestionMap = DB::table('answers')
+                ->whereIn('id', $answerIds)
+                ->pluck('question_id', 'id');
+
+            foreach ($answers as $questionId => $answer) {
+                $answerId = $answer['answerId'] ?? null;
+
+                if (!$answerId) {
+                    continue;
+                }
+
+                if ((int) ($answerQuestionMap[(int) $answerId] ?? 0) !== (int) $questionId) {
+                    $validator->errors()->add(
+                        'answers',
+                        "Answer ID $answerId does not belong to question ID $questionId."
+                    );
+                }
+            }
         });
     }
 }
-

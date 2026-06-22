@@ -53,8 +53,8 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds, curren
     const userAnswers = testUser.answers || [];
     const totalQuestions = testUser.test?.questions?.length || 0;
     const answeredCount = userAnswers.filter(a => a.answer_id || a.answer_text).length;
-    const correctCount = userAnswers.filter(a => a.is_correct === 1).length;
-    const wrongCount = userAnswers.filter(a => a.is_correct === 0 && (a.answer_id || a.answer_text)).length;
+    const correctCount = userAnswers.filter(a => Number(a.is_correct) === 1).length;
+    const wrongCount = userAnswers.filter(a => Number(a.is_correct) === 0 && (a.answer_id || a.answer_text)).length;
     const unansweredCount = totalQuestions - answeredCount;
 
     const formatTime = (seconds) => {
@@ -167,7 +167,7 @@ export default function ShowAnalytics({ testUser, serverRemainingSeconds, curren
                     </div>
                     <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-2xl shadow-md border-2 border-purple-200 flex flex-col items-center justify-center">
                         <p className="text-xs text-purple-600 font-bold uppercase tracking-wider mb-2">Nilai Realtime</p>
-                        <p className="text-4xl font-bold text-purple-600">{score}</p>
+                        <p className="text-4xl font-bold text-purple-600">{(Number(score) || 0).toFixed(2)}</p>
                     </div>
                 </div>
 

@@ -50,26 +50,32 @@ class StatisticsController extends Controller
     {
         $request->validate([
             'answer_id' => 'required|exists:user_answers,id',
-            'is_correct' => 'required|boolean'
         ]);
 
-        // 1. Ambil data jawaban & soal terkait
+        // 1. Fetch the submitted answer and related question
         $answerId = $request->answer_id;
         $userAnswer = DB::table('user_answers')->where('id', $answerId)->first();
 
-        if (!$userAnswer) return back()->withErrors('Data tidak ditemukan');
+        if (!$userAnswer) {
+            return back()->withErrors('Data tidak ditemukan');
+        }
 
         $question = Question::find($userAnswer->question_id);
+        $correctAnswer = DB::table('answers')
+            ->where('question_id', $question->id)
+            ->where('is_correct', true)
+            ->first();
 
-        // 2. Tentukan Skor (Jika Benar = Full Score, Jika Salah = 0)
-        $score = $request->is_correct ? $question->score : 0;
+        // 2. Determine correctness dynamically
+        $isCorrect = $correctAnswer && $correctAnswer->id === $userAnswer->answer_id;
+        $score = $isCorrect ? $question->score : 0;
 
-        // 3. Update Database
+        // 3. Update the database
         DB::table('user_answers')
             ->where('id', $answerId)
             ->update([
-                'is_correct' => $request->is_correct,
-                'score' => $score
+                'is_correct' => $isCorrect,
+                'score' => $score,
             ]);
 
         $testUser = DB::table('test_users')

@@ -3,7 +3,7 @@
 namespace App\Services\Statistics;
 
 use App\Models\TestUser;
-use Illuminate\Support\Facades\DB;
+use App\Services\CBT\ScoringService;
 
 class StudentStatisticsService
 {
@@ -18,33 +18,37 @@ class StudentStatisticsService
 
         // Hitung Statistik Dasar
         $totalTests = $history->count();
-        $scores = $history->pluck('result.total_score')->filter(); // Ambil array nilai
+        $scores = $history->map(fn (TestUser $testUser) => ScoringService::calculate($testUser))->values();
+
+        $averageScore = $totalTests > 0 ? round((float) $scores->avg(), 2) : 0.0;
 
         $stats = [
             'total_tests' => $totalTests,
-            'average_score' => $totalTests > 0 ? round($scores->avg(), 1) : 0,
-            'highest_score' => $totalTests > 0 ? $scores->max() : 0,
-            'lowest_score' => $totalTests > 0 ? $scores->min() : 0,
-            'passed_tests' => $history->where('result.total_score', '>=', 76)->count(),
+            'average_score' => $averageScore,
+            'highest_score' => $totalTests > 0 ? (float) $scores->max() : 0,
+            'lowest_score' => $totalTests > 0 ? (float) $scores->min() : 0,
+            'passed_tests' => $scores->filter(fn ($score) => $score >= 76)->count(),
         ];
 
         // Data untuk Grafik (5 Ujian Terakhir)
         $chartData = $history->take(10)->reverse()->values()->map(function ($item) {
             return [
                 'test_title' => $item->test->title,
-                'score' => $item->result->total_score ?? 0,
+                'score' => ScoringService::calculate($item),
                 'date' => $item->finished_at->format('d M'),
             ];
         });
 
         // Data Tabel Histori
         $historyData = $history->map(function ($item) {
+            $score = ScoringService::calculate($item);
+
             return [
                 'id' => $item->id,
                 'test_title' => $item->test->title,
                 'finished_at' => $item->finished_at->format('d F Y H:i'),
-                'score' => $item->result->total_score ?? 0,
-                'status' => $item->result->total_score >= 76 ? 'Lulus' : 'Tidak Lulus',
+                'score' => $score,
+                'status' => $score >= 76 ? 'Lulus' : 'Tidak Lulus',
             ];
         });
 

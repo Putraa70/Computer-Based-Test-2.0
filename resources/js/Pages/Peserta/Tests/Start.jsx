@@ -29,6 +29,7 @@ export default function Start({
     lastIndex,
     currentUser,
     examToken,
+    examConfigVersion,
 }) {
     const { auth } = usePage().props;
 
@@ -51,6 +52,7 @@ export default function Start({
     const batchQueueRef = useRef({});
     const batchFlushTimerRef = useRef(null);
     const batchSendingRef = useRef(false);
+    const examConfigVersionRef = useRef(examConfigVersion);
 
     // UI State
     const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -219,6 +221,17 @@ export default function Start({
                           },
                 });
                 const data = response.data;
+
+                if (
+                    data.exam_config_version &&
+                    examConfigVersionRef.current &&
+                    data.exam_config_version !== examConfigVersionRef.current
+                ) {
+                    examConfigVersionRef.current = data.exam_config_version;
+                    await flushBatchAnswers();
+                    window.location.reload();
+                    return;
+                }
 
                 // --- HANDLE LOCKED ---
                 if (data.status === "locked") {

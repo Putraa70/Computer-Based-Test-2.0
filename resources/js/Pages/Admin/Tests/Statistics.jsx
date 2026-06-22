@@ -186,7 +186,7 @@ export default function Statistics({ test, summary }) {
                                                 <div className="flex flex-wrap gap-x-8 gap-y-2 text-xs font-bold tracking-wide">
                                                     <div className="flex items-center gap-2 text-gray-600">
                                                         <HelpCircle className="w-4 h-4 text-gray-400" />
-                                                        <span>Tampil: <span className="text-gray-900 text-sm">{q.stats.recurrence}</span></span>
+                                                        <span>Mahasiswa: <span className="text-gray-900 text-sm">{q.stats.recurrence}</span></span>
                                                     </div>
                                                     <div className="w-px h-5 bg-amber-200 mx-2 hidden md:block"></div>
                                                     <div className="flex items-center gap-2 text-emerald-700">

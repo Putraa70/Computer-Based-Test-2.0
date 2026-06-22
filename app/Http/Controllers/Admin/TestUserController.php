@@ -206,9 +206,9 @@ class TestUserController extends Controller
                 'test:id,title',
                 'result:id,test_user_id,total_score'
             ])
+                ->select('test_users.*')
                 ->join('users', 'test_users.user_id', '=', 'users.id')
                 ->leftJoin('results', 'test_users.id', '=', 'results.test_user_id')
-                ->select('test_users.*')
                 ->limit(500); // ✅ Limit to prevent memory exhaustion
 
             if ($testId) $query->where('test_users.test_id', $testId);
@@ -219,44 +219,30 @@ class TestUserController extends Controller
                 });
             }
 
+            ScoringService::selectFinalScore($query);
+
+            switch ($sort) {
+                case 'npm_asc':
+                    $query->orderBy('users.npm', 'asc');
+                    break;
+                case 'score_desc':
+                    ScoringService::orderByFinalScore($query, 'desc');
+                    break;
+                case 'score_asc':
+                    ScoringService::orderByFinalScore($query, 'asc');
+                    break;
+                default:
+                    $query->orderByDesc('started_at');
+                    break;
+            }
+
             // Fetch data
             $data = $query->get();
 
-            // ✅ Use ScoringService for consistent calculation (lightweight)
+            // Keep backward compatibility with the PDF blade that reads custom_score.
             foreach ($data as $item) {
-                // Calculate realtime score
-                $realtimeScore = ScoringService::calculate($item);
-
-                // Use realtime for ongoing, saved result for submitted
-                if ($item->status === 'ongoing' || $item->status === 'not_started') {
-                    $item->custom_score = $realtimeScore;
-                } else {
-                    $item->custom_score = $item->result->total_score ?? 0;
-                }
-
-                $item->custom_score_raw = (float) $item->custom_score;
+                $item->custom_score = (float) ($item->final_score ?? ScoringService::calculate($item));
             }
-
-            // Sort data sesuai parameter setelah custom score dihitung
-            switch ($sort) {
-                case 'npm_asc':
-                    $data = $data->sortBy(function ($item) {
-                        return $item->user->npm ?? '';
-                    });
-                    break;
-                case 'score_desc':
-                    $data = $data->sortByDesc('custom_score_raw');
-                    break;
-                case 'score_asc':
-                    $data = $data->sortBy('custom_score_raw');
-                    break;
-                default:
-                    $data = $data->sortByDesc('started_at');
-                    break;
-            }
-
-            // Reset keys setelah sorting
-            $data = $data->values();
 
             // ✅ Increase memory limit for PDF generation
             ini_set('memory_limit', '256M');

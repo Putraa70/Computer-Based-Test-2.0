@@ -8,14 +8,42 @@ import {
 
 export default function Results({ testUsers = [], test, testUsersStats = null, resultsFilters = {}, resultsTestOptions = [] }) {
   const [filterTest, setFilterTest] = useState(resultsFilters?.test_id ? parseInt(resultsFilters.test_id) : null);
-  const [searchUser, setSearchUser] = useState("");
-  const [sortBy, setSortBy] = useState("started_at");
+  const [searchUser, setSearchUser] = useState(resultsFilters?.search || "");
+  const [sortBy, setSortBy] = useState(resultsFilters?.sort || "started_at");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const refreshInFlight = useRef(false);
+  const hasMounted = useRef(false);
 
   useEffect(() => {
-    setFilterTest(resultsFilters?.test_id ? parseInt(resultsFilters.test_id) : null);
-  }, [resultsFilters?.test_id]);
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      const params = {
+        section: 'results',
+        test_id: filterTest,
+        search: searchUser,
+        sort: sortBy,
+        per_page: resultsFilters?.per_page || 50,
+      };
+
+      Object.keys(params).forEach((key) => {
+        if (params[key] === null || params[key] === undefined || params[key] === "") {
+          delete params[key];
+        }
+      });
+
+      router.get(route('admin.tests.index'), params, {
+        preserveScroll: true,
+        preserveState: false,
+        replace: true,
+      });
+    }, 250);
+
+    return () => clearTimeout(timeoutId);
+  }, [filterTest, searchUser, sortBy]);
 
   const withResultsSection = (url) => {
     if (!url) return url;
@@ -61,51 +89,15 @@ export default function Results({ testUsers = [], test, testUsersStats = null, r
   }, [lockModal, addTimeModal]);
 
   const calculateScore = (testUser) => {
-    // ✅ Use realtime_score for ongoing tests, result.total_score for submitted tests
-    let rawScore = 0;
-
-    if (testUser.status === 'ongoing' || testUser.status === 'not_started') {
-      // Use realtime calculated score
-      rawScore = testUser.realtime_score ?? 0;
-    } else {
-      // Use saved result score
-      rawScore = testUser.result?.total_score ?? 0;
-    }
+    const rawScore = testUser.final_score ?? testUser.realtime_score ?? testUser.result?.total_score ?? 0;
 
     return Number(rawScore).toFixed(2);
   };
 
-  // Filter Logic (Pakai dataList)
-  const filteredData = useMemo(() => {
-    let data = dataList; //  Ganti testUsers jadi dataList
-    if (searchUser) {
-      const lowerSearch = searchUser.toLowerCase();
-      data = data.filter((tu) =>
-          tu.user?.name?.toLowerCase().includes(lowerSearch) ||
-          tu.user?.email?.toLowerCase().includes(lowerSearch) ||
-          tu.user?.npm?.toLowerCase().includes(lowerSearch)
-      );
-    }
-    data = [...data].sort((a, b) => {
-      const scoreA = parseFloat(calculateScore(a));
-      const scoreB = parseFloat(calculateScore(b));
-      if (sortBy === "started_at") return new Date(b.started_at) - new Date(a.started_at);
-      else if (sortBy === "score_desc") return scoreB - scoreA;
-      else if (sortBy === "score_asc") return scoreA - scoreB;
-      else if (sortBy === "npm_asc") {
-        const npmA = a.user?.npm || "";
-        const npmB = b.user?.npm || "";
-        return npmA.localeCompare(npmB, undefined, { numeric: true });
-      }
-      return 0;
-    });
-    return data;
-  }, [dataList, filterTest, searchUser, sortBy]);
+  const filteredData = dataList;
 
-  // STATS: Use backend stats if available and no filters applied, otherwise calculate from filtered data
   const stats = useMemo(() => {
-    // Backend stats always represent server-side filtered dataset (test_id)
-    if (!searchUser && testUsersStats) {
+    if (testUsersStats) {
       return {
         total: testUsersStats.total,
         completed: testUsersStats.completed,
@@ -114,7 +106,6 @@ export default function Results({ testUsers = [], test, testUsersStats = null, r
       };
     }
 
-    // If filters applied, calculate from filtered data (client-side)
     const total = filteredData.length;
     const completed = filteredData.filter((tu) => tu.finished_at).length;
     const pending = total - completed;
@@ -122,7 +113,7 @@ export default function Results({ testUsers = [], test, testUsersStats = null, r
     if (total > 0) totalScore = filteredData.reduce((sum, tu) => sum + parseFloat(calculateScore(tu)), 0);
     const avgScore = total > 0 ? (totalScore / total).toFixed(2) : "0.00";
     return { total, completed, pending, avgScore };
-  }, [filteredData, filterTest, searchUser, testUsersStats]);
+  }, [filteredData, testUsersStats]);
 
   const formatDateTime = (dateStr) => {
     if (!dateStr) return "-";
@@ -230,15 +221,6 @@ export default function Results({ testUsers = [], test, testUsersStats = null, r
   const handleFilterTestChange = (nextValue) => {
     const nextTestId = nextValue ? parseInt(nextValue) : null;
     setFilterTest(nextTestId);
-    router.get(route('admin.tests.index'), {
-      section: 'results',
-      test_id: nextTestId,
-      per_page: 100,
-    }, {
-      preserveScroll: true,
-      preserveState: false,
-      replace: true,
-    });
   };
 
   return (

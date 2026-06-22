@@ -3,6 +3,8 @@
 namespace App\Services\Statistics;
 
 use App\Models\Question;
+use App\Models\TestUser;
+use App\Services\CBT\ScoringService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -33,7 +35,7 @@ class TestStatisticsService
             return self::getEmptyStats();
         }
 
-        $questionIds = $questionIds->take(100)->values();
+        $questionIds = $questionIds->values(); 
 
         $participantsQuery = DB::table('test_users')
             ->where('test_users.test_id', $testId)
@@ -45,22 +47,34 @@ class TestStatisticsService
             return self::getEmptyStats();
         }
 
-        $scoresData = DB::table('test_users')
-            ->leftJoin('results', 'test_users.id', '=', 'results.test_user_id')
-            ->where('test_users.test_id', $testId)
-            ->where('test_users.status', 'submitted')
-            ->selectRaw('COALESCE(results.total_score, 0) as total_score')
-            ->pluck('total_score')
-            ->map(fn($score) => (float) $score);
+        $scoresData = TestUser::with('test')
+            ->where('test_id', $testId)
+            ->where('status', 'submitted')
+            ->get()
+            ->map(fn (TestUser $testUser) => ScoringService::calculate($testUser))
+            ->values();
 
-        $avgScore = (float) ($scoresData->avg() ?? 0);
+        $minScore = $scoresData->isEmpty() ? 0.0 : (float) $scoresData->min();
+        $maxScore = $scoresData->isEmpty() ? 0.0 : (float) $scoresData->max();
+        $scoreMean = $scoresData->count() > 0 ? $scoresData->avg() : 0.0;
+        $stddev = 0.0;
+
+        if ($scoresData->count() > 1) {
+            $variance = $scoresData->reduce(function ($carry, $score) use ($scoreMean) {
+                return $carry + (($score - $scoreMean) ** 2);
+            }, 0.0) / ($scoresData->count() - 1);
+
+            $stddev = round(sqrt($variance), 2);
+        }
+
         $stats = [
             'total_participants' => $totalParticipants,
-            'average_score' => round($avgScore, 2),
-            'highest_score' => (float) ($scoresData->max() ?? 0),
-            'lowest_score' => (float) ($scoresData->min() ?? 0),
+            'average_score' => round((float) ($scoresData->avg() ?? 0), 2),
+            'highest_score' => $maxScore,
+            'lowest_score' => $minScore,
             'passed_count' => $scoresData->filter(fn($score) => $score >= 76)->count(),
             'failed_count' => $scoresData->filter(fn($score) => $score < 76)->count(),
+            'stddev_score' => $stddev,
         ];
 
         $distribution = [
@@ -224,24 +238,33 @@ class TestStatisticsService
 
     private static function getTopStudents(int $testId, int $totalQuestions): array
     {
-        $topStudents = DB::table('test_users')
-            ->join('users', 'test_users.user_id', '=', 'users.id')
-            ->leftJoin('results', 'test_users.id', '=', 'results.test_user_id')
-            ->where('test_users.test_id', $testId)
-            ->where('test_users.status', 'submitted')
-            ->select('users.name', 'test_users.finished_at')
-            ->selectRaw('COALESCE(results.total_score, 0) as score')
-            ->orderByDesc('score')
-            ->limit(5)
-            ->get();
+        $topStudents = TestUser::with(['test', 'user'])
+            ->select('test_users.*')
+            ->where('test_id', $testId)
+            ->where('status', 'submitted')
+            ->limit(5);
+
+        ScoringService::selectFinalScore($topStudents);
+        ScoringService::orderByFinalScore($topStudents);
+
+        $topStudents = $topStudents
+            ->get()
+            ->map(function (TestUser $testUser) {
+                return [
+                    'name' => $testUser->user->name,
+                    'score' => (float) ($testUser->final_score ?? ScoringService::calculate($testUser)),
+                    'finished_at' => $testUser->finished_at,
+                ];
+            })
+            ->values();
 
         return $topStudents->map(function ($item) {
-            $score = (float) $item->score;
+            $score = (float) $item['score'];
 
             return [
-                'name' => $item->name,
+                'name' => $item['name'],
                 'score' => $score,
-                'finished_at' => $item->finished_at ? \Carbon\Carbon::parse($item->finished_at)->diffForHumans() : '-',
+                'finished_at' => $item['finished_at'] ? \Carbon\Carbon::parse($item['finished_at'])->diffForHumans() : '-',
             ];
         })->toArray();
     }

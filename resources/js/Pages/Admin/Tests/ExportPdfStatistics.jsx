@@ -131,7 +131,7 @@ export default function ExportPdfStatistics({ test, stats, questions }) {
 
             autoTable(doc, {
                 startY: finalY,
-                head: [['No', 'Tampil', 'Benar', 'Salah', 'Kosong']],
+                head: [['No', 'Mahasiswa', 'Benar', 'Salah', 'Kosong']],
                 body: [[
                     i + 1, 
                     `${q.stats.recurrence}`, 

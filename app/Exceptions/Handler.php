@@ -16,21 +16,20 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
-        $response = parent::render($request, $e);
-
-        // Handle Session Expired (419) agar balik ke login dengan pesan
-        if ($response->status() === 419) {
-            return redirect()->route('login')->with('error', 'Sesi Anda berakhir, silakan login kembali.');
+        if ($request->expectsJson()) {
+            return parent::render($request, $e);
         }
 
-        // Daftar status yang ingin ditampilkan menggunakan DynamicError
-        $errorStatuses = [500, 503, 404, 403];
+        $response = parent::render($request, $e);
+        $status = $response->getStatusCode();
 
-        if (in_array($response->status(), $errorStatuses)) {
+        // Centralized web error page for production CBT.
+        $renderableStatuses = [403, 404, 405, 419, 429, 500, 503];
+
+        if (in_array($status, $renderableStatuses, true)) {
             return Inertia::render('Errors/DynamicError', [
-                'status' => $response->status(),
-                'message' => $e->getMessage() ?: 'Terjadi kesalahan sistem.',
-            ])->toResponse($request)->setStatusCode($response->status());
+                'status' => $status,
+            ])->toResponse($request)->setStatusCode($status);
         }
 
         return $response;

@@ -1,307 +1,483 @@
-<?php
-
-namespace Database\Seeders;
-
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use App\Models\User;
-use App\Models\Group;
-use App\Models\Module;
-use App\Models\Topic;
-use App\Models\Question;
-use App\Models\Answer;
-use App\Models\Test;
-
 /**
  * ================================================================
- *  LOAD TEST SEEDER
- *  Membuat data lengkap untuk k6 load test (full-exam-flow.js):
- *  500 peserta + group + 150 soal + 1 ujian aktif
- * ================================================================
+ *  CBT FULL EXAM FLOW — k6 Load Test
+ *  Flow: Login → Buka Ujian → Kerjakan Soal → Submit → Logout
  *
- *  CARA JALANKAN (di CMD Laragon / terminal server):
- *  php artisan db:seed --class=LoadTestSeeder
- *
- *  HAPUS SEMUA DATA LOAD TEST:
- *  php artisan db:seed --class=LoadTestSeeder --fresh   ← tidak ada fresh di seeder
- *  (gunakan Tinker: App\Models\Group::where('name','Load Test K6')->first()->delete())
- *
- *  SETELAH SELESAI TEST, CATAT ID ujian yang dibuat, lalu update di:
- *  load-test/full-exam-flow.js → const TEST_ID = <ID yang dicatat>
+ *  FIXES:
+ *  1. CSRF token diambil dari response header X-XSRF-TOKEN, bukan cookie
+ *  2. Answer payload pakai form-encoded bukan JSON (sesuai Laravel)
+ *  3. Batch answer menggunakan endpoint batch jika tersedia
+ *  4. Timeout lebih realistis untuk 500 concurrent users
+ *  5. Sleep lebih realistis agar tidak DoS server
  * ================================================================
  */
-class LoadTestSeeder extends Seeder
-{
-    // ── Konfigurasi NPM (sesuaikan dengan k6 script) ──────────────
-    const NPM_PREFIX  = '231705';
-    const NPM_START   = 1098;      // NPM pertama: 2317051098
-    const TOTAL_USERS = 500;       // Buat 500 peserta
 
-    public function run(): void
-    {
-        $this->command->info('');
-        $this->command->info('╔══════════════════════════════════════════════╗');
-        $this->command->info('║       CBT LOAD TEST SEEDER                  ║');
-        $this->command->info('╚══════════════════════════════════════════════╝');
+import http                         from 'k6/http';
+import { check, sleep, group, fail } from 'k6';
+import { Counter, Rate, Trend }      from 'k6/metrics';
+import { SharedArray }               from 'k6/data';
+import { randomIntBetween }          from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
-        DB::transaction(function () {
+// ================================================================
+//  KONFIGURASI
+// ================================================================
+const BASE_URL        = __ENV.BASE_URL        || 'http://127.0.0.1';
+const TEST_ID         = Number(__ENV.TEST_ID  || 1);
+const TOTAL_QUESTIONS = Number(__ENV.TOTAL_QUESTIONS || 50);   // ✅ sesuaikan
+const NPM_PREFIX      = __ENV.NPM_PREFIX      || '231705';
+const NPM_START       = Number(__ENV.NPM_START || 1098);
+const TOTAL_USERS     = Number(__ENV.TOTAL_USERS || 500);
+const TOTAL_VUS       = Number(__ENV.VUS || TOTAL_USERS);
+const SKIP_SETUP_AUTH_CHECK = (__ENV.SKIP_SETUP_AUTH_CHECK || 'true') === 'true';
 
-            // ═══════════════════════════════════════════════════════
-            //  STEP 1: BUAT GROUP
-            // ═══════════════════════════════════════════════════════
-            $this->command->info('');
-            $this->command->info('[1/4] Membuat group "Load Test K6"...');
-
-            $group = Group::firstOrCreate([
-                'name' => 'Load Test K6',
-            ]);
-
-            $this->command->info("      ✓ Group ID: {$group->id}");
-
-            // ═══════════════════════════════════════════════════════
-            //  STEP 2: BUAT 500 PESERTA
-            //  NPM: 2317051098 sampai 2317051597
-            //  Password = NPM masing-masing
-            // ═══════════════════════════════════════════════════════
-            $this->command->info('');
-            $this->command->info('[2/4] Membuat ' . self::TOTAL_USERS . ' peserta (NPM 2317051098 - 2317051597)...');
-
-            $userIds = [];
-            $created = 0;
-            $skipped = 0;
-
-            for ($i = 0; $i < self::TOTAL_USERS; $i++) {
-                $npm   = self::NPM_PREFIX . (self::NPM_START + $i);
-                $email = "loadtest_{$npm}@cbt.test";
-
-                // Gunakan firstOrCreate agar aman dijalankan ulang
-                $user = User::firstOrCreate(
-                    ['npm' => $npm],
-                    [
-                        'name'      => "Peserta Load Test {$npm}",
-                        'email'     => $email,
-                        'npm'       => $npm,
-                        'password'  => Hash::make($npm), // password = NPM
-                        'role'      => 'peserta',
-                        'is_active' => true,
-                    ]
-                );
-
-                // Selalu clear active_session_id agar tidak diblokir single-session guard
-                if ($user->active_session_id) {
-                    DB::table('sessions')->where('id', $user->active_session_id)->delete();
-                    $user->update(['active_session_id' => null]);
-                }
-
-                if ($user->wasRecentlyCreated) {
-                    $created++;
-                } else {
-                    $skipped++;
-                }
-
-                // Attach ke group (hindari duplikat)
-                if (!$user->groups()->where('groups.id', $group->id)->exists()) {
-                    $user->groups()->attach($group->id);
-                }
-
-                $userIds[] = $user->id;
-            }
-
-            $this->command->info("      ✓ Dibuat baru : {$created} peserta");
-            $this->command->info("      ✓ Sudah ada   : {$skipped} peserta (di-skip)");
-            $this->command->info("      ✓ Total di group: " . count($userIds) . " peserta");
-
-            // ═══════════════════════════════════════════════════════
-            //  STEP 3: BUAT MODUL, TOPIK, DAN 150 SOAL PG
-            // ═══════════════════════════════════════════════════════
-            $this->command->info('');
-            $this->command->info('[3/4] Membuat modul + topik + 150 soal pilihan ganda...');
-
-            $module = Module::firstOrCreate([
-                'name' => 'Load Test Module',
-            ]);
-
-            $topic = Topic::firstOrCreate(
-                [
-                    'module_id' => $module->id,
-                    'name'      => 'Load Test Topic (150 Soal PG)',
-                ],
-                ['is_active' => true]
-            );
-
-            // Hitung soal yang sudah ada di topik ini
-            $existingCount = Question::where('topic_id', $topic->id)->count();
-
-            if ($existingCount >= 150) {
-                $this->command->info("      ✓ Topik sudah punya {$existingCount} soal, skip generate.");
-            } else {
-                $toGenerate = 150 - $existingCount;
-                $this->command->info("      Topik punya {$existingCount} soal, generate {$toGenerate} lagi...");
-
-                // Template soal-soal kedokteran realistis
-                $vignettes = [
-                    "Seorang laki-laki 55 tahun datang dengan nyeri dada kiri menjalar ke lengan kiri, keringat dingin, dan sesak. EKG: ST elevasi di V1-V4. Apakah diagnosis paling tepat?",
-                    "Pasien anak 4 tahun datang dengan stridor inspirasi, demam, dan suara serak mendadak sejak semalam. Foto leher lateral menunjukkan tanda 'thumb sign'. Diagnosis?",
-                    "Wanita 28 tahun hamil 32 minggu datang dengan tekanan darah 160/110 mmHg, edema tungkai, dan proteinuria +++. Diagnosis?",
-                    "Laki-laki 70 tahun mengeluh tremor saat istirahat, wajah seperti topeng (masked face), dan langkah kecil-kecil. Pemeriksaan: rigiditas cogwheel. Diagnosis?",
-                    "Perempuan 35 tahun mengeluh jantung berdebar, berkeringat banyak, berat badan turun, dan mata membesar. TSH <0,01, FT4 meningkat. Diagnosis?",
-                    "Bayi 2 hari dibawa dengan muntah hijau proyektil sejak lahir. Foto polos abdomen: double bubble sign. Diagnosis?",
-                    "Laki-laki 45 tahun perokok berat datang dengan batuk kronik > 3 bulan selama 2 tahun berturut-turut, produksi sputum banyak. Diagnosis?",
-                    "Wanita 60 tahun mengeluh nyeri lutut bilateral yang memburuk saat naik tangga, disertai krepitasi. Röntgen: penyempitan celah sendi. Diagnosis?",
-                    "Pasien 22 tahun datang dengan luka tusuk di dada kiri, hipoksia, dan suara napas menghilang di sisi kiri. Trakea deviasi ke kanan. Diagnosis?",
-                    "Laki-laki 50 tahun dengan riwayat DM datang dengan kaki kanan kehitaman, berbau, dan tidak terasa nyeri. Diagnosis?",
-                ];
-
-                $kunciBenar = [
-                    'STEMI Anterior',
-                    'Epiglotitis',
-                    'Preeklampsia Berat',
-                    'Penyakit Parkinson',
-                    'Hipertiroid (Graves)',
-                    'Atresia Duodenum',
-                    'PPOK (Bronkitis Kronik)',
-                    'Osteoartritis Genu',
-                    'Tension Pneumothorax',
-                    'Kaki Diabetik (Gangren)',
-                ];
-
-                $pengecoh = [
-                    'Angina Pectoris',
-                    'Pneumonia',
-                    'Gastritis Akut',
-                    'Epilepsi',
-                    'Hipotiroid',
-                    'Hernia Diafragmatika',
-                    'Asma Bronkial',
-                    'Artritis Reumatoid',
-                    'Pneumothorax Spontan',
-                    'Peripheral Artery Disease',
-                    'Perikarditis',
-                    'Laringomalasia',
-                    'Hipertensi Gestasional',
-                    'Essential Tremor',
-                    'Cushing Syndrome',
-                    'Volvulus',
-                    'Bronkiektasis',
-                    'Gout Arthritis',
-                    'Hematotoraks',
-                    'Selulitis',
-                ];
-
-                $questionsBatch = [];
-                $answersBatch   = [];
-
-                for ($j = 1; $j <= $toGenerate; $j++) {
-                    $index   = ($existingCount + $j - 1) % count($vignettes);
-                    $soalNum = $existingCount + $j;
-
-                    $question = Question::create([
-                        'topic_id'      => $topic->id,
-                        'type'          => 'multiple_choice',
-                        'question_text' => "Soal No. {$soalNum}: " . $vignettes[$index],
-                        'score'         => 1,
-                        'is_active'     => true,
-                    ]);
-
-                    // 1 jawaban benar
-                    Answer::create([
-                        'question_id' => $question->id,
-                        'answer_text' => $kunciBenar[$index % count($kunciBenar)],
-                        'is_correct'  => true,
-                    ]);
-
-                    // 4 jawaban pengecoh (ambil 4 berbeda)
-                    $pengecohKeys = array_rand($pengecoh, 4);
-                    foreach ($pengecohKeys as $k) {
-                        Answer::create([
-                            'question_id' => $question->id,
-                            'answer_text' => $pengecoh[$k],
-                            'is_correct'  => false,
-                        ]);
-                    }
-                }
-
-                $this->command->info("      ✓ {$toGenerate} soal berhasil dibuat");
-            }
-
-            // ═══════════════════════════════════════════════════════
-            //  STEP 4: BUAT UJIAN (150 soal, 150 menit, aktif)
-            // ═══════════════════════════════════════════════════════
-            $this->command->info('');
-            $this->command->info('[4/4] Membuat ujian "Ujian Load Test K6 (150 Soal)"...');
-
-            // Cek apakah ujian load test sudah ada
-            $test = Test::firstOrCreate(
-                ['title' => 'Ujian Load Test K6 (150 Soal)'],
-                [
-                    'title'       => 'Ujian Load Test K6 (150 Soal)',
-                    'description' => 'Ujian otomatis untuk k6 load testing. 500 peserta, 150 soal, 150 menit.',
-                    'duration'    => 150,                    // 150 menit
-                    'start_time'  => now()->subMinutes(5),   // Sudah dimulai
-                    'end_time'    => now()->addHours(6),     // Aktif 6 jam ke depan
-                    'is_active'   => true,
-                    'require_seb' => false,                  // WAJIB false — k6 bukan Safe Exam Browser
-                ]
-            );
-
-            // Selalu refresh window waktu agar tidak expired saat tes dijalankan ulang
-            $test->update([
-                'start_time'  => now()->subMinutes(5),
-                'end_time'    => now()->addHours(6),
-                'is_active'   => true,
-                'require_seb' => false,                  // WAJIB false — k6 bukan Safe Exam Browser
-            ]);
-
-            // Hapus TestUser lama agar prevent.retake tidak memblokir run ulang
-            \App\Models\TestUser::where('test_id', $test->id)
-                ->whereIn('user_id', $userIds)
-                ->delete();
-            $this->command->info("      ✓ TestUser lama dihapus (ready for fresh run)");
-
-            // Attach topik (dengan config soal)
-            if (!$test->topics()->where('topics.id', $topic->id)->exists()) {
-                $test->topics()->attach($topic->id, [
-                    'total_questions'  => 150,
-                    'question_type'    => 'multiple_choice',
-                    'random_questions' => true,
-                    'random_answers'   => true,
-                    'max_answers'      => 5,
-                ]);
-            }
-
-            // Attach group
-            if (!$test->groups()->where('groups.id', $group->id)->exists()) {
-                $test->groups()->attach($group->id);
-            }
-
-            $this->command->info("      ✓ Test ID: {$test->id}");
-            $this->command->info("      ✓ Durasi : 150 menit");
-            $this->command->info("      ✓ Aktif  : " . now()->subMinutes(5)->format('H:i') . " - " . now()->addHours(6)->format('H:i'));
-        }); // end transaction
-
-        // ═══════════════════════════════════════════════════════════
-        //  RINGKASAN
-        // ═══════════════════════════════════════════════════════════
-        $test = Test::where('title', 'Ujian Load Test K6 (150 Soal)')->first();
-
-        $this->command->info('');
-        $this->command->info('╔══════════════════════════════════════════════╗');
-        $this->command->info('║   ✓  SEEDER SELESAI — Ringkasan Data        ║');
-        $this->command->info('╚══════════════════════════════════════════════╝');
-        $this->command->info('');
-        $this->command->info("  Group    : Load Test K6");
-        $this->command->info("  Peserta  : " . self::TOTAL_USERS . " user");
-        $this->command->info("  NPM Range: " . self::NPM_PREFIX . self::NPM_START . " s/d " . self::NPM_PREFIX . (self::NPM_START + self::TOTAL_USERS - 1));
-        $this->command->info("  Password : NPM masing-masing (misal: 2317051098)");
-        $this->command->info("  Soal     : 150 soal pilihan ganda (5 pilihan/soal)");
-        $this->command->info("  TEST ID  : " . ($test?->id ?? '???'));
-        $this->command->info('');
-        $this->command->warn('  ⚠  UPDATE k6 SCRIPT sebelum test:');
-        $this->command->warn("     const TEST_ID = " . ($test?->id ?? '???') . ";  ← di full-exam-flow.js");
-        $this->command->info('');
-        $this->command->info('  CARA JALANKAN K6:');
-        $this->command->info('  k6 run load-test/full-exam-flow.js');
-        $this->command->info('');
+// ================================================================
+//  DATA PESERTA
+// ================================================================
+const USERS = new SharedArray('peserta', function () {
+    const list = [];
+    for (let i = 0; i < TOTAL_USERS; i++) {
+        const npm = `${NPM_PREFIX}${NPM_START + i}`;
+        list.push({ login: npm, password: npm });
     }
+    return list;
+});
+
+// ================================================================
+//  CUSTOM METRICS
+// ================================================================
+const loginSuccessRate  = new Rate('login_success_rate');
+const startSuccessRate  = new Rate('start_exam_success_rate');
+const answerSuccessRate = new Rate('answer_success_rate');
+const submitSuccessRate = new Rate('submit_success_rate');
+const loginDuration     = new Trend('login_duration_ms',    true);
+const startDuration     = new Trend('start_exam_duration_ms', true);
+const answerDuration    = new Trend('answer_duration_ms',   true);
+const submitDuration    = new Trend('submit_duration_ms',   true);
+const totalAnswersSent  = new Counter('total_answers_sent');
+const totalAnswersFailed = new Counter('total_answers_failed');
+
+// ================================================================
+//  OPSI SKENARIO
+// ================================================================
+export const options = {
+    scenarios: {
+        ujian_serentak: {
+            executor:     'per-vu-iterations',
+            vus:          TOTAL_VUS,
+            iterations:   1,
+            maxDuration:  '30m',
+            gracefulStop: '2m',
+        },
+    },
+    thresholds: {
+        http_req_duration:       ['p(50)<1000', 'p(90)<3000', 'p(95)<5000'],
+        http_req_failed:         ['rate<0.20'],
+        login_success_rate:      ['rate>0.85'],
+        start_exam_success_rate: ['rate>0.80'],
+        answer_success_rate:     ['rate>0.75'],
+        submit_success_rate:     ['rate>0.70'],
+    },
+};
+
+// ================================================================
+//  HELPER: Ambil CSRF token
+//  ✅ FIX: Laravel set XSRF-TOKEN di cookie, bukan header
+// ================================================================
+function getCsrfToken(res) {
+    // Coba dari response cookies dulu
+    if (res && res.cookies && res.cookies['XSRF-TOKEN']) {
+        return decodeURIComponent(res.cookies['XSRF-TOKEN'][0].value);
+    }
+    // Fallback dari cookie jar
+    const jar     = http.cookieJar();
+    const cookies = jar.cookiesForURL(BASE_URL + '/');
+    const raw     = cookies['XSRF-TOKEN'];
+    if (!raw || raw.length === 0) return '';
+    return decodeURIComponent(Array.isArray(raw) ? raw[0] : raw);
+}
+
+// ================================================================
+//  HELPER: Parse Inertia props
+// ================================================================
+function parseInertiaProps(html) {
+    if (!html) return null;
+    try {
+        const match = html.match(/data-page="([^"]+)"/);
+        if (!match) return null;
+        const raw = match[1]
+            .replace(/&quot;/g, '"')
+            .replace(/&amp;/g, '&')
+            .replace(/&#039;/g, "'")
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
+        return JSON.parse(raw)?.props || null;
+    } catch (e) {
+        return null;
+    }
+}
+
+// ================================================================
+//  STEP 1 — LOGIN
+// ================================================================
+function doLogin(user) {
+    // GET login page untuk dapat CSRF cookie
+    const loginPage = http.get(`${BASE_URL}/login`, {
+        redirects: 5,
+        tags: { step: 'csrf' },
+    });
+
+    // ✅ FIX: ambil CSRF dari response login page
+    const csrf = getCsrfToken(loginPage);
+
+    const start = Date.now();
+    const res = http.post(
+        `${BASE_URL}/login`,
+        // ✅ FIX: form-urlencoded bukan JSON
+        `login=${encodeURIComponent(user.login)}&password=${encodeURIComponent(user.password)}`,
+        {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Referer':      `${BASE_URL}/login`,
+                'X-XSRF-TOKEN': csrf,
+                'X-Load-Test':  '1',
+            },
+            redirects: 5,
+            tags: { step: 'login' },
+        }
+    );
+    loginDuration.add(Date.now() - start);
+
+    const redirectedAway = res.url && !res.url.includes('/login');
+    const ok = check(res, {
+        'login: status 200':            (r) => r.status === 200,
+        'login: redirect ke dashboard': ()  => redirectedAway,
+    }, { step: 'login' });
+
+    loginSuccessRate.add(ok);
+
+    if (!ok) {
+        const body = res.body || '';
+        if (body.includes('Password salah') || body.includes('NPM/Email')) {
+            console.error(`[VU ${__VU}] ✗ NPM/password salah atau akun belum ada`);
+        } else if (body.includes('perangkat lain') || body.includes('session')) {
+            console.warn(`[VU ${__VU}] ✗ Single session blocking`);
+        } else if (body.includes('Too Many')) {
+            console.warn(`[VU ${__VU}] ✗ Rate limited (429)`);
+        } else {
+            console.warn(`[VU ${__VU}] ✗ Login gagal | url=${res.url} | status=${res.status}`);
+        }
+        if (__VU === 1 && __ITER === 0) {
+            console.error(`[VU 1] BODY: ${(res.body||'').substring(0, 400).replace(/\s+/g, ' ')}`);
+        }
+    }
+
+    return { ok, csrf: getCsrfToken(res) };
+}
+
+// ================================================================
+//  STEP 2 — BUKA UJIAN
+// ================================================================
+function doStartExam(csrf) {
+    const start = Date.now();
+    const res = http.get(
+        `${BASE_URL}/peserta/tests/${TEST_ID}/start`,
+        {
+            headers: {
+                'X-XSRF-TOKEN': csrf,
+                'Accept':       'text/html,application/xhtml+xml',
+                'X-Load-Test':  '1',
+            },
+            redirects: 5,
+            tags: { step: 'start_exam' },
+        }
+    );
+    startDuration.add(Date.now() - start);
+
+    const ok = check(res, {
+        'start: status 200':       (r) => r.status === 200,
+        'start: ada konten ujian': (r) => r.body && r.body.includes('testUserId'),
+    }, { step: 'start_exam' });
+
+    startSuccessRate.add(ok);
+
+    if (!ok) {
+        console.warn(`[VU ${__VU}] ✗ Gagal buka ujian | status=${res.status} | url=${res.url}`);
+        return { testUserId: null, questions: [] };
+    }
+
+    const props      = parseInertiaProps(res.body);
+    const testUserId = props?.testUserId || null;
+    const questions  = Array.isArray(props?.questions) ? props.questions : [];
+
+    if (!testUserId) {
+        console.warn(`[VU ${__VU}] ✗ testUserId tidak ditemukan`);
+    }
+
+    return { testUserId, questions, csrf: getCsrfToken(res) };
+}
+
+// ================================================================
+//  STEP 3 — JAWAB SOAL
+//  ✅ FIX: Gunakan JSON payload sesuai endpoint answer Laravel
+// ================================================================
+function doAnswerQuestions(testUserId, questions, csrf) {
+    let successCount = 0;
+    let failCount    = 0;
+    const total      = questions.length > 0 ? questions.length : TOTAL_QUESTIONS;
+
+    for (let i = 0; i < total; i++) {
+        const q          = questions[i];
+        const questionId = q?.id || (i + 1);
+        const opts       = Array.isArray(q?.answers) && q.answers.length > 0 ? q.answers : null;
+        const answerId   = opts
+            ? opts[randomIntBetween(0, opts.length - 1)]?.id
+            : randomIntBetween(1, 5);
+
+        const aStart = Date.now();
+        const res = http.post(
+            `${BASE_URL}/peserta/tests/${testUserId}/answer`,
+            JSON.stringify({ question_id: questionId, answer_id: answerId }),
+            {
+                headers: {
+                    'Content-Type':     'application/json',
+                    'Accept':           'application/json',
+                    'X-XSRF-TOKEN':     csrf,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-Load-Test':      '1',
+                },
+                timeout: '15s',
+                tags: { step: 'answer' },
+            }
+        );
+        answerDuration.add(Date.now() - aStart);
+
+        const saved = check(res, {
+            'answer: status 200':   (r) => r.status === 200,
+            'answer: status saved': (r) => {
+                try { return JSON.parse(r.body)?.status === 'saved'; } catch { return false; }
+            },
+        }, { step: 'answer' });
+
+        answerSuccessRate.add(saved);
+        totalAnswersSent.add(1);
+
+        if (saved) {
+            successCount++;
+        } else {
+            failCount++;
+            totalAnswersFailed.add(1);
+            if (res.status === 401 || res.status === 403) {
+                console.warn(`[VU ${__VU}] ✗ Soal ke-${i+1}: status ${res.status} — sesi habis`);
+                break;
+            }
+            // ✅ FIX: update CSRF jika expired
+            if (res.status === 419) {
+                csrf = getCsrfToken(res);
+                console.warn(`[VU ${__VU}] CSRF expired, refresh token`);
+            }
+        }
+
+        // ✅ FIX: delay lebih realistis agar tidak banjiri server
+        sleep(randomIntBetween(1, 3));
+    }
+
+    console.log(`[VU ${__VU}] Jawaban: ${successCount}/${total} berhasil, ${failCount} gagal`);
+    return successCount;
+}
+
+// ================================================================
+//  STEP 4 — SUBMIT
+// ================================================================
+function doSubmit(testUserId, csrf) {
+    const start = Date.now();
+    const res = http.post(
+        `${BASE_URL}/peserta/tests/${testUserId}/submit`,
+        JSON.stringify({}),
+        {
+            headers: {
+                'Content-Type':     'application/json',
+                'X-XSRF-TOKEN':     csrf,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept':           'text/html, application/xhtml+xml',
+                'X-Load-Test':      '1',
+            },
+            redirects: 5,
+            timeout:   '30s',
+            tags: { step: 'submit' },
+        }
+    );
+    submitDuration.add(Date.now() - start);
+
+    const ok = check(res, {
+        'submit: status ok':          (r) => r.status === 200 || r.status === 302,
+        'submit: redirect dashboard': (r) => r.url && r.url.includes('/peserta'),
+    }, { step: 'submit' });
+
+    submitSuccessRate.add(ok);
+
+    if (!ok) {
+        console.warn(`[VU ${__VU}] ✗ Submit gagal | status=${res.status} | url=${res.url}`);
+    }
+
+    return getCsrfToken(res);
+}
+
+// ================================================================
+//  STEP 5 — LOGOUT
+// ================================================================
+function doLogout(csrf) {
+    const res = http.post(
+        `${BASE_URL}/logout`,
+        JSON.stringify({}),
+        {
+            headers: {
+                'Content-Type':     'application/json',
+                'X-XSRF-TOKEN':     csrf,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept':           'text/html, application/xhtml+xml',
+                'X-Load-Test':      '1',
+            },
+            redirects: 5,
+            timeout:   '10s',
+            tags: { step: 'logout' },
+        }
+    );
+
+    check(res, {
+        'logout: redirect ke login': (r) => r.url && r.url.includes('/login'),
+        'logout: status ok':         (r) => r.status === 200 || r.status === 302,
+    }, { step: 'logout' });
+
+    if (res.status === 405) {
+        console.error(`[VU ${__VU}] ✗ LOGOUT 405 — gunakan POST bukan GET`);
+    }
+}
+
+// ================================================================
+//  MAIN FLOW
+// ================================================================
+export default function () {
+    const user = USERS[(__VU - 1) % USERS.length];
+    let csrf   = '';
+
+    // STEP 1: LOGIN
+    let loginOk = false;
+    group('1. Login', () => {
+        const result = doLogin(user);
+        loginOk = result.ok;
+        csrf    = result.csrf;
+    });
+
+    if (!loginOk) {
+        console.warn(`[VU ${__VU}] Skip — login gagal`);
+        sleep(3);
+        return;
+    }
+
+    sleep(randomIntBetween(1, 3));
+
+    // STEP 2: BUKA UJIAN
+    let testUserId = null;
+    let questions  = [];
+    group('2. Buka Ujian', () => {
+        const result = doStartExam(csrf);
+        testUserId   = result.testUserId;
+        questions    = result.questions;
+        csrf         = result.csrf || csrf;
+    });
+
+    if (!testUserId) {
+        console.warn(`[VU ${__VU}] Skip — gagal buka ujian`);
+        sleep(3);
+        return;
+    }
+
+    sleep(randomIntBetween(2, 5));
+
+    // STEP 3: JAWAB SOAL
+    group('3. Mengerjakan Soal', () => {
+        doAnswerQuestions(testUserId, questions, csrf);
+    });
+
+    sleep(randomIntBetween(1, 3));
+
+    // STEP 4: SUBMIT
+    group('4. Submit', () => {
+        csrf = doSubmit(testUserId, csrf);
+    });
+
+    sleep(randomIntBetween(2, 4));
+
+    // STEP 5: LOGOUT
+    group('5. Logout', () => {
+        doLogout(csrf);
+    });
+
+    sleep(2);
+}
+
+// ================================================================
+//  SETUP
+// ================================================================
+export function setup() {
+    console.log('================================================================');
+    console.log('  CBT FULL EXAM FLOW — Load Test');
+    console.log('================================================================');
+    console.log(`  Server  : ${BASE_URL}`);
+    console.log(`  Test ID : ${TEST_ID}`);
+    console.log(`  Users   : ${TOTAL_USERS}`);
+    console.log(`  Soal    : ${TOTAL_QUESTIONS}`);
+    console.log('================================================================');
+
+    const ping = http.get(`${BASE_URL}/login`);
+    if (ping.status !== 200) {
+        fail(`✗ Server tidak bisa dijangkau: ${BASE_URL} → status ${ping.status}`);
+    }
+    console.log(`  ✓ Server OK (status ${ping.status})`);
+
+    if (SKIP_SETUP_AUTH_CHECK) {
+        console.log('  ✓ Auth check di-skip');
+        return {};
+    }
+
+    // Verifikasi login user pertama
+    const firstNpm  = `${NPM_PREFIX}${NPM_START}`;
+    const csrf      = getCsrfToken(ping);
+    const loginTest = http.post(
+        `${BASE_URL}/login`,
+        `login=${encodeURIComponent(firstNpm)}&password=${encodeURIComponent(firstNpm)}`,
+        {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-XSRF-TOKEN': csrf,
+                'X-Load-Test':  '1',
+            },
+            redirects: 5,
+        }
+    );
+
+    if (loginTest.url && !loginTest.url.includes('/login')) {
+        console.log(`  ✓ Login verifikasi OK (NPM: ${firstNpm})`);
+        http.post(`${BASE_URL}/logout`, JSON.stringify({}), {
+            headers: { 'Content-Type': 'application/json', 'X-XSRF-TOKEN': getCsrfToken(loginTest), 'X-Load-Test': '1' },
+            redirects: 5,
+        });
+    } else {
+        fail(`✗ Login gagal untuk NPM ${firstNpm} — jalankan seeder dulu`);
+    }
+
+    return {};
+}
+
+// ================================================================
+//  TEARDOWN
+// ================================================================
+export function teardown() {
+    console.log('================================================================');
+    console.log('  Load Test Selesai');
+    console.log('  login_success_rate     > 85% = stabil');
+    console.log('  answer_success_rate    > 75% = autosave stabil');
+    console.log('  submit_success_rate    > 70% = submit stabil');
+    console.log('  http_req_duration p95  < 5s  = server OK');
+    console.log('================================================================');
 }

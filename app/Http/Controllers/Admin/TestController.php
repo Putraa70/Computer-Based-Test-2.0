@@ -11,7 +11,10 @@ use App\Models\Module;
 use App\Models\Topic;
 use App\Models\TestUser;
 use App\Models\Question; // Pastikan import ini ada untuk fitur grading
+use App\Services\CBT\QuestionGeneratorService;
+use App\Services\CBT\QuestionCacheService;
 use App\Services\CBT\ScoringService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -41,23 +44,16 @@ class TestController extends Controller
             $participants = [];
 
             if ($currentTestId) {
-                // Hitung total soal dengan optimized SQL (bukan eager load topics.questions)
-                $totalQuestions = DB::table('questions')
-                    ->join('topics', 'questions.topic_id', '=', 'topics.id')
-                    ->join('test_topics', 'topics.id', '=', 'test_topics.topic_id')
-                    ->where('test_topics.test_id', $currentTestId)
-                    ->where('questions.is_active', true)
-                    ->count();
-
-                if ($totalQuestions == 0) $totalQuestions = 1;
-
-                // Ambil peserta dengan skor dari results table (optimized SQL, bukan eager load answers)
-                $participantsQuery = DB::table('test_users')
-                    ->join('users', 'test_users.user_id', '=', 'users.id')
-                    ->leftJoin('results', 'test_users.id', '=', 'results.test_user_id')
-                    ->where('test_users.test_id', $currentTestId)
-                    ->orderByDesc('test_users.updated_at')
+                $participantsQuery = TestUser::with([
+                    'user:id,name,npm,role',
+                    'test:id,title',
+                ])
+                    ->select('test_users.*')
+                    ->where('test_id', $currentTestId)
                     ->limit(100); // ✅ OPTIMIZED: Limit to 100 to prevent 502 errors
+
+                ScoringService::selectFinalScore($participantsQuery);
+                ScoringService::orderByFinalScore($participantsQuery);
 
                 // Aggregate answered count per test_user
                 $answeredCountsRaw = DB::table('user_answers')
@@ -67,35 +63,20 @@ class TestController extends Controller
                     ->keyBy('test_user_id');
 
                 $participants = $participantsQuery
-                    ->select([
-                        'test_users.id',
-                        'test_users.test_id',
-                        'test_users.status',
-                        'test_users.started_at',
-                        'test_users.finished_at',
-                        'users.id as user_id',
-                        'users.name as user_name',
-                        'users.npm',
-                        'users.role',
-                        'results.total_score',
-                    ])
                     ->get()
-                    ->map(function ($p) use ($answeredCountsRaw) {
+                    ->map(function (TestUser $p) use ($answeredCountsRaw) {
+                        $score = (float) ($p->final_score ?? ScoringService::calculate($p));
                         $answeredCount = $answeredCountsRaw[$p->id]->answer_count ?? 0;
+
                         return [
                             'id' => $p->id,
                             'test_id' => $p->test_id,
-                            'user' => (object) [
-                                'id' => $p->user_id,
-                                'name' => $p->user_name,
-                                'npm' => $p->npm,
-                                'role' => $p->role,
-                            ],
+                            'user' => $p->user,
                             'status' => $p->status,
                             'started_at' => $p->started_at,
                             'finished_at' => $p->finished_at,
                             'answered_count' => (int) $answeredCount,
-                            'score' => number_format((float) ($p->total_score ?? 0), 2),
+                            'score' => $score,
                         ];
                     });
             }
@@ -121,12 +102,16 @@ class TestController extends Controller
                     'per_page' => $perPage,
                 ]));
 
-            // ✅ OPTIMIZED: Skip expensive ScoringService calculation per item
-            // Frontend can calculate realtime score on demand or use cached total_score
-            // $testUsers->getCollection()->transform(function ($testUser) {
-            //     $testUser->realtime_score = ScoringService::calculate($testUser);
-            //     return $testUser;
-            // });
+            $testUsers->getCollection()->transform(function ($testUser) {
+                $score = (float) ($testUser->final_score ?? ScoringService::calculate($testUser));
+                $testUser->realtime_score = $score;
+
+                if ($testUser->result) {
+                    $testUser->result->total_score = $score;
+                }
+
+                return $testUser;
+            });
 
             return inertia('Admin/Tests/Index', [
                 'testUsers' => $testUsers,
@@ -218,7 +203,7 @@ class TestController extends Controller
     {
         // OPTIMIZED: Use join instead of whereHas to avoid N+1 queries
         $query = TestUser::query()
-            ->select('test_users.*')
+            ->select('test_users.*', 'users.npm as sort_npm')
             ->with([
                 'user:id,name,npm',
                 'test:id,title,duration',
@@ -240,13 +225,35 @@ class TestController extends Controller
             });
         }
 
-        $sort = (string) $request->input('sort', 'latest');
-        if ($sort === 'oldest') {
-            $query->orderBy('test_users.started_at');
-        } elseif ($sort === 'submitted') {
-            $query->orderByDesc('test_users.finished_at')->orderByDesc('test_users.started_at');
-        } else {
-            $query->orderByDesc('test_users.started_at');
+        ScoringService::selectFinalScore($query);
+
+        $sort = (string) $request->input('sort', 'started_at');
+        switch ($sort) {
+            case 'npm_asc':
+                $query->orderBy('sort_npm', 'asc')
+                    ->orderBy('test_users.id');
+                break;
+            case 'oldest':
+                $query->orderBy('test_users.started_at')
+                    ->orderBy('test_users.id');
+                break;
+            case 'submitted':
+                $query->orderByDesc('test_users.finished_at')
+                    ->orderByDesc('test_users.started_at')
+                    ->orderBy('test_users.id');
+                break;
+            case 'score_asc':
+                ScoringService::orderByFinalScore($query, 'asc');
+                break;
+            case 'score_desc':
+                ScoringService::orderByFinalScore($query, 'desc');
+                break;
+            case 'latest':
+            case 'started_at':
+            default:
+                $query->orderByDesc('test_users.started_at')
+                    ->orderBy('test_users.id');
+                break;
         }
 
         return $query->distinct('test_users.id');
@@ -277,17 +284,37 @@ class TestController extends Controller
             $stats = $statsQuery
                 ->selectRaw('COUNT(DISTINCT test_users.id) as total')
                 ->selectRaw('SUM(CASE WHEN test_users.finished_at IS NOT NULL THEN 1 ELSE 0 END) as completed')
-                ->selectRaw('AVG(results.total_score) as avg_score')
                 ->first();
 
             $total = (int) ($stats->total ?? 0);
             $completed = (int) ($stats->completed ?? 0);
 
+            $testUsers = TestUser::with('test')
+                ->select('test_users.*')
+                ->join('users', 'test_users.user_id', '=', 'users.id')
+                ->leftJoin('results', 'results.test_user_id', '=', 'test_users.id');
+
+            if ($selectedTestId) {
+                $testUsers->where('test_users.test_id', $selectedTestId);
+            } elseif ($request->filled('test_id')) {
+                $testUsers->where('test_users.test_id', (int) $request->input('test_id'));
+            }
+
+            if ($request->filled('search')) {
+                $search = trim((string) $request->input('search'));
+                $testUsers->where(function ($q) use ($search) {
+                    $q->where('users.name', 'like', "%{$search}%")
+                        ->orWhere('users.npm', 'like', "%{$search}%");
+                });
+            }
+
+            $scores = $testUsers->distinct('test_users.id')->get()->map(fn (TestUser $testUser) => ScoringService::calculate($testUser));
+
             return [
                 'total' => $total,
                 'completed' => $completed,
                 'pending' => max(0, $total - $completed),
-                'avgScore' => number_format((float) ($stats->avg_score ?? 0), 2),
+                'avgScore' => number_format((float) ($scores->avg() ?? 0), 2, '.', ''),
             ];
         } catch (\Exception $e) {
             // Return default fallback values
@@ -416,31 +443,46 @@ class TestController extends Controller
     {
         $data = $request->validated();
 
-        $test->update([
-            'title' => $data['title'],
-            'description' => $data['description'] ?? null,
-            'duration' => $data['duration'],
-            'start_time' => $data['start_time'],
-            'end_time' => $data['end_time'],
-            'is_active' => $data['is_active'] ?? $test->is_active,
-            'results_to_users' => $data['results_to_users'] ?? $test->results_to_users,
-            'require_seb' => $data['require_seb'] !== null ? $data['require_seb'] : true,
-        ]);
+        DB::transaction(function () use ($data, $test) {
+            $test->update([
+                'title' => $data['title'],
+                'description' => $data['description'] ?? null,
+                'duration' => $data['duration'],
+                'start_time' => $data['start_time'],
+                'end_time' => $data['end_time'],
+                'is_active' => $data['is_active'] ?? $test->is_active,
+                'results_to_users' => $data['results_to_users'] ?? $test->results_to_users,
+                'require_seb' => array_key_exists('require_seb', $data) ? $data['require_seb'] : true,
+            ]);
 
-        if (isset($data['groups'])) {
-            $test->groups()->sync($data['groups']);
-        }
-
-        if (isset($data['topics'])) {
-            $syncTopics = [];
-            foreach ($data['topics'] as $topic) {
-                $syncTopics[$topic['id']] = [
-                    'total_questions' => $topic['total_questions'],
-                    'question_type' => $topic['question_type'] ?? 'mixed',
-                ];
+            if (isset($data['groups'])) {
+                $test->groups()->sync($data['groups']);
             }
-            $test->topics()->sync($syncTopics);
-        }
+
+            if (isset($data['topics'])) {
+                $syncTopics = [];
+                foreach ($data['topics'] as $topic) {
+                    $syncTopics[$topic['id']] = [
+                        'total_questions' => $topic['total_questions'],
+                        'question_type' => $topic['question_type'] ?? 'mixed',
+                    ];
+                }
+                $test->topics()->sync($syncTopics);
+
+                $maxIndex = max(0, collect($data['topics'])->sum(fn($topic) => (int) $topic['total_questions']) - 1);
+                TestUser::where('test_id', $test->id)
+                    ->whereIn('status', ['ongoing', 'not_started'])
+                    ->where('current_index', '>', $maxIndex)
+                    ->update([
+                        'current_index' => $maxIndex,
+                        'last_question_id' => null,
+                    ]);
+            }
+        });
+
+        QuestionGeneratorService::clearForTest($test->id);
+        QuestionCacheService::invalidateTest($test->id);
+        Cache::forget("statistics:test:summary:{$test->id}");
 
         return redirect()->route('admin.tests.index')->with('success', 'Ujian berhasil diperbarui');
     }

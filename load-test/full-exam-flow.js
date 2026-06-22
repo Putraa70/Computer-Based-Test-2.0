@@ -38,7 +38,7 @@ import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 const BASE_URL       = __ENV.BASE_URL || 'http://192.168.5.70';
 
 // ID ujian di tabel `tests` (pastikan is_active=1, waktu masih valid)
-const TEST_ID        = 1;
+const TEST_ID        = Number(__ENV.TEST_ID || 8);
 
 // Jumlah soal dalam ujian (sesuaikan dengan data sebenarnya)
 const TOTAL_QUESTIONS = Number(__ENV.TOTAL_QUESTIONS || 150);
