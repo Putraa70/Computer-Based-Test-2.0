@@ -49,16 +49,18 @@ class TestController extends Controller
                     'test:id,title',
                 ])
                     ->select('test_users.*')
-                    ->where('test_id', $currentTestId)
-                    ->limit(100); // ✅ OPTIMIZED: Limit to 100 to prevent 502 errors
+                    ->where('test_id', $currentTestId);
 
                 ScoringService::selectFinalScore($participantsQuery);
                 ScoringService::orderByFinalScore($participantsQuery);
 
                 // Aggregate answered count per test_user
                 $answeredCountsRaw = DB::table('user_answers')
-                    ->selectRaw('test_user_id, COUNT(*) as answer_count')
-                    ->groupBy('test_user_id')
+                    ->join('test_users', 'user_answers.test_user_id', '=', 'test_users.id')
+                    ->where('test_users.test_id', $currentTestId)
+                    ->whereNotNull('user_answers.answer_id')
+                    ->selectRaw('user_answers.test_user_id, COUNT(*) as answer_count')
+                    ->groupBy('user_answers.test_user_id')
                     ->get()
                     ->keyBy('test_user_id');
 
@@ -92,14 +94,16 @@ class TestController extends Controller
 
         if ($section === 'results') {
             $selectedTestId = $this->resolveResultsTestId($request);
-            $perPage = 50; // ✅ Reduced from 100 to reduce response size & prevent 502 errors
+            $resultsQuery = $this->buildResultsQuery($request, $selectedTestId);
+            $perPage = $this->resolvePerPage($request, $resultsQuery);
+            $perPageFilter = $this->resolvePerPageFilter($request);
 
-            $testUsers = $this->buildResultsQuery($request, $selectedTestId)
+            $testUsers = $resultsQuery
                 ->paginate($perPage)
                 ->appends(array_merge($request->query(), [
                     'section' => 'results',
                     'test_id' => $selectedTestId,
-                    'per_page' => $perPage,
+                    'per_page' => $perPageFilter,
                 ]));
 
             $testUsers->getCollection()->transform(function ($testUser) {
@@ -121,13 +125,14 @@ class TestController extends Controller
                     $request->only(['search', 'sort']),
                     [
                         'test_id' => $selectedTestId,
-                        'per_page' => $perPage,
+                        'per_page' => $perPageFilter,
                     ]
                 ),
             ]);
         }
 
         if ($section === 'statistic') {
+            $perPageFilter = $this->resolvePerPageFilter($request);
             // ✅ OPTIMIZED: Use join instead of whereHas to avoid N+1 queries
             $statsTestsQuery = Test::query()
                 ->select('tests.id', 'tests.title', 'tests.duration', 'tests.start_time', 'tests.end_time', 'tests.is_active', 'tests.created_at')
@@ -152,11 +157,13 @@ class TestController extends Controller
             }
 
             return inertia('Admin/Tests/Index', [
-                'tests' => $statsTestsQuery->paginate(20)->appends(array_merge($request->query(), ['section' => 'statistic'])),
+                'tests' => $statsTestsQuery
+                    ->paginate($this->resolvePerPage($request, $statsTestsQuery))
+                    ->appends(array_merge($request->query(), ['section' => 'statistic', 'per_page' => $perPageFilter])),
                 'modules' => Module::select('id', 'name')->where('is_active', true)->orderBy('name')->get(),
                 'groups' => Group::select('id', 'name')->orderBy('name')->get(),
                 'topics' => [],
-                'filters' => $request->only(['search', 'module_id', 'group_id']),
+                'filters' => array_merge($request->only(['search', 'module_id', 'group_id']), ['per_page' => $perPageFilter]),
             ]);
         }
 
@@ -183,16 +190,39 @@ class TestController extends Controller
         }
 
         return inertia('Admin/Tests/Index', [
-            // List Ujian (Pagination 20 agar daftar lebih panjang)
-            'tests' => $query->paginate(20)->appends($request->query()),
+            'tests' => $query
+                ->paginate($this->resolvePerPage($request, $query))
+                ->appends(array_merge($request->query(), ['per_page' => $this->resolvePerPageFilter($request)])),
 
             // Data Dropdown
             'modules' => Module::select('id', 'name')->where('is_active', true)->orderBy('name')->get(),
             'groups' => Group::select('id', 'name')->orderBy('name')->get(),
             'topics' => Topic::with('module')->where('is_active', true)->get(),
 
-            'filters' => $request->only(['search', 'module_id', 'group_id']),
+            'filters' => array_merge($request->only(['search', 'module_id', 'group_id']), ['per_page' => $this->resolvePerPageFilter($request)]),
         ]);
+    }
+
+    private function resolvePerPage(Request $request, $query = null): int
+    {
+        if ($request->input('per_page') === 'all' && $query) {
+            return max(1, (clone $query)->count());
+        }
+
+        $perPage = (int) $request->input('per_page', 100);
+
+        return in_array($perPage, [100, 500], true) ? $perPage : 100;
+    }
+
+    private function resolvePerPageFilter(Request $request): int|string
+    {
+        if ($request->input('per_page') === 'all') {
+            return 'all';
+        }
+
+        $perPage = (int) $request->input('per_page', 100);
+
+        return in_array($perPage, [100, 500], true) ? $perPage : 100;
     }
 
     /**

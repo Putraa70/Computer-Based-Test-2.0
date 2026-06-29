@@ -13,7 +13,17 @@ import {
   FileText,
 } from "lucide-react";
 
-export default function Index({ auth, results }) {
+export default function Index({ auth, results, filters = {} }) {
+  const currentPerPage = filters?.per_page || 100;
+
+  const handlePerPageChange = (perPage) => {
+    router.get(
+      route("peserta.results.index"),
+      { per_page: perPage },
+      { preserveScroll: true, replace: true },
+    );
+  };
+
   // Helper Format Tanggal
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -55,6 +65,18 @@ export default function Index({ auth, results }) {
           {/* Table Card */}
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-200">
             <div className="p-6">
+              <div className="mb-4 flex items-center justify-end gap-2 text-xs text-gray-600">
+                <span className="font-bold uppercase tracking-wide">Tampilkan</span>
+                <select
+                  value={currentPerPage}
+                  onChange={(e) => handlePerPageChange(e.target.value)}
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-semibold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
+                  <option value="100">100</option>
+                  <option value="500">500</option>
+                  <option value="all">Semua</option>
+                </select>
+              </div>
+
               <Table
                 data={results.data}
                 emptyMessage="Anda belum memiliki riwayat ujian yang selesai."

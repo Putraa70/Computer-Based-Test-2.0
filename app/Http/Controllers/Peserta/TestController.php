@@ -32,24 +32,9 @@ class TestController extends Controller
     {
         $testUser->loadMissing('test');
 
-        $topicConfig = DB::table('test_topics')
-            ->where('test_id', $testUser->test_id)
-            ->orderBy('topic_id')
-            ->get([
-                'topic_id',
-                'total_questions',
-                'question_type',
-                'random_questions',
-                'random_answers',
-                'max_answers',
-                'answer_mode',
-                'updated_at',
-            ]);
-
-        return md5(json_encode([
-            'test_updated_at' => $testUser->test?->updated_at?->toDateTimeString(),
-            'topics' => $topicConfig,
-        ]));
+        return $testUser->test
+            ? QuestionGeneratorService::configVersion($testUser->test)
+            : md5('missing-test:' . $testUser->test_id);
     }
 
     private function touchActivityIfNeeded(TestUser $testUser): void
@@ -236,24 +221,42 @@ class TestController extends Controller
                 ->count();
         }
 
-        $answeredCount = $testUser->answers()
-            ->where(function ($query) {
-                $query->whereNotNull('answer_id')
-                    ->orWhereNotNull('answer_text');
-            })
-            ->count();
+        $currentQuestionIds = $questions->pluck('id')->map(fn ($id) => (int) $id)->all();
+        $validAnswerIds = $questions
+            ->flatMap(fn ($question) => collect($question['answers'] ?? [])->pluck('id'))
+            ->map(fn ($id) => (int) $id)
+            ->all();
 
         $existingAnswers = $testUser->answers()
             ->select('question_id', 'answer_id', 'answer_text')
+            ->when(!empty($currentQuestionIds), fn ($query) => $query->whereIn('question_id', $currentQuestionIds))
             ->get()
-            ->mapWithKeys(function ($ans) {
+            ->mapWithKeys(function ($ans) use ($validAnswerIds) {
+                $answerId = $ans->answer_id ? (int) $ans->answer_id : null;
+
+                if ($answerId && !in_array($answerId, $validAnswerIds, true)) {
+                    $answerId = null;
+                }
+
                 return [
                     $ans->question_id => [
-                        'answerId' => $ans->answer_id,
+                        'answerId' => $answerId,
                         'answerText' => $ans->answer_text
                     ]
                 ];
             });
+
+        $answeredCount = $existingAnswers
+            ->filter(fn ($answer) => !is_null($answer['answerId']) || trim((string) ($answer['answerText'] ?? '')) !== '')
+            ->count();
+
+        $lastIndex = min((int) ($testUser->current_index ?? 0), max(0, $totalQuestions - 1));
+        if ((int) $testUser->current_index !== $lastIndex) {
+            $testUser->update([
+                'current_index' => $lastIndex,
+                'last_question_id' => $questions[$lastIndex]['id'] ?? null,
+            ]);
+        }
 
         // ✅ P0: Use secure encrypted token instead of predictable base64 token
         $examToken = SecureExamToken::generate($testUser->id);
@@ -267,7 +270,7 @@ class TestController extends Controller
             'remainingSeconds' => ExamTimeService::remainingSeconds($testUser),
             'existingAnswers' => $existingAnswers,
             'currentUser' => $user,
-            'lastIndex' => $testUser->current_index ?? 0,
+            'lastIndex' => $lastIndex,
             'examToken' => $examToken,  // ✅ Secure encrypted token
             'examConfigVersion' => $this->examConfigVersion($testUser),
         ]);

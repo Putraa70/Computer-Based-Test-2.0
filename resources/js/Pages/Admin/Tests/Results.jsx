@@ -10,6 +10,7 @@ export default function Results({ testUsers = [], test, testUsersStats = null, r
   const [filterTest, setFilterTest] = useState(resultsFilters?.test_id ? parseInt(resultsFilters.test_id) : null);
   const [searchUser, setSearchUser] = useState(resultsFilters?.search || "");
   const [sortBy, setSortBy] = useState(resultsFilters?.sort || "started_at");
+  const [perPage, setPerPage] = useState(resultsFilters?.per_page || 100);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const refreshInFlight = useRef(false);
   const hasMounted = useRef(false);
@@ -26,7 +27,7 @@ export default function Results({ testUsers = [], test, testUsersStats = null, r
         test_id: filterTest,
         search: searchUser,
         sort: sortBy,
-        per_page: resultsFilters?.per_page || 50,
+        per_page: perPage,
       };
 
       Object.keys(params).forEach((key) => {
@@ -43,7 +44,7 @@ export default function Results({ testUsers = [], test, testUsersStats = null, r
     }, 250);
 
     return () => clearTimeout(timeoutId);
-  }, [filterTest, searchUser, sortBy]);
+  }, [filterTest, searchUser, sortBy, perPage]);
 
   const withResultsSection = (url) => {
     if (!url) return url;
@@ -276,6 +277,14 @@ export default function Results({ testUsers = [], test, testUsersStats = null, r
                         <option value="npm_asc">NPM Terkecil (A-Z)</option>
                         <option value="score_desc">Nilai Tertinggi</option>
                         <option value="score_asc">Nilai Terendah</option>
+                    </select>
+                </div>
+                <div className="md:w-36">
+                    <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block mb-2">Tampilkan</label>
+                    <select value={perPage} onChange={(e) => setPerPage(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                        <option value="all">Semua</option>
                     </select>
                 </div>
             </div>

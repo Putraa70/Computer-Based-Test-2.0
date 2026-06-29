@@ -20,6 +20,7 @@ export default function Grouping({ groups }) {
   const { filters } = usePage().props;
 
   const [search, setSearch] = useState(filters?.search || "");
+  const [perPage, setPerPage] = useState(filters?.per_page || 100);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
@@ -46,10 +47,19 @@ export default function Grouping({ groups }) {
     window.searchTimeout = setTimeout(() => {
       router.get(
         route("admin.users.index"),
-        { section: "groups", search: val },
+        { section: "groups", search: val, per_page: perPage },
         { preserveState: true, preserveScroll: true, replace: true },
       );
     }, 400);
+  };
+
+  const handlePerPageChange = (value) => {
+    setPerPage(value);
+    router.get(
+      route("admin.users.index"),
+      { section: "groups", search, per_page: value },
+      { preserveState: true, preserveScroll: true, replace: true },
+    );
   };
 
   // logic crud
@@ -153,8 +163,28 @@ export default function Grouping({ groups }) {
           searchValue={search}
           onSearchChange={handleSearch}
           filters={[]}
-          onReset={() => handleSearch("")}
+          onReset={() => {
+            setSearch("");
+            setPerPage(100);
+            router.get(
+              route("admin.users.index"),
+              { section: "groups", search: "", per_page: 100 },
+              { preserveState: true, preserveScroll: true, replace: true },
+            );
+          }}
         />
+
+        <div className="mb-4 flex items-center justify-end gap-2 text-xs text-gray-600">
+          <span className="font-bold uppercase tracking-wide">Tampilkan</span>
+          <select
+            value={perPage}
+            onChange={(e) => handlePerPageChange(e.target.value)}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-semibold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="all">Semua</option>
+          </select>
+        </div>
 
         {/* 3. Table */}
         <Table

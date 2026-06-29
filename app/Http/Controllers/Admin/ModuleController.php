@@ -24,6 +24,7 @@ class ModuleController extends Controller
         ];
 
         if ($section === 'class') {
+            $perPageFilter = $this->resolvePerPageFilter($request);
             $query = Module::withCount('topics') // Hitung jumlah topik
                 ->latest();
 
@@ -36,10 +37,12 @@ class ModuleController extends Controller
             }
 
             // Gunakan Pagination untuk tabel utama
-            $data['modules'] = $query->paginate(10)->appends($request->query());
+            $data['modules'] = $query
+                ->paginate($this->resolvePerPage($request, $query))
+                ->appends(array_merge($request->query(), ['per_page' => $perPageFilter]));
 
             // Kirim filter balik ke frontend agar input search tidak hilang
-            $data['filters'] = $request->only(['search']);
+            $data['filters'] = array_merge($request->only(['search']), ['per_page' => $perPageFilter]);
         }
 
         // ==========================================
@@ -71,6 +74,8 @@ class ModuleController extends Controller
         if ($section === 'questions') {
             $moduleId = $request->input('module_id');
             $topicId  = $request->input('topic_id');
+            $search = trim((string) $request->input('search', ''));
+            $perPageFilter = $this->resolvePerPageFilter($request);
 
             $data['modules'] = Module::select('id', 'name')->orderBy('name')->get();
 
@@ -124,19 +129,39 @@ class ModuleController extends Controller
             }
 
             // ═══════════════════════════════════════════════════════════════════════
-            // Questions: Pagination 50 per halaman untuk display list
+            // Questions: Pagination default 100 per halaman untuk display list
             // ═══════════════════════════════════════════════════════════════════════
-            $data['questions'] = $topicId
-                ? Question::with('answers')
-                ->where('topic_id', $topicId)
-                ->latest()
-                ->paginate(50)  // ← Halaman hanya 50 items
-                ->withQueryString()
-                : null;
+            if ($topicId) {
+                $questionsQuery = Question::with('answers')
+                    ->where('topic_id', $topicId)
+                    ->latest();
+
+                if ($search !== '') {
+                    $questionsQuery->where(function ($query) use ($search) {
+                        $query->where('question_text', 'like', "%{$search}%");
+
+                        if (ctype_digit($search)) {
+                            $query->orWhere('id', (int) $search);
+                        }
+
+                        $query->orWhereHas('answers', function ($answerQuery) use ($search) {
+                                $answerQuery->where('answer_text', 'like', "%{$search}%");
+                            });
+                    });
+                }
+
+                $data['questions'] = $questionsQuery
+                    ->paginate($this->resolvePerPage($request, $questionsQuery))
+                    ->appends(array_merge($request->query(), ['per_page' => $perPageFilter]));
+            } else {
+                $data['questions'] = null;
+            }
 
             $data['filters'] = [
                 'module_id' => $moduleId,
                 'topic_id'  => $topicId,
+                'search'    => $search,
+                'per_page'  => $perPageFilter,
             ];
         }
 
@@ -151,6 +176,28 @@ class ModuleController extends Controller
 
         // Default render halaman Index
         return inertia('Admin/Modules/Index', $data);
+    }
+
+    private function resolvePerPage(Request $request, $query = null): int
+    {
+        if ($request->input('per_page') === 'all' && $query) {
+            return max(1, (clone $query)->count());
+        }
+
+        $perPage = (int) $request->input('per_page', 100);
+
+        return in_array($perPage, [100, 500], true) ? $perPage : 100;
+    }
+
+    private function resolvePerPageFilter(Request $request): int|string
+    {
+        if ($request->input('per_page') === 'all') {
+            return 'all';
+        }
+
+        $perPage = (int) $request->input('per_page', 100);
+
+        return in_array($perPage, [100, 500], true) ? $perPage : 100;
     }
 
     /**

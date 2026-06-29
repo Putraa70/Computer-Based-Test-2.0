@@ -27,7 +27,33 @@ class GroupController extends Controller {
             });
         }
 
-        return $query->paginate(10)->appends($request->query());
+        $perPageFilter = self::resolvePerPageFilter($request);
+
+        return $query
+            ->paginate(self::resolvePerPage($request, $query))
+            ->appends(array_merge($request->query(), ['per_page' => $perPageFilter]));
+    }
+
+    private static function resolvePerPage(Request $request, $query = null): int
+    {
+        if ($request->input('per_page') === 'all' && $query) {
+            return max(1, (clone $query)->count());
+        }
+
+        $perPage = (int) $request->input('per_page', 100);
+
+        return in_array($perPage, [100, 500], true) ? $perPage : 100;
+    }
+
+    private static function resolvePerPageFilter(Request $request): int|string
+    {
+        if ($request->input('per_page') === 'all') {
+            return 'all';
+        }
+
+        $perPage = (int) $request->input('per_page', 100);
+
+        return in_array($perPage, [100, 500], true) ? $perPage : 100;
     }
 
     public function store(Request $request) {

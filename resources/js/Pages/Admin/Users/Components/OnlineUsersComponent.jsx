@@ -6,6 +6,16 @@ import { LogOut, User, Wifi } from "lucide-react";
 export default function OnlineUsersComponent({ users, totalOnline }) {
     const { auth } = usePage().props;
     const [isForcing, setIsForcing] = useState(null);
+    const currentPerPage =
+        new URLSearchParams(window.location.search).get("per_page") || 100;
+
+    const handlePerPageChange = (perPage) => {
+        router.get(
+            route("admin.users.index"),
+            { section: "online", per_page: perPage },
+            { preserveScroll: true, replace: true },
+        );
+    };
 
     const handleForceLogout = async (userId, userName) => {
         const result = await Swal.fire({
@@ -81,7 +91,7 @@ export default function OnlineUsersComponent({ users, totalOnline }) {
         <div className="space-y-4">
             {/* Header */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
                     <div>
                         <h2 className="text-xl font-bold text-gray-900">
                             Pengguna Online
@@ -91,13 +101,31 @@ export default function OnlineUsersComponent({ users, totalOnline }) {
                             jika diperlukan.
                         </p>
                     </div>
-                    <div className="text-right">
-                        <div className="text-4xl font-bold text-green-600">
-                            {totalOnline}
+                    <div className="flex items-center gap-4">
+                        <div className="text-right">
+                            <div className="text-4xl font-bold text-green-600">
+                                {totalOnline}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">
+                                Pengguna Online
+                            </p>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">
-                            Pengguna Online
-                        </p>
+                        <div className="flex items-center gap-2 text-xs text-gray-600">
+                            <span className="font-bold uppercase tracking-wide">
+                                Tampilkan
+                            </span>
+                            <select
+                                value={currentPerPage}
+                                onChange={(e) =>
+                                    handlePerPageChange(e.target.value)
+                                }
+                                className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-semibold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                            >
+                                <option value="100">100</option>
+                                <option value="500">500</option>
+                                <option value="all">Semua</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,7 +165,7 @@ export default function OnlineUsersComponent({ users, totalOnline }) {
                                     >
                                         {/* No */}
                                         <td className="px-6 py-4 text-gray-600">
-                                            {index + 1}
+                                            {(users.from || 1) + index}
                                         </td>
 
                                         {/* Nama */}

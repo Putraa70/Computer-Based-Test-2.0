@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Question;
 use App\Models\Answer;
+use App\Services\CBT\QuestionGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -32,7 +33,7 @@ class QuestionController extends Controller
             'options.*.image'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        DB::transaction(function () use ($validated, $request) {
+        $question = DB::transaction(function () use ($validated, $request) {
 
             // 2. Upload Gambar Soal (Jika ada)
             $qImagePath = null;
@@ -84,7 +85,12 @@ class QuestionController extends Controller
                     ]);
                 }
             }
+
+            return $question;
         });
+
+        QuestionGeneratorService::clearQuestion($question->id);
+        QuestionGeneratorService::clearForTopic((int) $question->topic_id);
 
         return redirect()
             ->back()
@@ -104,6 +110,8 @@ class QuestionController extends Controller
             'options.*.is_correct' => 'boolean',
             'options.*.image'      => 'nullable|image|max:5120',
         ]);
+
+        $oldTopicId = (int) $question->topic_id;
 
         DB::transaction(function () use ($validated, $request, $question) {
 
@@ -162,6 +170,10 @@ class QuestionController extends Controller
             }
         });
 
+        QuestionGeneratorService::clearQuestion($question->id);
+        QuestionGeneratorService::clearForTopic($oldTopicId);
+        QuestionGeneratorService::clearForTopic((int) $question->fresh()->topic_id);
+
         return redirect()
             ->back()
             ->with('success', 'Soal berhasil diperbarui');
@@ -169,6 +181,9 @@ class QuestionController extends Controller
 
     public function destroy(Question $question)
     {
+        $topicId = (int) $question->topic_id;
+        $questionId = (int) $question->id;
+
         DB::transaction(function () use ($question) {
 
             // 1. Hapus Gambar Soal
@@ -188,6 +203,9 @@ class QuestionController extends Controller
             $question->delete();
         });
 
+        QuestionGeneratorService::clearQuestion($questionId);
+        QuestionGeneratorService::clearForTopic($topicId);
+
         return redirect()
             ->route('admin.modules.index', ['section' => 'questions'])
             ->with('success', 'Soal berhasil dihapus');
@@ -205,10 +223,16 @@ class QuestionController extends Controller
 
         $count = 0;
 
-        DB::transaction(function () use ($request, &$count) {
+        $topicIds = [];
+        $questionIds = [];
+
+        DB::transaction(function () use ($request, &$count, &$topicIds, &$questionIds) {
             $questions = Question::with('answers')->whereIn('id', $request->ids)->get();
 
             foreach ($questions as $question) {
+                $topicIds[] = (int) $question->topic_id;
+                $questionIds[] = (int) $question->id;
+
                 // 1. Hapus Gambar Soal
                 if ($question->question_image && Storage::disk('public')->exists($question->question_image)) {
                     Storage::disk('public')->delete($question->question_image);
@@ -227,6 +251,14 @@ class QuestionController extends Controller
                 $count++;
             }
         });
+
+        foreach (array_unique($questionIds) as $questionId) {
+            QuestionGeneratorService::clearQuestion($questionId);
+        }
+
+        foreach (array_unique($topicIds) as $topicId) {
+            QuestionGeneratorService::clearForTopic($topicId);
+        }
 
         return back()->with('success', "{$count} soal berhasil dihapus beserta jawabannya.");
     }

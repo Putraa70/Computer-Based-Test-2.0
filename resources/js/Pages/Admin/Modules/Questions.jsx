@@ -37,13 +37,20 @@ export default function Questions({
 
     // State untuk bulk delete
     const [selectedIds, setSelectedIds] = useState([]);
+    const [searchTerm, setSearchTerm] = useState(filters.search || "");
 
     // --- LOGIC FILTERING ---
     const handleModuleChange = (moduleId) => {
         setIsLoading(true);
+        setSearchTerm("");
         router.get(
             route("admin.modules.index"),
-            { section: "questions", module_id: moduleId },
+            {
+                section: "questions",
+                module_id: moduleId,
+                per_page: filters.per_page || 100,
+                search: "",
+            },
             {
                 preserveState: true,
                 preserveScroll: true,
@@ -55,12 +62,15 @@ export default function Questions({
 
     const handleTopicChange = (topicId) => {
         setIsLoading(true);
+        setSearchTerm("");
         router.get(
             route("admin.modules.index"),
             {
                 section: "questions",
                 module_id: filters.module_id,
                 topic_id: topicId,
+                per_page: filters.per_page || 100,
+                search: "",
             },
             {
                 preserveState: true,
@@ -102,6 +112,52 @@ export default function Questions({
     };
 
     const questionList = questions?.data || [];
+    const currentPerPage = filters.per_page || 100;
+
+    const handleSearchChange = (value) => {
+        setSearchTerm(value);
+        clearTimeout(window.questionSearchTimeout);
+        window.questionSearchTimeout = setTimeout(() => {
+            setIsLoading(true);
+            router.get(
+                route("admin.modules.index"),
+                {
+                    section: "questions",
+                    module_id: filters.module_id,
+                    topic_id: filters.topic_id,
+                    search: value,
+                    per_page: filters.per_page || 100,
+                },
+                {
+                    preserveState: true,
+                    preserveScroll: true,
+                    replace: true,
+                    only: ["questions", "filters"],
+                    onFinish: () => setIsLoading(false),
+                },
+            );
+        }, 350);
+    };
+
+    const handlePerPageChange = (perPage) => {
+        setIsLoading(true);
+        router.get(
+            route("admin.modules.index"),
+            {
+                section: "questions",
+                module_id: filters.module_id,
+                topic_id: filters.topic_id,
+                search: filters.search || "",
+                per_page: perPage,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                only: ["questions", "filters"],
+                onFinish: () => setIsLoading(false),
+            },
+        );
+    };
 
     // Bulk Delete Handler
     const handleBulkDelete = () => {
@@ -289,13 +345,40 @@ export default function Questions({
                     </div>
 
                     {filters.topic_id && (
-                        <Button
-                            onClick={openCreate}
-                            className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold"
-                        >
-                            <PlusIcon className="w-5 h-5" />
-                            Buat Soal Baru
-                        </Button>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) =>
+                                    handleSearchChange(e.target.value)
+                                }
+                                placeholder="Cari teks soal / jawaban..."
+                                className="w-full sm:w-64 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-semibold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                            />
+                            <div className="flex items-center gap-2 text-xs text-gray-600">
+                                <span className="font-bold uppercase tracking-wide">
+                                    Tampilkan
+                                </span>
+                                <select
+                                    value={currentPerPage}
+                                    onChange={(e) =>
+                                        handlePerPageChange(e.target.value)
+                                    }
+                                    className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-semibold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                >
+                                    <option value="100">100</option>
+                                    <option value="500">500</option>
+                                    <option value="all">Semua</option>
+                                </select>
+                            </div>
+                            <Button
+                                onClick={openCreate}
+                                className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold"
+                            >
+                                <PlusIcon className="w-5 h-5" />
+                                Buat Soal Baru
+                            </Button>
+                        </div>
                     )}
                 </div>
 

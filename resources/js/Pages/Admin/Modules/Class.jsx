@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { router } from "@inertiajs/react";
 import Button from "@/Components/UI/Button";
 import DataFilter from "@/Components/Shared/DataFilter"; // Sekarang komponen ini DIPAKAI
+import Pagination from "@/Components/UI/Pagination";
 
 // Import Komponen Modular
 import ClassTable from "./Class-Components/ClassTable";
@@ -13,6 +14,7 @@ import { PlusIcon, AcademicCapIcon } from "@heroicons/react/24/outline";
 export default function Class({ modules, filters }) {
   // State
   const [search, setSearch] = useState(filters?.search || "");
+  const [perPage, setPerPage] = useState(filters?.per_page || 100);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
@@ -23,7 +25,16 @@ export default function Class({ modules, filters }) {
     setSearch(val);
     router.get(
       route("admin.modules.index"),
-      { section: "class", search: val },
+      { section: "class", search: val, per_page: perPage },
+      { preserveState: true, preserveScroll: true, replace: true },
+    );
+  };
+
+  const handlePerPageChange = (value) => {
+    setPerPage(value);
+    router.get(
+      route("admin.modules.index"),
+      { section: "class", search, per_page: value },
       { preserveState: true, preserveScroll: true, replace: true },
     );
   };
@@ -31,7 +42,8 @@ export default function Class({ modules, filters }) {
   // 2. Reset Handler (Bersihkan pencarian)
   const handleReset = () => {
     setSearch("");
-    router.get(route("admin.modules.index"), { section: "class" });
+    setPerPage(100);
+    router.get(route("admin.modules.index"), { section: "class", per_page: 100 });
   };
 
   // 3. CRUD Handlers
@@ -108,6 +120,18 @@ export default function Class({ modules, filters }) {
         hideReset={!search}
       />
 
+      <div className="flex items-center justify-end gap-2 text-xs text-gray-600">
+        <span className="font-bold uppercase tracking-wide">Tampilkan</span>
+        <select
+          value={perPage}
+          onChange={(e) => handlePerPageChange(e.target.value)}
+          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-semibold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
+          <option value="100">100</option>
+          <option value="500">500</option>
+          <option value="all">Semua</option>
+        </select>
+      </div>
+
       {/* CONTENT: TABLE ATAU EMPTY STATE */}
       {!hasData ? (
         <ClassEmpty
@@ -127,7 +151,12 @@ export default function Class({ modules, filters }) {
           }
         />
       ) : (
-        <ClassTable modules={modules} onEdit={openEdit} onDelete={destroy} />
+        <>
+          <ClassTable modules={modules} onEdit={openEdit} onDelete={destroy} />
+          <div className="mt-4">
+            {modules.links && <Pagination links={modules.links} />}
+          </div>
+        </>
       )}
 
       {/* MODAL FORM */}

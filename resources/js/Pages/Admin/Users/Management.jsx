@@ -12,6 +12,7 @@ export default function Management({ users, onAddClick, onEditClick }) {
   const [params, setParams] = useState({
     search: filters?.search || "",
     group_id: filters?.group_id || "",
+    per_page: filters?.per_page || 100,
   });
 
   const refreshData = (newParams) => {
@@ -102,8 +103,20 @@ export default function Management({ users, onAddClick, onEditClick }) {
           searchValue={params.search}
           onSearchChange={onSearch}
           filters={filterConfig}
-          onReset={() => refreshData({ search: "", group_id: "" })}
+          onReset={() => refreshData({ search: "", group_id: "", per_page: 100 })}
         />
+
+        <div className="mb-4 flex items-center justify-end gap-2 text-xs text-gray-600">
+          <span className="font-bold uppercase tracking-wide">Tampilkan</span>
+          <select
+            value={params.per_page || 100}
+            onChange={(e) => refreshData({ ...params, per_page: e.target.value })}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-semibold focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100">
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="all">Semua</option>
+          </select>
+        </div>
 
         <Table
           columns={[
@@ -113,7 +126,7 @@ export default function Management({ users, onAddClick, onEditClick }) {
               className: "text-sm text-center w-16",
               render: (_, __, index) => {
                 const currentPage = Number(users?.current_page) || 1;
-                const perPage = Number(users?.per_page) || 50;
+                const perPage = Number(users?.per_page) || 100;
                 const from = Number(users?.from) || ((currentPage - 1) * perPage + 1);
                 const rowNumber = Number(from) + Number(index);
                 return !isNaN(rowNumber) ? rowNumber : index + 1;

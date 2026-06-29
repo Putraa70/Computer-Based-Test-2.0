@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import PesertaLayout from '@/Layouts/PesertaLayout';
 import { palettePeserta } from '@/constants/palette';
 import { Calendar, CheckCircle, Activity, ArrowRight } from 'lucide-react';
@@ -11,6 +11,8 @@ import EmptyState from './Components/EmptyState'; // Asumsi file ini sudah ada d
 
 export default function Dashboard({ summary, recentTests }) {
     const theme = palettePeserta.luxuryNature;
+    const { auth } = usePage().props;
+    const userName = auth?.user?.name || 'Peserta';
 
     return (
         <PesertaLayout>
@@ -19,8 +21,10 @@ export default function Dashboard({ summary, recentTests }) {
             <div className="space-y-8">
                 {/* 1. Header & Greeting */}
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Dashboard Peserta</h1>
-                    <p className="text-gray-500 mt-1">Selamat datang! Berikut adalah ringkasan aktivitas ujian Anda.</p>
+                    <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+                        Selamat datang, <span style={{ color: theme.primary }}>{userName}</span>
+                    </h1>
+                    <p className="text-gray-500 mt-1">Berikut ringkasan aktivitas dan jadwal ujian Anda.</p>
                 </div>
 
                 {/* 2. Statistik Grid */}

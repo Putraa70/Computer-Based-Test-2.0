@@ -200,7 +200,7 @@ class TestUserController extends Controller
         }
 
         if ($type === 'pdf') {
-            // ✅ OPTIMIZED: Only load necessary data + add limit to prevent memory exhaustion
+            // ✅ OPTIMIZED: Only load necessary data for PDF export
             $query = TestUser::with([
                 'user:id,name,npm',
                 'test:id,title',
@@ -208,8 +208,7 @@ class TestUserController extends Controller
             ])
                 ->select('test_users.*')
                 ->join('users', 'test_users.user_id', '=', 'users.id')
-                ->leftJoin('results', 'test_users.id', '=', 'results.test_user_id')
-                ->limit(500); // ✅ Limit to prevent memory exhaustion
+                ->leftJoin('results', 'test_users.id', '=', 'results.test_user_id');
 
             if ($testId) $query->where('test_users.test_id', $testId);
             if ($search) {

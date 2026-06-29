@@ -47,7 +47,10 @@ class UserController extends Controller
         return inertia('Admin/Users/Index', [
             'section' => 'groups',
             'groups' => $groups, // data grup dikirim kesini
-            'filters' => $request->only(['search']),
+            'filters' => array_merge(
+                $request->only(['search']),
+                ['per_page' => $this->resolvePerPageFilter($request)]
+            ),
         ]);
     }
 
@@ -112,7 +115,7 @@ class UserController extends Controller
         // Hitung Total Online untuk Badge Frontend
         $totalOnlineCount = $sortedUsers->where('is_online', true)->count();
 
-        $perPage = 100;
+        $perPage = $this->resolvePerPage($request, $sortedUsers->count());
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $currentItems = $sortedUsers->slice(($currentPage - 1) * $perPage, $perPage)->values()->all();
         $paginatedUsers = new LengthAwarePaginator(
@@ -191,9 +194,11 @@ class UserController extends Controller
         return inertia('Admin/Users/Index', [
             'section' => 'selection',
             // pake withQueryString dengan appends biar gada error
-            'users' => $query->paginate(50)->appends($request->query()),
+            'users' => $query
+                ->paginate($this->resolvePerPage($request, $query))
+                ->appends(array_merge($request->query(), ['per_page' => $this->resolvePerPageFilter($request)])),
             'groups' => Group::select('id', 'name')->get(),
-            'filters' => $request->only(['search', 'group_id']),
+            'filters' => array_merge($request->only(['search', 'group_id']), ['per_page' => $this->resolvePerPageFilter($request)]),
         ]);
     }
 
@@ -325,14 +330,44 @@ class UserController extends Controller
         $query->orderByRaw("CASE WHEN role = 'admin' THEN 0 WHEN role = 'peserta' THEN 1 ELSE 2 END")
             ->orderBy('id', 'desc');
 
-        $users = $query->paginate(50)->appends($request->query());
+        $users = $query
+            ->paginate($this->resolvePerPage($request, $query))
+            ->appends(array_merge($request->query(), ['per_page' => $this->resolvePerPageFilter($request)]));
 
         return inertia('Admin/Users/Index', [
             'section' => 'management',
             'users' => $users,
             'groups' => Group::select('id', 'name')->orderBy('name')->get(),
-            'filters' => $request->only(['search', 'group_id']),
+            'filters' => array_merge($request->only(['search', 'group_id']), ['per_page' => $this->resolvePerPageFilter($request)]),
         ]);
+    }
+
+    private function resolvePerPage(Request $request, $source = null): int
+    {
+        if ($request->input('per_page') === 'all') {
+            if (is_int($source)) {
+                return max(1, $source);
+            }
+
+            if ($source) {
+                return max(1, (clone $source)->count());
+            }
+        }
+
+        $perPage = (int) $request->input('per_page', 100);
+
+        return in_array($perPage, [100, 500], true) ? $perPage : 100;
+    }
+
+    private function resolvePerPageFilter(Request $request): int|string
+    {
+        if ($request->input('per_page') === 'all') {
+            return 'all';
+        }
+
+        $perPage = (int) $request->input('per_page', 100);
+
+        return in_array($perPage, [100, 500], true) ? $perPage : 100;
     }
 
     public function create()

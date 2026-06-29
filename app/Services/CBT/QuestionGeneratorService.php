@@ -5,6 +5,7 @@ namespace App\Services\CBT;
 use App\Models\Test;
 use App\Models\Question;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
 use Throwable;
@@ -207,9 +208,108 @@ class QuestionGeneratorService
             return;
         }
 
+        Cache::forget(self::configVersionCacheKey($testId));
+
         foreach ($test->testUsers as $testUser) {
             self::clear($test->id, $testUser->user_id);
+            Cache::forget("exam_status:{$testUser->id}");
         }
+    }
+
+    public static function clearQuestion(int $questionId): void
+    {
+        Cache::forget(self::questionPayloadCacheKey($questionId));
+    }
+
+    public static function clearForTopic(int $topicId): void
+    {
+        $tests = Test::query()
+            ->whereHas('topics', fn ($query) => $query->where('topics.id', $topicId))
+            ->with('testUsers:id,test_id,user_id')
+            ->get(['id']);
+
+        foreach ($tests as $test) {
+            self::clearForTest($test->id);
+            QuestionCacheService::invalidateTest($test->id);
+            Cache::forget("statistics:test:summary:{$test->id}");
+        }
+    }
+
+    public static function configVersion(Test $test): string
+    {
+        return Cache::remember(
+            self::configVersionCacheKey($test->id),
+            now()->addSeconds(3600),
+            fn () => self::buildConfigVersion($test)
+        );
+    }
+
+    protected static function configVersionCacheKey(int $testId): string
+    {
+        return "cbt_exam_config_version:{$testId}";
+    }
+
+    protected static function buildConfigVersion(Test $test): string
+    {
+        $test->loadMissing('topics');
+
+        $topicRows = $test->topics
+            ->sortBy('id')
+            ->map(function ($topic) {
+                return [
+                    'topic_id' => (int) $topic->id,
+                    'question_type' => (string) ($topic->pivot->question_type ?? 'mixed'),
+                    'random_questions' => (int) ($topic->pivot->random_questions ?? 0),
+                    'random_answers' => (int) ($topic->pivot->random_answers ?? 0),
+                    'max_answers' => (int) ($topic->pivot->max_answers ?? 0),
+                    'answer_mode' => (string) ($topic->pivot->answer_mode ?? ''),
+                    'updated_at' => (string) ($topic->pivot->updated_at ?? ''),
+                ];
+            })
+            ->values()
+            ->all();
+
+        $topicIds = collect($topicRows)->pluck('topic_id')->all();
+
+        $questionRows = empty($topicIds)
+            ? []
+            : DB::table('questions')
+                ->whereIn('topic_id', $topicIds)
+                ->where('is_active', true)
+                ->orderBy('topic_id')
+                ->orderBy('id')
+                ->get(['id', 'topic_id', 'type', 'updated_at'])
+                ->map(fn ($question) => [
+                    'id' => (int) $question->id,
+                    'topic_id' => (int) $question->topic_id,
+                    'type' => (string) $question->type,
+                    'updated_at' => (string) $question->updated_at,
+                ])
+                ->all();
+
+        $questionIds = collect($questionRows)->pluck('id')->all();
+
+        $answerRows = empty($questionIds)
+            ? []
+            : DB::table('answers')
+                ->whereIn('question_id', $questionIds)
+                ->orderBy('question_id')
+                ->orderBy('id')
+                ->get(['id', 'question_id', 'is_correct', 'updated_at'])
+                ->map(fn ($answer) => [
+                    'id' => (int) $answer->id,
+                    'question_id' => (int) $answer->question_id,
+                    'is_correct' => (int) $answer->is_correct,
+                    'updated_at' => (string) $answer->updated_at,
+                ])
+                ->all();
+
+        return md5(json_encode([
+            'test_updated_at' => optional($test->updated_at)->toDateTimeString(),
+            'topics' => $topicRows,
+            'questions' => $questionRows,
+            'answers' => $answerRows,
+        ]));
     }
 
     /**
@@ -427,24 +527,6 @@ class QuestionGeneratorService
 
     protected static function configSignature(Test $test): string
     {
-        $test->loadMissing('topics');
-
-        $parts = $test->topics
-            ->sortBy('id')
-            ->map(function ($topic) {
-                // `total_questions` tidak lagi mempengaruhi pemilihan soal, set ke ALL
-                return implode(':', [
-                    $topic->id,
-                    'ALL',
-                    $topic->pivot->question_type ?? 'mixed',
-                    (int) ($topic->pivot->random_questions ?? 0),
-                    (int) ($topic->pivot->random_answers ?? 0),
-                    (int) ($topic->pivot->max_answers ?? 0),
-                    (string) ($topic->pivot->answer_mode ?? ''),
-                ]);
-            })
-            ->implode('|');
-
-        return md5($parts);
+        return self::configVersion($test);
     }
 }

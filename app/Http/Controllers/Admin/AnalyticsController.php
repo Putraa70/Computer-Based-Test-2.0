@@ -10,6 +10,7 @@ use Inertia\Inertia;
 //  1. IMPORT SERVICE
 use App\Services\CBT\ExamTimeService;
 use App\Services\CBT\ScoringService;
+use Illuminate\Support\Facades\DB;
 
 class AnalyticsController extends Controller
 {
@@ -27,17 +28,26 @@ class AnalyticsController extends Controller
 
             $participantsQuery = TestUser::with('user')
                 ->select('test_users.*')
-                ->where('test_id', $currentTestId)
-                ->limit(100);
+                ->where('test_id', $currentTestId);
 
             ScoringService::selectFinalScore($participantsQuery);
             ScoringService::orderByFinalScore($participantsQuery);
 
+            $answeredCountsRaw = DB::table('user_answers')
+                ->join('test_users', 'user_answers.test_user_id', '=', 'test_users.id')
+                ->where('test_users.test_id', $currentTestId)
+                ->whereNotNull('user_answers.answer_id')
+                ->selectRaw('user_answers.test_user_id, COUNT(*) as answer_count')
+                ->groupBy('user_answers.test_user_id')
+                ->get()
+                ->keyBy('test_user_id');
+
             $participants = $participantsQuery
                 ->get()
-                ->map(function ($p) use ($totalQuestions) {
+                ->map(function ($p) use ($totalQuestions, $answeredCountsRaw) {
                     // ✅ Use ScoringService for consistent realtime calculation
                     $score = (float) ($p->final_score ?? ScoringService::calculate($p));
+                    $answeredCount = $answeredCountsRaw[$p->id]->answer_count ?? 0;
 
                     return [
                         'id' => $p->id,
@@ -45,7 +55,7 @@ class AnalyticsController extends Controller
                         'status' => $p->status,
                         'started_at' => $p->started_at,
                         'finished_at' => $p->finished_at,
-                        'answered_count' => $p->answers()->whereNotNull('answer_id')->count(),
+                        'answered_count' => (int) $answeredCount,
                         'score' => $score,
                     ];
                 });

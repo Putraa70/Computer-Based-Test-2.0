@@ -15,9 +15,6 @@ export default function NavbarPeserta({ toggleSidebar, theme }) {
                         <button onClick={toggleSidebar} className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
                             <Menu className="w-6 h-6" />
                         </button>
-                        <h2 className="text-lg font-semibold text-gray-800 hidden md:block">
-                            Selamat Datang, <span style={{ color: theme.primary }}>{auth.user.name}</span>
-                        </h2>
                     </div>
 
                     <div className="flex items-center gap-4">
