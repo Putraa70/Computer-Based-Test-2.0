@@ -6,6 +6,7 @@ import {
   Database,
   Globe,
   HelpCircle,
+  FileText,
 } from "lucide-react";
 
 export const SideBarItems = [
@@ -85,6 +86,20 @@ export const SideBarItems = [
         params: { section: "import" },
       },
 
+    ],
+  },
+
+  {
+    name: "Bank Soal",
+    icon: FileText,
+    route: "admin.modules.index",
+    subMenus: [
+      {
+        name: "Import Soal Word",
+        id: "ImportWord",
+        route: "admin.modules.index",
+        params: { section: "import-word" },
+      },
     ],
   },
 

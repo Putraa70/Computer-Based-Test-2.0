@@ -16,7 +16,7 @@ export default function Dashboard({ stats, latestTests }) {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             });
-            
+
             if (response.ok) {
                 const data = await response.json();
                 if(data.server_time) {
@@ -41,22 +41,22 @@ export default function Dashboard({ stats, latestTests }) {
     }, []);
 
     const testColumns = [
-        { 
-            label: 'Judul Ujian', 
+        {
+            label: 'Judul Ujian',
             key: 'title',
             render: (val) => <span className="font-semibold text-gray-900">{val}</span>
         },
-        { 
-            label: 'Modul', 
-            key: 'module_name', 
+        {
+            label: 'Modul',
+            key: 'module_name',
             render: (val) => (
                 <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-100">
                     {val || '-'}
                 </span>
             )
         },
-        { 
-            label: 'Topik', 
+        {
+            label: 'Topik',
             key: 'topic_name',
             render: (val) => (
                 <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 border border-purple-100">
@@ -66,14 +66,14 @@ export default function Dashboard({ stats, latestTests }) {
         },
         { label: 'Waktu Mulai', key: 'start_time' },
         { label: 'Waktu Selesai', key: 'end_time' },
-        { 
-            label: 'Aksi', 
-            key: 'id', 
+        {
+            label: 'Aksi',
+            key: 'id',
             render: (id) => (
                 <button className="text-emerald-600 hover:text-emerald-800 hover:underline text-xs font-bold transition-colors">
                     Detail
                 </button>
-            ) 
+            )
         },
     ];
 
@@ -90,29 +90,29 @@ export default function Dashboard({ stats, latestTests }) {
 
                 {/* 2. Stat Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <StatCard 
-                        label="Total Peserta" 
-                        value={stats.totalUsers} 
-                        icon="people" 
-                        color="bg-blue-500" 
+                    <StatCard
+                        label="Total Peserta"
+                        value={stats.totalUsers}
+                        icon="people"
+                        color="bg-blue-500"
                     />
-                    <StatCard 
-                        label="Total Ujian" 
-                        value={stats.totalTests} 
-                        icon="assignment" 
-                        color="bg-[#00a65a]" 
+                    <StatCard
+                        label="Total Ujian"
+                        value={stats.totalTests}
+                        icon="assignment"
+                        color="bg-[#00a65a]"
                     />
-                    <StatCard 
-                        label="Ujian Aktif" 
-                        value={stats.activeTests} 
-                        icon="verified" 
-                        color="bg-orange-500" 
+                    <StatCard
+                        label="Ujian Aktif"
+                        value={stats.activeTests}
+                        icon="verified"
+                        color="bg-orange-500"
                     />
-                    <StatCard 
-                        label="Sesi Berlangsung" 
-                        value={stats.ongoingTests} 
-                        icon="timer" 
-                        color="bg-purple-600" 
+                    <StatCard
+                        label="Sesi Berlangsung"
+                        value={stats.ongoingTests}
+                        icon="timer"
+                        color="bg-purple-600"
                     />
                 </div>
 
@@ -123,9 +123,9 @@ export default function Dashboard({ stats, latestTests }) {
                         <h2 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Jadwal Ujian Terbaru</h2>
                     </div>
                     <div className="p-5 overflow-x-auto">
-                        <Table 
-                            columns={testColumns} 
-                            data={latestTests} 
+                        <Table
+                            columns={testColumns}
+                            data={latestTests}
                             emptyMessage="Belum ada ujian yang dijadwalkan."
                         />
                     </div>
@@ -137,13 +137,13 @@ export default function Dashboard({ stats, latestTests }) {
                         <span className="material-icons text-gray-400 text-sm">dns</span>
                         <h2 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Status Infrastruktur</h2>
                     </div>
-                    
+
                     {/* Layout Grid Horizontal agar terlihat seperti Status Bar */}
                     <div className="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-center">
                         <HealthItem label="Koneksi Database" status="stabil" />
                         <HealthItem label="Protokol Inertia" status="aktif" />
                         <HealthItem label="Layanan Mesin CBT" status="siap" />
-                        
+
                         {/* Jam Server */}
                         <div className="flex flex-col md:items-end border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
                             <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">Waktu Server</p>

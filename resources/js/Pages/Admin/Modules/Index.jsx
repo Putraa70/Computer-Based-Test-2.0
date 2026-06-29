@@ -7,6 +7,7 @@ import Questions from "./Questions";
 import Topic from "./Topic";
 import Results from "./Results";
 import ImportPage from "./Import";
+import ImportWord from "./ImportWord";
 
 export default function Index(props) {
   const { url } = usePage();
@@ -32,6 +33,9 @@ export default function Index(props) {
 
       case "import":
         return <ImportPage {...props} />;
+
+      case "import-word":
+        return <ImportWord {...props} />;
 
       default:
         return <Class {...props} />;

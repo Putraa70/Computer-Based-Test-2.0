@@ -70,6 +70,26 @@ class ModuleController extends Controller
         }
         // ==========================================
 
+        if ($section === 'import-word') {
+            $moduleId = $request->input('module_id');
+
+            $topics = [];
+            if ($moduleId) {
+                $topics = Topic::select('id', 'name', 'module_id')
+                    ->where('module_id', $moduleId)
+                    ->where('is_active', true)
+                    ->orderBy('name')
+                    ->get();
+            }
+
+            return inertia('Admin/Modules/ImportWord', [
+                'modules' => Module::select('id', 'name')->orderBy('name')->get(),
+                'topics'  => $topics,
+                'filters' => ['module_id' => $moduleId],
+                'section' => 'import-word'
+            ]);
+        }
+
         // 2. LOGIC TAB 'QUESTIONS'
         if ($section === 'questions') {
             $moduleId = $request->input('module_id');

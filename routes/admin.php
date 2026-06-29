@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\{
     ForceSubmitController,
     ImportUserController,
     ImportQuestionController,
+    ImportWordQuestionController,
     AnalyticsController,
     UserController,
     GroupController,
@@ -53,6 +54,9 @@ Route::middleware([
     Route::get('/questions/import', [ImportQuestionController::class, 'create'])->name('questions.import.view');
     Route::post('/import/questions', [ImportQuestionController::class, 'store'])->name('import.questions');
     Route::get('/questions/import/template', [ImportQuestionController::class, 'downloadTemplate'])->name('questions.import.template');
+    Route::get('/questions/import-word', [ImportWordQuestionController::class, 'create'])->name('questions.import-word.view');
+    Route::post('/questions/import-word/preview', [ImportWordQuestionController::class, 'preview'])->name('questions.import-word.preview');
+    Route::post('/questions/import-word', [ImportWordQuestionController::class, 'store'])->name('questions.import-word.store');
 
     // Bulk Delete Questions
     Route::post('/questions/bulk-delete', [QuestionController::class, 'bulkDelete'])->name('questions.bulk-delete');
